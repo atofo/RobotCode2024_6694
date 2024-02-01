@@ -4,19 +4,25 @@
 
 package frc.robot.Commands;
 
-import edu.wpi.first.wpilibj.XboxController;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.DrivetrainSubsystem;
 
 public class DriveWithJoystick extends Command {
   /** Creates a new DriveWithJoystick. */
 
-  private final Drivetrain drivetrain;
-  private final XboxController driverController;
+  private final DrivetrainSubsystem drivetrain;
+  private final DoubleSupplier joystickX;
+  private final DoubleSupplier joystickY;
+  private final DoubleSupplier joystickZ;
 
-  public DriveWithJoystick(Drivetrain drivetrain, XboxController driverController) {
+  public DriveWithJoystick(DrivetrainSubsystem drivetrain, DoubleSupplier joystickX, DoubleSupplier joystickY,
+      DoubleSupplier joystickZ) {
     this.drivetrain = drivetrain;
-    this.driverController = driverController;
+    this.joystickX = joystickX;
+    this.joystickY = joystickX;
+    this.joystickZ = joystickX;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -24,15 +30,12 @@ public class DriveWithJoystick extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Boolean Inverted = false;
+    //Boolean Inverted = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double joystickX = driverController.getRawAxis(1);
-    double joystickY = driverController.getRawAxis(0);
-    double joystickZ = driverController.getRawAxis(4);
 
     drivetrain.drive(joystickX, joystickY, joystickZ);
   }
