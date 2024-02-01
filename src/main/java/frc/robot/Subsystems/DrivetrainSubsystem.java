@@ -10,8 +10,9 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivetrainConstants;
+import java.util.function.DoubleSupplier;
 
-public class Drivetrain extends SubsystemBase {
+public class DrivetrainSubsystem extends SubsystemBase {
 
   private CANSparkMax leftFrontMotor = new CANSparkMax(DrivetrainConstants.leftFrontMotor_PORT, MotorType.kBrushless);
   private CANSparkMax rightFrontMotor = new CANSparkMax(DrivetrainConstants.rightFrontMotor_PORT,
@@ -22,21 +23,21 @@ public class Drivetrain extends SubsystemBase {
   MecanumDrive m_drive = new MecanumDrive(leftFrontMotor::set, leftRearMotor::set, rightFrontMotor::set,
       rightRearMotor::set);
 
-  public Drivetrain() {
+  public DrivetrainSubsystem() {
 
     rightFrontMotor.setInverted(false);
     rightRearMotor.setInverted(false);
   }
 
-  public void drive(Double joystickX, Double joystickY, Double joystickZ) {
+   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ) {
 
-    if (Math.abs(joystickX) < 0.1 && Math.abs(joystickY) < 0.1 && Math.abs(joystickZ) < 0.1) {
+    if (Math.abs(joystickX.getAsDouble()) < 0.1 && Math.abs(joystickY.getAsDouble()) < 0.1 && Math.abs(joystickZ.getAsDouble()) < 0.1) {
       m_drive.driveCartesian(0, 0, 0);
     } else {
-      m_drive.driveCartesian(joystickX, joystickY, joystickZ);
+      m_drive.driveCartesian(joystickX.getAsDouble(), joystickY.getAsDouble(), joystickZ.getAsDouble());
     }
 
-  }
+  } 
 
   @Override
   public void periodic() {
