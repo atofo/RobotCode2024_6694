@@ -4,22 +4,22 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
-import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.DrivetrainSubsystem;
 
 public class RobotContainer {
 
-  private final XboxController m_driverController = new XboxController(OperatorConstants.controllerPort);
-  private final Drivetrain m_drivetrainSubsystem = new Drivetrain();
-  //private final DriveWithJoystick m_driveWithJoystickCommand = new DriveWithJoystick(m_drivetrainSubsystem,
-  // m_driverController);
+  private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.controllerPort);
+  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
+      () -> m_driverController.getRawAxis(1), () -> m_driverController.getRawAxis(0), () -> m_driverController.getRawAxis(4));
 
   public RobotContainer() {
-    m_drivetrainSubsystem.setDefaultCommand(new DriveWithJoystick(m_drivetrainSubsystem, m_driverController));
+    m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
     configureBindings();
   }
 
