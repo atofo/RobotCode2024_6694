@@ -25,8 +25,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public DrivetrainSubsystem() {
 
-    rightFrontMotor.setInverted(false);
-    rightRearMotor.setInverted(false);
+    rightFrontMotor.setInverted(true);
+    rightRearMotor.setInverted(true);
   }
 
    public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ) {
@@ -34,7 +34,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     if (Math.abs(joystickX.getAsDouble()) < 0.1 && Math.abs(joystickY.getAsDouble()) < 0.1 && Math.abs(joystickZ.getAsDouble()) < 0.1) {
       m_drive.driveCartesian(0, 0, 0);
     } else {
-      m_drive.driveCartesian(joystickX.getAsDouble(), joystickY.getAsDouble(), joystickZ.getAsDouble());
+      m_drive.driveCartesian(-joystickX.getAsDouble(), joystickY.getAsDouble(), joystickZ.getAsDouble());
     }
 
   } 

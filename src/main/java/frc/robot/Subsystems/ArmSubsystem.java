@@ -5,9 +5,6 @@
 package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import java.util.function.BooleanSupplier;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -34,36 +31,41 @@ public class ArmSubsystem extends SubsystemBase {
     arm_leftMotor.follow(arm_rightMotor);
   }
 
- /*  public Command set(double Output) {
-    return this.run(() -> arm_rightMotor.set(Output));
-  } */
-
-  public Command setSetpoint(double Setpoint) {
-    //this.Setpoint = Setpoint;
-    return runOnce(() -> pid.setSetpoint(Setpoint));
-  }
-
-  /* public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier povRight) {
-    if (povLeft.getAsBoolean() == true) {
-      Setpoint = Setpoint -1;
-    }
-    if (povRight.getAsBoolean() == true) {
-      Setpoint = Setpoint +1;
-    }
-    
-    return runOnce(() -> pid.setSetpoint(Setpoint));
-  } */
-
+  /*
+   * public Command set(double Output) {
+   * return this.run(() -> arm_rightMotor.set(Output));
+   * }
+   */
   @Override
   public void periodic() {
     super.periodic();
     processVar = pid.calculate(arm_Encoder.getPosition());
-    arm_rightMotor.set(processVar * 0.5);
-    arm_leftMotor.set(processVar * 0.5);
+    arm_rightMotor.set(processVar * 0.2);
+    arm_leftMotor.set(processVar * 0.2);
 
     SmartDashboard.putNumber("Setpoint: ", pid.getSetpoint());
     SmartDashboard.putNumber("Encoder: ", arm_Encoder.getPosition());
     SmartDashboard.putNumber("Process Variable: ", processVar);
     SmartDashboard.putNumber("Error ", pid.getPositionError());
   }
+
+  public Command setSetpoint(double Setpoint) {
+    // this.Setpoint = Setpoint;
+    return runOnce(() -> pid.setSetpoint(Setpoint));
+  }
+
+  /*
+   * public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier
+   * povRight) {
+   * if (povLeft.getAsBoolean() == true) {
+   * Setpoint = Setpoint -1;
+   * }
+   * if (povRight.getAsBoolean() == true) {
+   * Setpoint = Setpoint +1;
+   * }
+   * 
+   * return runOnce(() -> pid.setSetpoint(Setpoint));
+   * }
+   */
+
 }

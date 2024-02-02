@@ -21,8 +21,8 @@ public class DriveWithJoystick extends Command {
       DoubleSupplier joystickZ) {
     this.drivetrain = drivetrain;
     this.joystickX = joystickX;
-    this.joystickY = joystickX;
-    this.joystickZ = joystickX;
+    this.joystickY = joystickY;
+    this.joystickZ = joystickZ;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -31,6 +31,7 @@ public class DriveWithJoystick extends Command {
   @Override
   public void initialize() {
     //Boolean Inverted = false;
+    drivetrain.drive(joystickX, joystickY, joystickZ);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
