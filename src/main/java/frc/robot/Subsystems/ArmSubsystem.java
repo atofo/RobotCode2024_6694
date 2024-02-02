@@ -34,16 +34,16 @@ public class ArmSubsystem extends SubsystemBase {
     arm_leftMotor.follow(arm_rightMotor);
   }
 
-  public Command set(double Output) {
+ /*  public Command set(double Output) {
     return this.run(() -> arm_rightMotor.set(Output));
-  }
+  } */
 
   public Command setSetpoint(double Setpoint) {
-    this.Setpoint = Setpoint;
+    //this.Setpoint = Setpoint;
     return runOnce(() -> pid.setSetpoint(Setpoint));
   }
 
-  public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier povRight) {
+  /* public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier povRight) {
     if (povLeft.getAsBoolean() == true) {
       Setpoint = Setpoint -1;
     }
@@ -52,13 +52,14 @@ public class ArmSubsystem extends SubsystemBase {
     }
     
     return runOnce(() -> pid.setSetpoint(Setpoint));
-  }
+  } */
 
   @Override
   public void periodic() {
     super.periodic();
     processVar = pid.calculate(arm_Encoder.getPosition());
-    arm_rightMotor.set(processVar * 0.2);
+    arm_rightMotor.set(processVar * 0.5);
+    arm_leftMotor.set(processVar * 0.5);
 
     SmartDashboard.putNumber("Setpoint: ", pid.getSetpoint());
     SmartDashboard.putNumber("Encoder: ", arm_Encoder.getPosition());

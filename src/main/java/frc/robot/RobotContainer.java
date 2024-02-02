@@ -30,10 +30,10 @@ public class RobotContainer {
 
   public RobotContainer() {
     //m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
-    xButton.onTrue(m_ArmSubsystem.setSetpoint(-5));
-    aButton.onTrue(m_ArmSubsystem.setSetpoint(5));
-    povRight.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
-    povLeft.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
+    xButton.onTrue(m_ArmSubsystem.setSetpoint(-8));
+    aButton.onTrue(m_ArmSubsystem.setSetpoint(8));
+    /* povRight.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
+    povLeft.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight)); */
  
     configureBindings();
   }
