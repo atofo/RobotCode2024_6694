@@ -5,6 +5,9 @@
 package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -16,29 +19,39 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.PIDConstants;
 
 public class ArmSubsystem extends SubsystemBase {
-  
+
   private CANSparkMax arm_leftMotor = new CANSparkMax(ArmConstants.arm_leftMotor_PORT, MotorType.kBrushless);
   private CANSparkMax arm_rightMotor = new CANSparkMax(ArmConstants.arm_rightMotor_PORT,
       MotorType.kBrushless); // LeftMotor = 14, RightMotor = 31
 
   private RelativeEncoder arm_Encoder;
   PIDController pid = new PIDController(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
-  double setpoint;
-  double processVar;
-  double m_Setpoint;
-
+  private double processVar;
+  private double Setpoint;
 
   public ArmSubsystem() {
     arm_Encoder = arm_rightMotor.getEncoder();
     arm_leftMotor.follow(arm_rightMotor);
   }
 
-  public Command set(double Output){
-    return this.run(()-> arm_rightMotor.set(Output));
+  public Command set(double Output) {
+    return this.run(() -> arm_rightMotor.set(Output));
   }
-  
-  public Command setSetpoint(double Setpoint){
-    return runOnce(()-> pid.setSetpoint(Setpoint));
+
+  public Command setSetpoint(double Setpoint) {
+    this.Setpoint = Setpoint;
+    return runOnce(() -> pid.setSetpoint(Setpoint));
+  }
+
+  public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier povRight) {
+    if (povLeft.getAsBoolean() == true) {
+      Setpoint = Setpoint -1;
+    }
+    if (povRight.getAsBoolean() == true) {
+      Setpoint = Setpoint +1;
+    }
+    
+    return runOnce(() -> pid.setSetpoint(Setpoint));
   }
 
   @Override
