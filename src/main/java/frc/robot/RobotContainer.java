@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Commands.ArmPositionsWithJoystick;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
@@ -18,22 +17,24 @@ public class RobotContainer {
 
   private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.controllerPort);
 
-  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  /* private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
       () -> m_driverController.getRawAxis(1), () -> m_driverController.getRawAxis(0),
-      () -> m_driverController.getRawAxis(4));
+      () -> m_driverController.getRawAxis(4)); */
 
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private Trigger xButton = m_driverController.x();
   private Trigger aButton = m_driverController.a();
   private Trigger povRight = m_driverController.povRight();
   private Trigger povLeft = m_driverController.povLeft();
-  private final ArmPositionsWithJoystick m_ArmPositionsWithJoystick = new ArmPositionsWithJoystick(m_ArmSubsystem,
-      () -> xButton.getAsBoolean(), () -> aButton.getAsBoolean(), ()-> povRight.getAsBoolean(), ()-> povLeft.getAsBoolean());
 
   public RobotContainer() {
-    m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
-    m_ArmSubsystem.setDefaultCommand(m_ArmPositionsWithJoystick); 
+    //m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
+    xButton.onTrue(m_ArmSubsystem.setSetpoint(-5));
+    aButton.onTrue(m_ArmSubsystem.setSetpoint(5));
+    povRight.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
+    povLeft.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
+ 
     configureBindings();
   }
 
