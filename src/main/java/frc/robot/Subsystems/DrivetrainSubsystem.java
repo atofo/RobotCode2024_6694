@@ -29,15 +29,30 @@ public class DrivetrainSubsystem extends SubsystemBase {
     rightRearMotor.setInverted(true);
   }
 
-   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ) {
+  public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
+      DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
 
-    if (Math.abs(joystickX.getAsDouble()) < 0.1 && Math.abs(joystickY.getAsDouble()) < 0.1 && Math.abs(joystickZ.getAsDouble()) < 0.1) {
-      m_drive.driveCartesian(0, 0, 0);
-    } else {
-      m_drive.driveCartesian(-joystickX.getAsDouble(), joystickY.getAsDouble(), joystickZ.getAsDouble());
+    if (rightTrigger.getAsDouble() > 0.1) {
+      if (Math.abs(joystickX.getAsDouble()) < 0.1 && Math.abs(joystickY.getAsDouble()) < 0.1
+          && Math.abs(joystickZ.getAsDouble()) < 0.1 && Math.abs(rightTrigger.getAsDouble()) < 0.1
+          && Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+        m_drive.driveCartesian(0, 0, 0);
+      } else {
+        m_drive.driveCartesian(rightTrigger.getAsDouble(), joystickY.getAsDouble(), joystickZ.getAsDouble());
+      }
     }
 
-  } 
+    else {
+      if (Math.abs(joystickX.getAsDouble()) < 0.1 && Math.abs(joystickY.getAsDouble()) < 0.1
+          && Math.abs(joystickZ.getAsDouble()) < 0.1 && Math.abs(rightTrigger.getAsDouble()) < 0.1
+          && Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+        m_drive.driveCartesian(0, 0, 0);
+      } else {
+        m_drive.driveCartesian(-leftTrigger.getAsDouble(), joystickY.getAsDouble(), joystickZ.getAsDouble());
+      }
+    }
+
+  }
 
   @Override
   public void periodic() {

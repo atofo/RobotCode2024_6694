@@ -6,6 +6,7 @@ package frc.robot.Commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 
@@ -14,15 +15,19 @@ public class DriveWithJoystick extends Command {
 
   private final DrivetrainSubsystem drivetrain;
   private final DoubleSupplier joystickX;
-  private final DoubleSupplier joystickY;
+  private DoubleSupplier joystickY;
   private final DoubleSupplier joystickZ;
+  private final DoubleSupplier rightTrigger;
+  private final DoubleSupplier leftTrigger;
 
   public DriveWithJoystick(DrivetrainSubsystem drivetrain, DoubleSupplier joystickX, DoubleSupplier joystickY,
-      DoubleSupplier joystickZ) {
+      DoubleSupplier joystickZ, DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
     this.drivetrain = drivetrain;
     this.joystickX = joystickX;
     this.joystickY = joystickY;
     this.joystickZ = joystickZ;
+    this.rightTrigger = rightTrigger;
+    this.leftTrigger = leftTrigger;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -31,14 +36,19 @@ public class DriveWithJoystick extends Command {
   @Override
   public void initialize() {
     //Boolean Inverted = false;
-    drivetrain.drive(joystickX, joystickY, joystickZ);
+    
+    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
+  
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    drivetrain.drive(joystickX, joystickY, joystickZ);
+   
+    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
+  
+    //drivetrain.drive(joystickX, joystickY, joystickZ);
   }
 
   // Called once the command ends or is interrupted.

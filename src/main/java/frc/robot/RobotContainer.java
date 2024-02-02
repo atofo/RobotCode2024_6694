@@ -21,7 +21,8 @@ public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
       () -> m_driverController.getRawAxis(1), () -> m_driverController.getRawAxis(0),
-      () -> m_driverController.getRawAxis(4)); 
+      () -> m_driverController.getRawAxis(4), () -> m_driverController.getRawAxis(3),
+      () -> m_driverController.getRawAxis(2));
 
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private final IntakeLauncherSubsystem m_IntakeLauncherSubsystem = new IntakeLauncherSubsystem();
@@ -40,15 +41,18 @@ public class RobotContainer {
 
   public RobotContainer() {
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
-    xButton.whileTrue(m_ArmSubsystem.setSetpoint(62)); //Setpoint = 82 para llegar hacia abajo
-    bButton.whileTrue(m_ArmSubsystem.setSetpoint(82.5));
-    aButton.whileTrue(m_IntakeLauncherSubsystem.getPiece());
-    yButton.whileTrue(m_IntakeLauncherSubsystem.throwPiece1());
-    povUp.whileTrue(m_IntakeLauncherSubsystem.throwPiece2());
+    povUp.whileTrue(m_ArmSubsystem.setSetpoint(62)); //Setpoint = 82 para llegar hacia abajo
+    povDown.whileTrue(m_ArmSubsystem.setSetpoint(82.5));
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0));
+
+    
+
+    /* aButton.whileTrue(m_IntakeLauncherSubsystem.getPiece());
+    yButton.whileTrue(m_IntakeLauncherSubsystem.throwPiece1());
+    //povUp.whileTrue(m_IntakeLauncherSubsystem.throwPiece2());
     povRight.whileTrue(m_IntakeLauncherSubsystem.throwPieceOFF1());
-    povLeft.whileTrue(m_IntakeLauncherSubsystem.throwPieceOFF2());
-    povDown.whileTrue(m_IntakeLauncherSubsystem.getPieceOFF());
+    povLeft.whileTrue(m_IntakeLauncherSubsystem.throwPieceOFF2()); */
+
 
    
 

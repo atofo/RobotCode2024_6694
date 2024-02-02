@@ -18,22 +18,43 @@ public class IntakeLauncherSubsystem extends SubsystemBase {
   private CANSparkMax m_upMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_upMotor_PORT, MotorType.kBrushless);
 
   /** Creates a new IntakeLauncher. */
-  public IntakeLauncherSubsystem() {}
+  public IntakeLauncherSubsystem() {
+
+  }
+
+  public Command setEverythingOFF(){
+    return runOnce(()-> {m_intakeMotor.set(0);
+                        m_downMotor.set(0);
+                        m_upMotor.set(0);});
+   
+  }
 
   public Command getPiece(){
-    return run(()-> m_intakeMotor.set(0.8));
+    return run(()-> {m_intakeMotor.set(0.8);
+                    m_downMotor.set(0);
+                    m_upMotor.set(0);});
+   
+  }
+  
+  public Command throwPiece(){
+    return run(()-> {m_intakeMotor.set(0.8);
+                    m_downMotor.set(-1);
+                    m_upMotor.set(1);});
    
   }
 
-  public Command getPieceOFF(){
-    return run(()-> m_intakeMotor.set(0));
+  public Command holdLaunch(){
+    return run(()-> {m_intakeMotor.set(0);
+                    m_downMotor.set(-1);
+                    m_upMotor.set(1);});
    
   }
 
-  public void holdPiece(){
-    m_intakeMotor.set(-0.2);
-    m_downMotor.set(0.2);
-    m_upMotor.set(-0.2);
+  public Command holdPiece(){
+    return run(()-> {m_intakeMotor.set(-0.2);
+                    m_downMotor.set(0.2);
+                    m_upMotor.set(-0.2);});
+   
   }
 
   public Command throwPiece1(){
@@ -54,11 +75,6 @@ public class IntakeLauncherSubsystem extends SubsystemBase {
   public Command throwPieceOFF2(){
     return run(()-> m_upMotor.set(0));
    
-  }
-
-  public void holdLaunch(){
-    m_downMotor.set(-1);
-    m_upMotor.set(1);
   }
 
 
