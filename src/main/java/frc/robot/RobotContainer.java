@@ -32,7 +32,8 @@ public class RobotContainer {
       () -> xButton.getAsBoolean(), () -> aButton.getAsBoolean(), ()-> povRight.getAsBoolean(), ()-> povLeft.getAsBoolean());
 
   public RobotContainer() {
-    // m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
+    m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
+    m_ArmSubsystem.setDefaultCommand(m_ArmPositionsWithJoystick); 
     configureBindings();
   }
 
