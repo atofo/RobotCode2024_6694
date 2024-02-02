@@ -14,9 +14,16 @@ public class Constants {
 
     public class PIDConstants{
 
-        public static final double kP = 2;
+        public static final double kP = 0.1;
         public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kD = 0.001;
 
     }
+
+    public class ArmConstants {
+            public static final int arm_leftMotor_PORT = 14;
+            public static final int arm_rightMotor_PORT = 31;
+        }
+
+    
 }
