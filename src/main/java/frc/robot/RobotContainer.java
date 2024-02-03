@@ -30,11 +30,15 @@ public class RobotContainer {
   private Trigger bButton = m_driverController.b();
   private Trigger aButton = m_driverController.a();
   private Trigger yButton = m_driverController.y();
+  
+  private Trigger LB = m_driverController.leftBumper();
+  private Trigger RB = m_driverController.rightBumper();
 
   private Trigger povRight = m_driverController.povRight();
   private Trigger povLeft = m_driverController.povLeft();
   private Trigger povDown = m_driverController.povDown();
   private Trigger povUp = m_driverController.povUp();
+
   private Trigger L3 = m_driverController.leftStick();
 
   private boolean ON = false;
@@ -45,7 +49,16 @@ public class RobotContainer {
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(82.5));
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0));
 
+    //xButton.and(bButton.and(aButton.and(yButton))).onFalse(m_IntakeLauncherSubsystem.setEverythingOFF());
+
+    //xButton.and(bButton).and(aButton).and(yButton).onFalse(m_IntakeLauncherSubsystem.setEverythingOFF());
     
+    xButton.whileTrue(m_IntakeLauncherSubsystem.getPiece());
+
+    LB.whileTrue(m_IntakeLauncherSubsystem.holdLaunch());
+    bButton.whileTrue(m_IntakeLauncherSubsystem.throwPiece());
+    aButton.whileTrue(m_IntakeLauncherSubsystem.holdPiece());
+
 
     /* aButton.whileTrue(m_IntakeLauncherSubsystem.getPiece());
     yButton.whileTrue(m_IntakeLauncherSubsystem.throwPiece1());

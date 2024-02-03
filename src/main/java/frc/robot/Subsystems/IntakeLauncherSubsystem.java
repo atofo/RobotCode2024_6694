@@ -9,7 +9,6 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.IntakeLauncherConstants;
 
 public class IntakeLauncherSubsystem extends SubsystemBase {
@@ -30,35 +29,35 @@ public class IntakeLauncherSubsystem extends SubsystemBase {
   }
 
   public Command getPiece(){
-    return run(()-> {m_intakeMotor.set(0.8);
+    return runOnce(()-> {m_intakeMotor.set(0.8);
                     m_downMotor.set(0);
                     m_upMotor.set(0);});
    
   }
   
   public Command throwPiece(){
-    return run(()-> {m_intakeMotor.set(0.8);
+    return runOnce(()-> {m_intakeMotor.set(0.8);
                     m_downMotor.set(-1);
                     m_upMotor.set(1);});
    
   }
 
   public Command holdLaunch(){
-    return run(()-> {m_intakeMotor.set(0);
+    return runOnce(()-> {m_intakeMotor.set(0);
                     m_downMotor.set(-1);
                     m_upMotor.set(1);});
    
   }
 
   public Command holdPiece(){
-    return run(()-> {m_intakeMotor.set(-0.2);
+    return runOnce(()-> {m_intakeMotor.set(-0.2);
                     m_downMotor.set(0.2);
                     m_upMotor.set(-0.2);});
    
   }
 
   public Command throwPiece1(){
-    return run(()-> m_downMotor.set(-1));
+    return runOnce(()-> m_downMotor.set(-1));
    
   }
 
