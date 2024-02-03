@@ -29,30 +29,33 @@ public class IntakeLauncherSubsystem extends SubsystemBase {
   }
 
   public Command getPiece(){
-    return runOnce(()-> {m_intakeMotor.set(0.8);
+    return run(()-> {m_intakeMotor.set(-0.8);
                     m_downMotor.set(0);
                     m_upMotor.set(0);});
    
   }
   
   public Command throwPiece(){
-    return runOnce(()-> {m_intakeMotor.set(0.8);
-                    m_downMotor.set(-1);
-                    m_upMotor.set(1);});
+    return run(()-> {m_intakeMotor.set(-0.8);
+                    m_downMotor.set(1);
+                    m_upMotor.set(-1);});
    
   }
 
   public Command holdLaunch(){
-    return runOnce(()-> {m_intakeMotor.set(0);
-                    m_downMotor.set(-1);
-                    m_upMotor.set(1);});
+    return run(()-> {m_intakeMotor.set(0);
+                    m_downMotor.set(1);
+                    m_upMotor.set(-1);});
+                    
+
+                    
    
   }
 
   public Command holdPiece(){
-    return runOnce(()-> {m_intakeMotor.set(-0.2);
-                    m_downMotor.set(0.2);
-                    m_upMotor.set(-0.2);});
+    return run(()-> {m_intakeMotor.set(-0.2);
+                    m_downMotor.set(-0.2);
+                    m_upMotor.set(0.2);});
    
   }
 

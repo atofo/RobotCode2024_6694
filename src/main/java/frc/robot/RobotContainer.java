@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
+import frc.robot.Commands.IntakeLauncherCommands;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeLauncherSubsystem;
@@ -18,19 +19,11 @@ public class RobotContainer {
 
   private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.controllerPort);
 
-  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-  private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
-      () -> m_driverController.getRawAxis(1), () -> m_driverController.getRawAxis(0),
-      () -> m_driverController.getRawAxis(4), () -> m_driverController.getRawAxis(3),
-      () -> m_driverController.getRawAxis(2));
-
-  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
-  private final IntakeLauncherSubsystem m_IntakeLauncherSubsystem = new IntakeLauncherSubsystem();
   private Trigger xButton = m_driverController.x();
   private Trigger bButton = m_driverController.b();
   private Trigger aButton = m_driverController.a();
   private Trigger yButton = m_driverController.y();
-  
+
   private Trigger LB = m_driverController.leftBumper();
   private Trigger RB = m_driverController.rightBumper();
 
@@ -41,38 +34,63 @@ public class RobotContainer {
 
   private Trigger L3 = m_driverController.leftStick();
 
-  private boolean ON = false;
+  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
+      () -> m_driverController.getRawAxis(1), () -> m_driverController.getRawAxis(0),
+      () -> m_driverController.getRawAxis(4), () -> m_driverController.getRawAxis(3),
+      () -> m_driverController.getRawAxis(2));
+
+  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
+
+  private final IntakeLauncherSubsystem m_IntakeLauncherSubsystem = new IntakeLauncherSubsystem();
+  private final IntakeLauncherCommands m_IntakeLauncherCommands = new IntakeLauncherCommands(m_IntakeLauncherSubsystem,
+      () -> xButton.getAsBoolean(), () -> aButton.getAsBoolean(), () -> bButton.getAsBoolean(), () -> RB.getAsBoolean());
 
   public RobotContainer() {
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
-    povUp.whileTrue(m_ArmSubsystem.setSetpoint(62)); //Setpoint = 82 para llegar hacia abajo
-    povDown.whileTrue(m_ArmSubsystem.setSetpoint(82.5));
+   // m_IntakeLauncherSubsystem.setDefaultCommand(m_IntakeLauncherCommands);
+
+    povUp.whileTrue(m_ArmSubsystem.setSetpoint(62)); // Setpoint = 82 para llegar hacia abajo
+    povDown.whileTrue(m_ArmSubsystem.setSetpoint(80.5));
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0));
 
-    //xButton.and(bButton.and(aButton.and(yButton))).onFalse(m_IntakeLauncherSubsystem.setEverythingOFF());
+    /*
+     * if(xButton.getAsBoolean() == true){
+     * m_IntakeLauncherSubsystem.run(()-> m_IntakeLauncherSubsystem.getPiece());
+     * } else if(aButton.getAsBoolean() == true){
+     * m_IntakeLauncherSubsystem.holdPiece();
+     * } else if(RB.getAsBoolean() == true){
+     * m_IntakeLauncherSubsystem.holdLaunch();
+     * } else if(bButton.getAsBoolean() == true){
+     * m_IntakeLauncherSubsystem.throwPiece();
+     * } else{
+     * m_IntakeLauncherSubsystem.setEverythingOFF();
+     * }
+     */
 
-    //xButton.and(bButton).and(aButton).and(yButton).onFalse(m_IntakeLauncherSubsystem.setEverythingOFF());
     
-    xButton.whileTrue(m_IntakeLauncherSubsystem.getPiece());
+      xButton.onTrue(m_IntakeLauncherSubsystem.getPiece());
+      RB.whileTrue(m_IntakeLauncherSubsystem.holdLaunch());
+      bButton.whileTrue(m_IntakeLauncherSubsystem.throwPiece());
+      aButton.whileTrue(m_IntakeLauncherSubsystem.holdPiece());
+      LB.whileTrue(m_IntakeLauncherSubsystem.setEverythingOFF());
+    
 
-    LB.whileTrue(m_IntakeLauncherSubsystem.holdLaunch());
-    bButton.whileTrue(m_IntakeLauncherSubsystem.throwPiece());
-    aButton.whileTrue(m_IntakeLauncherSubsystem.holdPiece());
+    /*
+     * aButton.whileTrue(m_IntakeLauncherSubsystem.getPiece());
+     * yButton.whileTrue(m_IntakeLauncherSubsystem.throwPiece1());
+     * //povUp.whileTrue(m_IntakeLauncherSubsystem.throwPiece2());
+     * povRight.whileTrue(m_IntakeLauncherSubsystem.throwPieceOFF1());
+     * povLeft.whileTrue(m_IntakeLauncherSubsystem.throwPieceOFF2());
+     * 
+     * 
+     * 
+     * 
+     * 
+     * /* povRight.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
+     * povLeft.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
+     */
 
-
-    /* aButton.whileTrue(m_IntakeLauncherSubsystem.getPiece());
-    yButton.whileTrue(m_IntakeLauncherSubsystem.throwPiece1());
-    //povUp.whileTrue(m_IntakeLauncherSubsystem.throwPiece2());
-    povRight.whileTrue(m_IntakeLauncherSubsystem.throwPieceOFF1());
-    povLeft.whileTrue(m_IntakeLauncherSubsystem.throwPieceOFF2()); */
-
-
-   
-
-
-    /* povRight.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
-    povLeft.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight)); */
- 
     configureBindings();
   }
 
