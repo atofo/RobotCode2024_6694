@@ -24,7 +24,6 @@ public class ArmSubsystem extends SubsystemBase {
   private RelativeEncoder arm_Encoder;
   PIDController pid = new PIDController(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
   private double processVar;
-  private double Setpoint;
 
   public ArmSubsystem() {
     arm_Encoder = arm_rightMotor.getEncoder();

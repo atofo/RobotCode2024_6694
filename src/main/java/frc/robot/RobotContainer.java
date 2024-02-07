@@ -11,9 +11,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.IntakeLauncherCommands;
+import frc.robot.Commands.Intake_getNote;
+import frc.robot.Commands.Intake_returnNote;
+import frc.robot.Commands.LauncherWithJoystick;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeLauncherSubsystem;
+import frc.robot.Subsystems.IntakeSubsystem;
+import frc.robot.Subsystems.LauncherSubsystem;
 
 public class RobotContainer {
 
@@ -34,6 +39,7 @@ public class RobotContainer {
 
   private Trigger L3 = m_driverController.leftStick();
 
+  
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
       () -> m_driverController.getRawAxis(1), () -> m_driverController.getRawAxis(0),
@@ -42,52 +48,27 @@ public class RobotContainer {
 
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
 
-  private final IntakeLauncherSubsystem m_IntakeLauncherSubsystem = new IntakeLauncherSubsystem();
-  private final IntakeLauncherCommands m_IntakeLauncherCommands = new IntakeLauncherCommands(m_IntakeLauncherSubsystem,
-      () -> xButton.getAsBoolean(), () -> aButton.getAsBoolean(), () -> bButton.getAsBoolean(), () -> RB.getAsBoolean());
+  private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+  private final Intake_getNote m_Intake_getNote = new Intake_getNote(m_IntakeSubsystem);
+  private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
+
+  private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
+  private final LauncherWithJoystick m_LauncherWithJoystick = new LauncherWithJoystick(m_LauncherSubsystem);
 
   public RobotContainer() {
-    m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
-   // m_IntakeLauncherSubsystem.setDefaultCommand(m_IntakeLauncherCommands);
 
+    m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
+   
     povUp.whileTrue(m_ArmSubsystem.setSetpoint(62)); // Setpoint = 82 para llegar hacia abajo
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(80.5));
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0));
 
-    /*
-     * if(xButton.getAsBoolean() == true){
-     * m_IntakeLauncherSubsystem.run(()-> m_IntakeLauncherSubsystem.getPiece());
-     * } else if(aButton.getAsBoolean() == true){
-     * m_IntakeLauncherSubsystem.holdPiece();
-     * } else if(RB.getAsBoolean() == true){
-     * m_IntakeLauncherSubsystem.holdLaunch();
-     * } else if(bButton.getAsBoolean() == true){
-     * m_IntakeLauncherSubsystem.throwPiece();
-     * } else{
-     * m_IntakeLauncherSubsystem.setEverythingOFF();
-     * }
-     */
+    bButton.whileTrue(m_Intake_getNote);
+    aButton.whileTrue(m_Intake_returnNote);
 
+    RB.onTrue(m_LauncherWithJoystick);
     
-      xButton.onTrue(m_IntakeLauncherSubsystem.getPiece());
-      RB.whileTrue(m_IntakeLauncherSubsystem.holdLaunch());
-      bButton.whileTrue(m_IntakeLauncherSubsystem.throwPiece());
-      aButton.whileTrue(m_IntakeLauncherSubsystem.holdPiece());
-      LB.whileTrue(m_IntakeLauncherSubsystem.setEverythingOFF());
-    
-
-    /*
-     * aButton.whileTrue(m_IntakeLauncherSubsystem.getPiece());
-     * yButton.whileTrue(m_IntakeLauncherSubsystem.throwPiece1());
-     * //povUp.whileTrue(m_IntakeLauncherSubsystem.throwPiece2());
-     * povRight.whileTrue(m_IntakeLauncherSubsystem.throwPieceOFF1());
-     * povLeft.whileTrue(m_IntakeLauncherSubsystem.throwPieceOFF2());
-     * 
-     * 
-     * 
-     * 
-     * 
-     * /* povRight.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
+    /* povRight.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
      * povLeft.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
      */
 
