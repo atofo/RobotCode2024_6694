@@ -59,9 +59,9 @@ public class RobotContainer {
 
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
    
-    povUp.whileTrue(m_ArmSubsystem.setSetpoint(62)); // Setpoint = 82 para llegar hacia abajo
-    povDown.whileTrue(m_ArmSubsystem.setSetpoint(80.5));
-    L3.whileTrue(m_ArmSubsystem.setSetpoint(0));
+    povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.37)); // Parado
+    povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.21)); // Shoot
+    L3.whileTrue(m_ArmSubsystem.setSetpoint(0.09)); // Intake/Modo Correr
 
     bButton.whileTrue(m_Intake_getNote);
     aButton.whileTrue(m_Intake_returnNote);

@@ -45,11 +45,7 @@ public class IntakeLauncherSubsystem extends SubsystemBase {
   public Command holdLaunch(){
     return run(()-> {m_intakeMotor.set(0);
                     m_downMotor.set(1);
-                    m_upMotor.set(-1);});
-                    
-
-                    
-   
+                    m_upMotor.set(-1);});         
   }
 
   public Command holdPiece(){
@@ -58,28 +54,6 @@ public class IntakeLauncherSubsystem extends SubsystemBase {
                     m_upMotor.set(0.2);});
    
   }
-
-  public Command throwPiece1(){
-    return runOnce(()-> m_downMotor.set(-1));
-   
-  }
-
-  public Command throwPiece2(){
-    return run(()-> m_upMotor.set(1));
-   
-  }
-
-  public Command throwPieceOFF1(){
-    return run(()-> m_downMotor.set(0));
-   
-  }
-
-  public Command throwPieceOFF2(){
-    return run(()-> m_upMotor.set(0));
-   
-  }
-
-
   
   @Override
   public void periodic() {

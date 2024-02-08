@@ -9,6 +9,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DutyCycle;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,13 +23,15 @@ public class ArmSubsystem extends SubsystemBase {
   private CANSparkMax arm_rightMotor = new CANSparkMax(ArmConstants.arm_rightMotor_PORT,
       MotorType.kBrushless); // LeftMotor = 14, RightMotor = 31
 
-  private RelativeEncoder arm_Encoder;
+  private final DutyCycleEncoder arm_Encoder = new DutyCycleEncoder(0);
   PIDController pid = new PIDController(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
+
   private double processVar;
+  private double Setpoint;
 
   public ArmSubsystem() {
-    arm_Encoder = arm_rightMotor.getEncoder();
     arm_leftMotor.follow(arm_rightMotor);
+    pid.setSetpoint(0.21);
   }
 
   /*
@@ -38,12 +42,12 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     super.periodic();
-    processVar = pid.calculate(arm_Encoder.getPosition());
-    arm_rightMotor.set(processVar * 0.2);
-    arm_leftMotor.set(processVar * 0.2);
+    processVar = pid.calculate(arm_Encoder.getAbsolutePosition());
+    arm_rightMotor.set(-processVar * 0.8);
+    arm_leftMotor.set(-processVar * 0.8);
 
     SmartDashboard.putNumber("Setpoint: ", pid.getSetpoint());
-    SmartDashboard.putNumber("Encoder: ", arm_Encoder.getPosition());
+    SmartDashboard.putNumber("Encoder: ", arm_Encoder.getAbsolutePosition());
     SmartDashboard.putNumber("Process Variable: ", processVar);
     SmartDashboard.putNumber("Error ", pid.getPositionError());
   }

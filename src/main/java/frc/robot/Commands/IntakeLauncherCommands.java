@@ -36,17 +36,6 @@ public class IntakeLauncherCommands extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (xButton.getAsBoolean() == true) {
-      intakeLauncherSubsystem.getPiece();
-    } else if (aButton.getAsBoolean() == true) {
-      intakeLauncherSubsystem.holdPiece();
-    } else if (RB.getAsBoolean() == true) {
-      intakeLauncherSubsystem.holdLaunch();
-    } else if (bButton.getAsBoolean() == true) {
-      intakeLauncherSubsystem.throwPiece();
-    } else {
-      intakeLauncherSubsystem.setEverythingOFF();
-    }
   }
 
   // Called once the command ends or is interrupted.
