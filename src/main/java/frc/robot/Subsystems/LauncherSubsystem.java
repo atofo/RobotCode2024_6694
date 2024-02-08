@@ -23,8 +23,8 @@ public class LauncherSubsystem extends SubsystemBase {
   }
 
   public void launcherOFF(){
-    m_downMotor.set(0);
-    m_upMotor.set(0);
+      m_downMotor.set(0);
+      m_upMotor.set(0);
   }
 
 

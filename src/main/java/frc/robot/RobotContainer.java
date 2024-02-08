@@ -61,7 +61,7 @@ public class RobotContainer {
    
     povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.37)); // Parado
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.21)); // Shoot
-    L3.whileTrue(m_ArmSubsystem.setSetpoint(0.09)); // Intake/Modo Correr
+    L3.whileTrue(m_ArmSubsystem.setSetpoint(0.0985)); // Intake/Modo Correr
 
     bButton.whileTrue(m_Intake_getNote);
     aButton.whileTrue(m_Intake_returnNote);
