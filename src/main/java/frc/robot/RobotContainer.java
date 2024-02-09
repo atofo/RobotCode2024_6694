@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.IntakeLauncherCommands;
@@ -55,22 +56,24 @@ public class RobotContainer {
   private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
   private final LauncherWithJoystick m_LauncherWithJoystick = new LauncherWithJoystick(m_LauncherSubsystem);
 
+
   public RobotContainer() {
 
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
    
-    povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.37)); // Parado
+    povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.37)); // 90 degrees
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.21)); // Shoot
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0.0985)); // Intake/Modo Correr
 
-    bButton.whileTrue(m_Intake_getNote);
-    aButton.whileTrue(m_Intake_returnNote);
-
-    RB.onTrue(m_LauncherWithJoystick);
+    /* bButton.whileTrue(m_Intake_getNote); //Intake get Note
+    aButton.whileTrue(m_Intake_returnNote); //Intake return Note  
+ */
+    RB.onTrue(m_LauncherWithJoystick); //Toggle Shoot
     
-    /* povRight.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
-     * povLeft.onTrue(m_ArmSubsystem.setSetpointManual(povLeft, povRight));
-     */
+    aButton.whileTrue(m_drivetrainSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    bButton.whileTrue(m_drivetrainSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    xButton.whileTrue(m_drivetrainSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    yButton.whileTrue(m_drivetrainSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     configureBindings();
   }

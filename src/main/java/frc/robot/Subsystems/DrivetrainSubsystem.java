@@ -7,8 +7,12 @@ package frc.robot.Subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DrivetrainConstants;
 import java.util.function.DoubleSupplier;
 
@@ -22,6 +26,21 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   MecanumDrive m_drive = new MecanumDrive(leftFrontMotor::set, leftRearMotor::set, rightFrontMotor::set,
       rightRearMotor::set);
+
+  private final SysIdRoutine m_sysIdRoutine = 
+  new SysIdRoutine(
+    new SysIdRoutine.Config(),
+    new SysIdRoutine.Mechanism(
+      (volts) -> {
+        leftFrontMotor.setVoltage(volts.in(Volts));
+        rightFrontMotor.setVoltage(volts.in(Volts));
+        leftRearMotor.setVoltage(volts.in(Volts));
+        rightRearMotor.setVoltage(volts.in(Volts));
+      },
+      null, // No log consumer, since data is recorded by URCL
+      this
+    )
+  );
 
   public DrivetrainSubsystem() {
 
@@ -52,6 +71,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
       }
     }
 
+  }
+
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.dynamic(direction);
   }
 
   @Override
