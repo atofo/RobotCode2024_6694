@@ -30,7 +30,7 @@ public class Constants {
         public static final int intakelauncher_intakeMotor_PORT = 30;
         public static final int intakelauncher_downMotor_PORT = 33;
         public static final int intakelauncher_upMotor_PORT = 32;
-        public static final int intakelauncher_intakeSwitch_PORT = 5;
+        public static final int intakelauncher_intakeSwitch_PORT = 3;
     }
 
 }

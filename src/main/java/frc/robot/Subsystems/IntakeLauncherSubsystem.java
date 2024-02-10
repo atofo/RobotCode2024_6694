@@ -55,8 +55,6 @@ public class IntakeLauncherSubsystem extends SubsystemBase {
   
   @Override
   public void periodic() {
-    super.periodic();
-    SmartDashboard.putBoolean("Limit switrch", intakeSwitch.get());
     // This method will be called once per scheduler run
   }
 }
