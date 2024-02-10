@@ -65,15 +65,15 @@ public class RobotContainer {
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.21)); // Shoot
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0.0985)); // Intake/Modo Correr
 
-    /* bButton.whileTrue(m_Intake_getNote); //Intake get Note
+    bButton.whileTrue(m_Intake_getNote); //Intake get Note
     aButton.whileTrue(m_Intake_returnNote); //Intake return Note  
- */
+ 
     RB.onTrue(m_LauncherWithJoystick); //Toggle Shoot
     
-    aButton.whileTrue(m_drivetrainSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    bButton.whileTrue(m_drivetrainSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    xButton.whileTrue(m_drivetrainSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    yButton.whileTrue(m_drivetrainSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    bButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    xButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    yButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse)); */
 
     configureBindings();
   }

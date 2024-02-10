@@ -9,12 +9,15 @@ import com.revrobotics.CANSparkMax;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DrivetrainConstants;
 import java.util.function.DoubleSupplier;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 
 public class DrivetrainSubsystem extends SubsystemBase {
 
@@ -23,6 +26,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
       MotorType.kBrushless);
   private CANSparkMax leftRearMotor = new CANSparkMax(DrivetrainConstants.leftRearMotor_PORT, MotorType.kBrushless);
   private CANSparkMax rightRearMotor = new CANSparkMax(DrivetrainConstants.rightRearMotor_PORT, MotorType.kBrushless);
+
+  private ADIS16470_IMU Gyroscope = new ADIS16470_IMU();
 
   MecanumDrive m_drive = new MecanumDrive(leftFrontMotor::set, leftRearMotor::set, rightFrontMotor::set,
       rightRearMotor::set);
@@ -43,9 +48,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   );
 
   public DrivetrainSubsystem() {
-
     rightFrontMotor.setInverted(true);
     rightRearMotor.setInverted(true);
+
+    Gyroscope.calibrate();
+
+    
   }
 
   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
@@ -83,6 +91,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    super.periodic();
+    SmartDashboard.putNumber("Gyroscope", Gyroscope.getAngle(IMUAxis.kYaw));
   }
 }
