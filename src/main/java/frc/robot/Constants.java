@@ -33,4 +33,14 @@ public class Constants {
         public static final int intakelauncher_intakeSwitch_PORT = 3;
     }
 
+    public class PIDConstants_Launcher {
+        public static final double kP = 0.0008;
+        public static final double kI = 0;
+        public static final double kD = 0;
+
+        public static final double kS = 0.19;
+        public static final double kV = 0.19;
+        public static final double kA = 0.48;
+        }
+
 }

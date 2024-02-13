@@ -24,7 +24,7 @@ public class ArmSubsystem extends SubsystemBase {
       MotorType.kBrushless); // LeftMotor = 14, RightMotor = 31
 
   private final DutyCycleEncoder arm_Encoder = new DutyCycleEncoder(0);
-  PIDController pid = new PIDController(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
+  private PIDController pid = new PIDController(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
 
   private double processVar;
   private double Setpoint;

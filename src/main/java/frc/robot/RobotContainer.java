@@ -68,7 +68,9 @@ public class RobotContainer {
     bButton.whileTrue(m_Intake_getNote); //Intake get Note
     aButton.whileTrue(m_Intake_returnNote); //Intake return Note  
  
-    RB.onTrue(m_LauncherWithJoystick); //Toggle Shoot
+    //RB.onTrue(m_LauncherWithJoystick); //Toggle Shoot
+    //yButton.whileTrue(m_LauncherWithJoystick);
+  
     
     /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     bButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));

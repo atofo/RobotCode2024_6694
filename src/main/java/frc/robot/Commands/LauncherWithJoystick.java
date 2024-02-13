@@ -28,19 +28,22 @@ public class LauncherWithJoystick extends Command {
   @Override
   public void execute() {
     System.out.println("Contador1: "+contador);
-        launcher.throwNote();
+        //launcher.throwNote();
+      launcher.launcherWithPID(2000);
+
         
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(contador == 2){                            //Presionar otra vez = apagar
+    /* if(contador == 2){                            //Presionar otra vez = apagar
           launcher.launcherOFF();
         contador = 0;
         } 
         System.out.println("Contador end: "+contador);
-    System.out.println("Shooter End ");
+    System.out.println("Shooter End "); */
+    launcher.launcherOFF();
   }
   
 
