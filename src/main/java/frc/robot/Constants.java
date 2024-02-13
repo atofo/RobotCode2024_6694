@@ -34,13 +34,23 @@ public class Constants {
     }
 
     public class PIDConstants_Launcher {
-        public static final double kP = 0.0008;
+        /* public static final double kP = 0.0008; //Constantes PID + Ff viejo
         public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kD = 0; */
 
         public static final double kS = 0.19;
         public static final double kV = 0.19;
-        public static final double kA = 0.48;
+        public static final double kA = 0.48; 
+        
+        public static final double kP = 0.0002;
+        public static final double kI = 0;
+        public static final double kD = 0;
+
+        public static final double kFF_downMotor = 0.00017;
+        public static final double kFF_upMotor = 0.00017;
+
+        public static final double minPIDOutput = 1.0;
+        public static final double maxPIDOutput = 0.0;
         }
 
 }

@@ -79,8 +79,8 @@ public class LauncherSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     super.periodic();
-    m_downMotor.setVoltage( feedforward.calculate(100)); 
-    /* + pid.calculate(launcherEncoder.getRate(), 50000)); */
+    m_downMotor.setVoltage( feedforward.calculate(100)
+     + pid.calculate(launcherEncoder.getRate(), 100)); // Los setpoints deben de ser los mismos
   
 
     SmartDashboard.putNumber("FeedForward Output ", feedforward.calculate(100));

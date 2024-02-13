@@ -14,12 +14,14 @@ import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.IntakeLauncherCommands;
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
+import frc.robot.Commands.LauncherPIDCommandTest;
 import frc.robot.Commands.LauncherWithJoystick;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeLauncherSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.LauncherSubsystem;
+import frc.robot.Subsystems.testLauncherPID_1;
 
 public class RobotContainer {
 
@@ -53,10 +55,11 @@ public class RobotContainer {
   private final Intake_getNote m_Intake_getNote = new Intake_getNote(m_IntakeSubsystem);
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
 
-  private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
-  private final LauncherWithJoystick m_LauncherWithJoystick = new LauncherWithJoystick(m_LauncherSubsystem);
-
-
+  //private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
+  //private final LauncherWithJoystick m_LauncherWithJoystick = new LauncherWithJoystick(m_LauncherSubsystem);
+  
+  private final testLauncherPID_1 m_testLauncherPID_1 = new testLauncherPID_1();
+  private final LauncherPIDCommandTest m_LauncherPIDCommandTest = new LauncherPIDCommandTest(m_testLauncherPID_1, 1000.0);
   public RobotContainer() {
 
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
@@ -67,7 +70,9 @@ public class RobotContainer {
 
     bButton.whileTrue(m_Intake_getNote); //Intake get Note
     aButton.whileTrue(m_Intake_returnNote); //Intake return Note  
- 
+    
+    yButton.whileTrue(m_LauncherPIDCommandTest);
+    
     //RB.onTrue(m_LauncherWithJoystick); //Toggle Shoot
     //yButton.whileTrue(m_LauncherWithJoystick);
   
