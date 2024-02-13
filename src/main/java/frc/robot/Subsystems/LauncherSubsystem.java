@@ -19,7 +19,7 @@ public class LauncherSubsystem extends SubsystemBase {
   private CANSparkMax m_downMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_downMotor_PORT, MotorType.kBrushless);
   private CANSparkMax m_upMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_upMotor_PORT, MotorType.kBrushless);
 
-  private final SysIdRoutine m_sysIdRoutine = 
+  /* private final SysIdRoutine m_sysIdRoutine = 
   new SysIdRoutine(
     new SysIdRoutine.Config(),
     new SysIdRoutine.Mechanism(
@@ -31,7 +31,7 @@ public class LauncherSubsystem extends SubsystemBase {
       this
     )
   );
-
+ */
   public LauncherSubsystem() {
     m_upMotor.setInverted(true);
   }
@@ -45,14 +45,14 @@ public class LauncherSubsystem extends SubsystemBase {
       m_downMotor.set(0);
       m_upMotor.set(0);
   }
-
+/* 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.quasistatic(direction);
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return m_sysIdRoutine.dynamic(direction);
-  }
+    return m_sysIdRoutine.dynamic(direction); 
+  }*/
 
   @Override
   public void periodic() {

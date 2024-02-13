@@ -33,4 +33,10 @@ public class Constants {
         public static final int intakelauncher_intakeSwitch_PORT = 3;
     }
 
+    public class ShooterFeedforward {
+        public static final double launcher_kS = 0.19;
+
+
+    }
+
 }

@@ -5,13 +5,12 @@
 package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Subsystems.IntakeSubsystem;
 
-public class Intake_getNote extends Command {
+public class Intake_ThrowNote extends Command {
   private IntakeSubsystem intake;
 
-  public Intake_getNote(IntakeSubsystem m_intakeSubsystem) {
+  public Intake_ThrowNote(IntakeSubsystem m_intakeSubsystem) {
     this.intake = m_intakeSubsystem;
     addRequirements(m_intakeSubsystem);
   }
@@ -19,19 +18,19 @@ public class Intake_getNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Intake Initialized");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.getNote();    
+
+    intake.throwNote();
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("Intake End");
     intake.intakeOFF();
   }
 
@@ -41,3 +40,5 @@ public class Intake_getNote extends Command {
     return false;
   }
 }
+
+

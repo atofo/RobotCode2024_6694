@@ -32,7 +32,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   MecanumDrive m_drive = new MecanumDrive(leftFrontMotor::set, leftRearMotor::set, rightFrontMotor::set,
       rightRearMotor::set);
 
-  private final SysIdRoutine m_sysIdRoutine = 
+ /*  private final SysIdRoutine m_sysIdRoutine = 
   new SysIdRoutine(
     new SysIdRoutine.Config(),
     new SysIdRoutine.Mechanism(
@@ -45,7 +45,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
       null, // No log consumer, since data is recorded by URCL
       this
     )
-  );
+  ); */
 
   public DrivetrainSubsystem() {
     rightFrontMotor.setInverted(true);
@@ -81,13 +81,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+  /* public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.quasistatic(direction);
   }
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
-  }
+  } */
 
   @Override
   public void periodic() {

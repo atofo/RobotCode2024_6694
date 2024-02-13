@@ -21,13 +21,11 @@ public class LauncherWithJoystick extends Command {
   @Override
   public void initialize() {
   System.out.println("Shooter Initializeed");
-  contador++;             //Presionar una vez = dejar prendido
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("Contador1: "+contador);
         launcher.throwNote();
         
   }
@@ -35,12 +33,8 @@ public class LauncherWithJoystick extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(contador == 2){                            //Presionar otra vez = apagar
+    System.out.println("Shooter End");
           launcher.launcherOFF();
-        contador = 0;
-        } 
-        System.out.println("Contador end: "+contador);
-    System.out.println("Shooter End ");
   }
   
 
@@ -48,6 +42,6 @@ public class LauncherWithJoystick extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

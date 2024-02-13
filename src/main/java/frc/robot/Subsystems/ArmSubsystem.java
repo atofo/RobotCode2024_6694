@@ -9,12 +9,14 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.IntakeLauncherConstants;
 import frc.robot.Constants.PIDConstants;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -43,13 +45,14 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     super.periodic();
     processVar = pid.calculate(arm_Encoder.getAbsolutePosition());
-    arm_rightMotor.set(-processVar * 0.8);
+    arm_rightMotor.set(-processVar * 0.8);  
     arm_leftMotor.set(-processVar * 0.8);
 
     SmartDashboard.putNumber("Setpoint: ", pid.getSetpoint());
     SmartDashboard.putNumber("Encoder: ", arm_Encoder.getAbsolutePosition());
     SmartDashboard.putNumber("Process Variable: ", processVar);
     SmartDashboard.putNumber("Error ", pid.getPositionError());
+
   }
 
   public Command setSetpoint(double Setpoint) {
