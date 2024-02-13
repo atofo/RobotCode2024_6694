@@ -10,7 +10,6 @@ import frc.robot.Subsystems.LauncherSubsystem;
 public class LauncherWithJoystick extends Command {
   
   private LauncherSubsystem launcher;
-  private int contador;
 
   public LauncherWithJoystick(LauncherSubsystem m_LauncherSubsystem) {
     this.launcher = m_LauncherSubsystem;
