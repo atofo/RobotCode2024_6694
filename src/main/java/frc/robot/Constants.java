@@ -7,10 +7,10 @@ public class Constants {
     }
 
     public class DrivetrainConstants {
-        public static final int leftFrontMotor_PORT = 11;
-        public static final int rightFrontMotor_PORT = 22;
-        public static final int leftRearMotor_PORT = 25;
-        public static final int rightRearMotor_PORT = 12;
+        public static final int leftFrontMotor_PORT = 14;
+        public static final int rightFrontMotor_PORT = 12;
+        public static final int leftRearMotor_PORT = 13;
+        public static final int rightRearMotor_PORT = 11;
     }
 
     public class PIDConstants {
@@ -22,15 +22,15 @@ public class Constants {
     }
 
     public class ArmConstants {
-        public static final int arm_leftMotor_PORT = 14;
-        public static final int arm_rightMotor_PORT = 31;
+        public static final int arm_leftMotor_PORT = 21;
+        public static final int arm_rightMotor_PORT = 22;
     }
 
     public class IntakeLauncherConstants {
-        public static final int intakelauncher_intakeMotor_PORT = 30;
-        public static final int intakelauncher_downMotor_PORT = 33;
+        public static final int intakelauncher_intakeMotor_PORT = 33;
+        public static final int intakelauncher_downMotor_PORT = 31;
         public static final int intakelauncher_upMotor_PORT = 32;
-        public static final int intakelauncher_intakeSwitch_PORT = 3;
+        public static final int intakelauncher_intakeSwitch_PORT = 1;
     }
 
     public class ShooterFeedforward {

@@ -69,10 +69,10 @@ public class RobotContainer {
 
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
    
-    povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.37)); // 90 degrees
-    povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.22)); // Shoot
-    L3.whileTrue(m_ArmSubsystem.setSetpoint(0.1)); // Intake/Modo Correr
-    RT.onTrue(m_Arm_manualSetpoint);
+    povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.38)); // 90 degrees
+    povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.279)); // Shoot
+    L3.whileTrue(m_ArmSubsystem.setSetpoint(0.13)); // Intake/Modo Correr
+    //RT.onTrue(m_Arm_manualSetpoint);
 
 
     bButton.toggleOnTrue(m_Intake_getNote); //Intake get Note
