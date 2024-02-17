@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Commands.Arm_manualSetpoint;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.Intake_getNote;
@@ -24,6 +24,9 @@ public class RobotContainer {
 
   private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.controllerPort);
 
+  private Trigger start = m_driverController.start();
+  private Trigger back = m_driverController.back();
+
   private Trigger xButton = m_driverController.x();
   private Trigger bButton = m_driverController.b();
   private Trigger aButton = m_driverController.a();
@@ -31,6 +34,9 @@ public class RobotContainer {
 
   private Trigger LB = m_driverController.leftBumper();
   private Trigger RB = m_driverController.rightBumper();
+  private Trigger RT = m_driverController.rightTrigger();
+  private Trigger LT = m_driverController.leftTrigger();
+
 
   private Trigger povRight = m_driverController.povRight();
   private Trigger povLeft = m_driverController.povLeft();
@@ -52,6 +58,7 @@ public class RobotContainer {
   private final Intake_getNote m_Intake_getNote = new Intake_getNote(m_IntakeSubsystem);
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
   private final Intake_ThrowNote m_Intake_throwNote = new Intake_ThrowNote(m_IntakeSubsystem);
+  private final Arm_manualSetpoint m_Arm_manualSetpoint = new Arm_manualSetpoint(m_ArmSubsystem);
 
 
   private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
@@ -65,6 +72,8 @@ public class RobotContainer {
     povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.37)); // 90 degrees
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.22)); // Shoot
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0.1)); // Intake/Modo Correr
+    RT.onTrue(m_Arm_manualSetpoint);
+
 
     bButton.toggleOnTrue(m_Intake_getNote); //Intake get Note
     aButton.whileTrue(m_Intake_returnNote); //Intake return Note  

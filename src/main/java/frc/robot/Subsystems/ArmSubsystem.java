@@ -60,6 +60,12 @@ public class ArmSubsystem extends SubsystemBase {
     return runOnce(() -> pid.setSetpoint(Setpoint));
   }
 
+   public void manualSetpoint() {
+      Setpoint += 0.001;
+      pid.setSetpoint(Setpoint);
+    }
+   
+
   /*
    * public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier
    * povRight) {
@@ -73,5 +79,4 @@ public class ArmSubsystem extends SubsystemBase {
    * return runOnce(() -> pid.setSetpoint(Setpoint));
    * }
    */
-
-}
+   }
