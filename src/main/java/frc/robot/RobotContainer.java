@@ -13,14 +13,12 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
-import frc.robot.Commands.LauncherPIDCommandTest;
 import frc.robot.Commands.LauncherWithJoystick;
 import frc.robot.Commands.Intake_ThrowNote;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.LauncherSubsystem;
-import frc.robot.Subsystems.testLauncherPID_1;
 
 public class RobotContainer {
 
@@ -65,9 +63,6 @@ public class RobotContainer {
   private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
   private final LauncherWithJoystick m_LauncherWithJoystick = new LauncherWithJoystick(m_LauncherSubsystem);
 
-  private final testLauncherPID_1 m_testLauncherPID_1 = new testLauncherPID_1();
-  private final LauncherPIDCommandTest m_LauncherPIDCommandTest = new LauncherPIDCommandTest(m_testLauncherPID_1, 1000.0);
-
 
   public RobotContainer() {
 
@@ -85,8 +80,6 @@ public class RobotContainer {
 
     RB.toggleOnTrue(m_LauncherWithJoystick); //Toggle Shoot
 
-    xButton.whileTrue(m_LauncherPIDCommandTest);
-    
     /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     bButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     xButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
