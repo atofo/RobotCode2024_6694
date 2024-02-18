@@ -14,10 +14,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.IntakeLauncherConstants;
@@ -28,24 +25,20 @@ public class testLauncherPID_1 extends SubsystemBase {
   private CANSparkMax m_downMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_downMotor_PORT, MotorType.kBrushless);
   private CANSparkMax m_upMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_upMotor_PORT, MotorType.kBrushless);
 
-  private RelativeEncoder m_downMotorEncoder;
-  private RelativeEncoder m_upMotorEncoder;
+  private RelativeEncoder m_downMotorEncoder = m_downMotor.getEncoder();
+  private RelativeEncoder m_upMotorEncoder = m_upMotor.getEncoder();
 
   private SparkPIDController m_downMotorPIDController;
-  private SparkPIDController m_upMotorPIDController;
 
-  private double targetVelocity = 0;
+  private double targetVelocity;
 
 
 
   public testLauncherPID_1() {
+    m_upMotor.follow(m_downMotor);
     m_upMotor.setInverted(true);
 
-    m_downMotorEncoder = m_downMotor.getEncoder();
-    m_upMotorEncoder = m_upMotor.getEncoder();
-
     m_downMotorPIDController = m_downMotor.getPIDController();
-    m_upMotorPIDController = m_upMotor.getPIDController();
 
     m_downMotorPIDController.setP(PIDConstants_Launcher.kP);
     m_downMotorPIDController.setI(PIDConstants_Launcher.kI);
@@ -54,14 +47,6 @@ public class testLauncherPID_1 extends SubsystemBase {
     m_downMotorPIDController.setFF(PIDConstants_Launcher.kFF_downMotor);
     m_downMotorPIDController.setOutputRange(PIDConstants_Launcher.minPIDOutput, PIDConstants_Launcher.maxPIDOutput);
 
-    m_upMotorPIDController.setP(PIDConstants_Launcher.kP);
-    m_upMotorPIDController.setI(PIDConstants_Launcher.kI);
-    m_upMotorPIDController.setD(PIDConstants_Launcher.kD);
-    m_upMotorPIDController.setIZone(PIDConstants_Launcher.kI);
-    m_upMotorPIDController.setFF(PIDConstants_Launcher.kFF_upMotor);
-    m_upMotorPIDController.setOutputRange(PIDConstants_Launcher.minPIDOutput, PIDConstants_Launcher.maxPIDOutput);
-    stop();
-
     m_downMotor.burnFlash();
     m_upMotor.burnFlash();
   }
@@ -69,12 +54,10 @@ public class testLauncherPID_1 extends SubsystemBase {
   public void setVelocity(double velocity){
     targetVelocity = velocity;
     m_downMotorPIDController.setReference(targetVelocity, ControlType.kVelocity);
-    m_upMotorPIDController.setReference(targetVelocity, ControlType.kVelocity);
   }
 
   public void setSpeed(double speed){
       m_downMotor.set(speed);
-      m_upMotor.set(speed);
     }
   
   public double getVelocity(){

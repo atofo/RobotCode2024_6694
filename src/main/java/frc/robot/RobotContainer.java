@@ -61,10 +61,11 @@ public class RobotContainer {
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
   private final Intake_ThrowNote m_Intake_throwNote = new Intake_ThrowNote(m_IntakeSubsystem);
   private final Arm_manualSetpoint m_Arm_manualSetpoint = new Arm_manualSetpoint(m_ArmSubsystem);
-  private final testLauncherPID_1 m_testLauncherPID_1 = new testLauncherPID_1(m_testLauncherPID_1);
 
   private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
   private final LauncherWithJoystick m_LauncherWithJoystick = new LauncherWithJoystick(m_LauncherSubsystem);
+
+  private final testLauncherPID_1 m_testLauncherPID_1 = new testLauncherPID_1();
   private final LauncherPIDCommandTest m_LauncherPIDCommandTest = new LauncherPIDCommandTest(m_testLauncherPID_1, 1000.0);
 
 
@@ -83,6 +84,8 @@ public class RobotContainer {
     yButton.whileTrue(m_Intake_throwNote); //Intake return Note  
 
     RB.toggleOnTrue(m_LauncherWithJoystick); //Toggle Shoot
+
+    xButton.whileTrue(m_LauncherPIDCommandTest);
     
     /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     bButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));

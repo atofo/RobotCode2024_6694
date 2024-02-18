@@ -22,8 +22,7 @@ import frc.robot.Constants.PIDConstants;
 public class ArmSubsystem extends SubsystemBase {
 
   private CANSparkMax arm_leftMotor = new CANSparkMax(ArmConstants.arm_leftMotor_PORT, MotorType.kBrushless);
-  private CANSparkMax arm_rightMotor = new CANSparkMax(ArmConstants.arm_rightMotor_PORT,
-      MotorType.kBrushless); // LeftMotor = 14, RightMotor = 31
+  private CANSparkMax arm_rightMotor = new CANSparkMax(ArmConstants.arm_rightMotor_PORT, MotorType.kBrushless);
 
   private final DutyCycleEncoder arm_Encoder = new DutyCycleEncoder(0);
   PIDController pid = new PIDController(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
@@ -33,7 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     arm_leftMotor.follow(arm_rightMotor);
-    pid.setSetpoint(0.21);
+    //pid.setSetpoint(0.21);
   }
 
   /*
