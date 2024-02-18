@@ -33,6 +33,11 @@ public class Constants {
         public static final int intakelauncher_intakeSwitch_PORT = 3;
     }
 
+    public class ClimberConstants {
+        public static final int climber_leftMotor_PORT = 42;
+        public static final int climber_rightMotor_PORT = 41;
+    }
+
     public class PIDConstants_Launcher {
         /* public static final double kP = 0.0008; //Constantes PID + Ff viejo
         public static final double kI = 0;

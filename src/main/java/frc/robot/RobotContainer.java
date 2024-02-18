@@ -14,11 +14,17 @@ import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
 import frc.robot.Commands.LauncherWithJoystick;
+import frc.robot.Commands.LeftClimberDown;
+import frc.robot.Commands.LeftClimberUp;
+import frc.robot.Commands.RightClimberUp;
+import frc.robot.Commands.RightClimberDown;
 import frc.robot.Commands.Intake_ThrowNote;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.LauncherSubsystem;
+import frc.robot.Subsystems.LeftClimber;
+import frc.robot.Subsystems.RightClimber;
 
 public class RobotContainer {
 
@@ -60,8 +66,17 @@ public class RobotContainer {
   private final Intake_ThrowNote m_Intake_throwNote = new Intake_ThrowNote(m_IntakeSubsystem);
   private final Arm_manualSetpoint m_Arm_manualSetpoint = new Arm_manualSetpoint(m_ArmSubsystem);
 
+
   private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
   private final LauncherWithJoystick m_LauncherWithJoystick = new LauncherWithJoystick(m_LauncherSubsystem);
+
+  private final LeftClimber m_LeftClimberSubsystem = new LeftClimber();
+  private final RightClimber m_RightClimberSubsystem = new RightClimber();
+
+  private final LeftClimberDown m_LeftClimberDown = new LeftClimberDown(m_LeftClimberSubsystem);
+  private final LeftClimberUp m_LeftClimberUp = new LeftClimberUp(m_LeftClimberSubsystem);
+  private final RightClimberDown m_RightClimberDown = new RightClimberDown(m_RightClimberSubsystem);
+  private final RightClimberUp m_RightClimberUp = new RightClimberUp(m_RightClimberSubsystem);
 
 
   public RobotContainer() {
@@ -69,6 +84,7 @@ public class RobotContainer {
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
    
     povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.38)); // 90 degrees
+    povRight.whileTrue(m_ArmSubsystem.setSetpoint(0.485)); // 90 degrees
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.279)); // Shoot
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0.13)); // Intake/Modo Correr
     //RT.onTrue(m_Arm_manualSetpoint);
@@ -79,6 +95,11 @@ public class RobotContainer {
     yButton.whileTrue(m_Intake_throwNote); //Intake return Note  
 
     RB.toggleOnTrue(m_LauncherWithJoystick); //Toggle Shoot
+
+    start.whileTrue(m_RightClimberUp);
+    back.whileTrue(m_LeftClimberUp);
+    xButton.whileTrue(m_RightClimberDown);
+    LB.whileTrue(m_LeftClimberDown);
 
     /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     bButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));

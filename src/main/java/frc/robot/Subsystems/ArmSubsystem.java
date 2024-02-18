@@ -32,14 +32,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     arm_leftMotor.follow(arm_rightMotor);
-    //pid.setSetpoint(0.21);
+    pid.setSetpoint(0.21);
   }
 
-  /*
-   * public Command set(double Output) {
-   * return this.run(() -> arm_rightMotor.set(Output));
-   * }
-   */
+
   @Override
   public void periodic() {
     super.periodic();
