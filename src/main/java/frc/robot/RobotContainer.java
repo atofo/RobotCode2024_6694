@@ -13,12 +13,14 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
+import frc.robot.Commands.LauncherPIDCommandTest;
 import frc.robot.Commands.LauncherWithJoystick;
 import frc.robot.Commands.Intake_ThrowNote;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.LauncherSubsystem;
+import frc.robot.Subsystems.testLauncherPID_1;
 
 public class RobotContainer {
 
@@ -59,10 +61,11 @@ public class RobotContainer {
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
   private final Intake_ThrowNote m_Intake_throwNote = new Intake_ThrowNote(m_IntakeSubsystem);
   private final Arm_manualSetpoint m_Arm_manualSetpoint = new Arm_manualSetpoint(m_ArmSubsystem);
-
+  private final testLauncherPID_1 m_testLauncherPID_1 = new testLauncherPID_1(m_testLauncherPID_1);
 
   private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
   private final LauncherWithJoystick m_LauncherWithJoystick = new LauncherWithJoystick(m_LauncherSubsystem);
+  private final LauncherPIDCommandTest m_LauncherPIDCommandTest = new LauncherPIDCommandTest(m_testLauncherPID_1, 1000.0);
 
 
   public RobotContainer() {
