@@ -43,10 +43,10 @@ public class ArmSubsystem extends SubsystemBase {
     arm_rightMotor.set(-processVar * 0.8);  
     arm_leftMotor.set(-processVar * 0.8);
 
-    SmartDashboard.putNumber("Setpoint: ", pid.getSetpoint());
-    SmartDashboard.putNumber("Encoder: ", arm_Encoder.getAbsolutePosition());
-    SmartDashboard.putNumber("Process Variable: ", processVar);
-    SmartDashboard.putNumber("Error ", pid.getPositionError());
+    SmartDashboard.putNumber("Arm Setpoint: ", pid.getSetpoint());
+    SmartDashboard.putNumber("Arm AbsEncoder: ", arm_Encoder.getAbsolutePosition());
+    SmartDashboard.putNumber("Arm ProcessVar: ", processVar);
+    SmartDashboard.putNumber("Arm Error ", pid.getPositionError());
 
   }
 
@@ -60,6 +60,10 @@ public class ArmSubsystem extends SubsystemBase {
       pid.setSetpoint(Setpoint);
     }
    
+    public Boolean isUp(){
+      return true;
+    }
+
 
   /*
    * public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier

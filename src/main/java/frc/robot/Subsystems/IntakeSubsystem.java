@@ -62,7 +62,7 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     super.periodic();
-    SmartDashboard.putBoolean("Switch", intakeSwitch.get());
+    SmartDashboard.putBoolean("Intake Switch", intakeSwitch.get());
 
   }
 }

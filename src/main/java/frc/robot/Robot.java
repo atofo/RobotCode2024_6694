@@ -16,9 +16,14 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  public static final double RightClimberPastSetpoint = 50.0;
+  public static final double RightClimberCurrene = 75.0;
+  public static final double kDefaultArmKp = 50.0;
+  public static final double kDefaultArmSetpointDegrees = 75.0;
+
   @Override
   public void robotInit() {
-  /*DataLogManager.start();
+  /*DataLogManager.start();+
     URCL.start(); */
     m_robotContainer = new RobotContainer();
   }
@@ -27,33 +32,11 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+
+  }
 
   @Override
   public void disabledPeriodic() {}
