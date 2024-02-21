@@ -19,7 +19,6 @@ import frc.robot.Commands.LeftClimberUp;
 import frc.robot.Commands.RightClimberUp;
 import frc.robot.Commands.RightClimberDown;
 import frc.robot.Commands.Intake_ThrowNote;
-import frc.robot.Commands.LeftEmergencyDown;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
@@ -81,7 +80,6 @@ public class RobotContainer {
 
   private final LeftClimberUp m_LeftClimberUp = new LeftClimberUp(m_LeftClimberSubsystem);
   private final LeftClimberDown m_LeftClimberDown = new LeftClimberDown(m_LeftClimberSubsystem);
-  private final LeftEmergencyDown m_LeftEmergencyDown = new LeftEmergencyDown(m_LeftClimberSubsystem);
 
   private final RightClimberUp m_RightClimberUp = new RightClimberUp(m_RightClimberSubsystem);
   private final RightClimberDown m_RightClimberDown = new RightClimberDown(m_RightClimberSubsystem);
@@ -92,10 +90,11 @@ public class RobotContainer {
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
    
     //Arm
+    // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0.30)); // Intake / Modo Correr
-    povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.279)); // Shoot
-    povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.60)); // Position 1: 90 degrees
-    povRight.whileTrue(m_ArmSubsystem.setSetpoint(0.425)); // Position 2: 90 degrees
+    povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.425)); // Shoot
+    povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.60).unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))); // Position 1: 90 degrees
+    povRight.whileTrue(m_ArmSubsystem.setSetpoint(0.80).unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))); // Position 2: 90 degrees
 
     //Intake
     bButton.toggleOnTrue(m_Intake_getNote); //Intake get Note
@@ -110,7 +109,6 @@ public class RobotContainer {
     back.whileTrue((m_LeftClimberUp).unless(() -> m_ArmSubsystem.isUp()));
     xButton.whileTrue(m_RightClimberDown);
     LB.whileTrue(m_LeftClimberDown);
-    povLeft.whileTrue(m_LeftEmergencyDown);
 
 
     //SysID Triggers
