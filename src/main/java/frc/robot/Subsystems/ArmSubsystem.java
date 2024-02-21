@@ -70,8 +70,8 @@ public class ArmSubsystem extends SubsystemBase {
       }
     }
 
-    public Boolean going90(){
-      if(Setpoint > 0.45 && Setpoint < 0.62){
+    public Boolean isOnFront(){
+      if(arm_Encoder.getAbsolutePosition() < 0.62){
         return true;
       }
       else{

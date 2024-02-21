@@ -94,7 +94,8 @@ public class RobotContainer {
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0.30)); // Intake / Modo Correr
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.425)); // Shoot
     povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.60).unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))); // Position 1: 90 degrees
-    povRight.whileTrue(m_ArmSubsystem.setSetpoint(0.80).unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))); // Position 2: 90 degrees
+    povRight.whileTrue(m_ArmSubsystem.setSetpoint(0.80).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 2: 90 degrees
+    povLeft.whileTrue(m_ArmSubsystem.setSetpoint(0.65).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 2: 90 degrees
 
     //Intake
     bButton.toggleOnTrue(m_Intake_getNote); //Intake get Note
