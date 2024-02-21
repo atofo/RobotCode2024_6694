@@ -18,7 +18,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
   private CANSparkMax m_downMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_downMotor_PORT, MotorType.kBrushless);
   private CANSparkMax m_upMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_upMotor_PORT, MotorType.kBrushless);
-
+  
   /* private final SysIdRoutine m_sysIdRoutine = 
   new SysIdRoutine(
     new SysIdRoutine.Config(),
@@ -32,7 +32,13 @@ public class LauncherSubsystem extends SubsystemBase {
     )
   );
  */
-  public LauncherSubsystem() {
+public LauncherSubsystem() {
+    m_upMotor.restoreFactoryDefaults();
+    m_downMotor.restoreFactoryDefaults();
+    
+    m_upMotor.burnFlash();
+    m_downMotor.burnFlash();
+
     m_upMotor.setInverted(true);
   }
 

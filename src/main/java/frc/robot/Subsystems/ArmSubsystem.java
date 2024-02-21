@@ -25,6 +25,7 @@ public class ArmSubsystem extends SubsystemBase {
   private CANSparkMax arm_rightMotor = new CANSparkMax(ArmConstants.arm_rightMotor_PORT, MotorType.kBrushless);
 
   private final DutyCycleEncoder arm_Encoder = new DutyCycleEncoder(0);
+
   PIDController pid = new PIDController(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
 
   private double processVar;
@@ -61,7 +62,23 @@ public class ArmSubsystem extends SubsystemBase {
     }
    
     public Boolean isUp(){
-      return true;
+      if(arm_Encoder.getAbsolutePosition() > 0.45 && arm_Encoder.getAbsolutePosition() < 0.62){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+
+    public Boolean going90(){
+      if(Setpoint > 0.45 && Setpoint < 0.62){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+
     }
 
 
@@ -78,4 +95,4 @@ public class ArmSubsystem extends SubsystemBase {
    * return runOnce(() -> pid.setSetpoint(Setpoint));
    * }
    */
-   }
+   
