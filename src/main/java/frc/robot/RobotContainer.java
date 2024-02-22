@@ -77,8 +77,10 @@ public class RobotContainer {
 
   private final LeftClimberDown m_LeftClimberDown = new LeftClimberDown(m_LeftClimberSubsystem);
   private final LeftClimberUp m_LeftClimberUp = new LeftClimberUp(m_LeftClimberSubsystem);
-  private final RightClimberDown m_RightClimberDown = new RightClimberDown(m_RightClimberSubsystem);
+
   private final RightClimberUp m_RightClimberUp = new RightClimberUp(m_RightClimberSubsystem);
+  private final RightClimberDown m_RightClimberDown = new RightClimberDown(m_RightClimberSubsystem);
+
 
 
   public RobotContainer() {
@@ -93,6 +95,13 @@ public class RobotContainer {
 
     
 
+    //Arm
+    // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
+    L3.whileTrue(m_ArmSubsystem.setSetpoint(0.30)); // Intake / Modo Correr
+    povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.425)); // Shoot
+    povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.60).unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))); // Position 1: 90 degrees
+    povRight.whileTrue(m_ArmSubsystem.setSetpoint(0.80).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 2: 90 degrees
+    povLeft.whileTrue(m_ArmSubsystem.setSetpoint(0.65).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 2: 90 degrees
 
     bButton.toggleOnTrue(m_Intake_getNote); //Intake get Note
     aButton.whileTrue(m_Intake_returnNote); //Intake return Note  
