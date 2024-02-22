@@ -6,6 +6,7 @@ package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -23,18 +24,35 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 
 public class DrivetrainSubsystem extends SubsystemBase {
 
+  // Invert Drive
   private boolean toggleDrive = false;
+  
 
+  // Drive Forward
+  private final double kEncoderTick2Meter = 1.0 / 4096.0 * 0.128 * Math.PI;
+  public double getEncoderMeters(){
+    return (leftFrontEncoder.getPosition() + rightFrontEncoder.getPosition()) / 2 *kEncoderTick2Meter;
+  }
+
+  // Motors
   private CANSparkMax leftFrontMotor = new CANSparkMax(DrivetrainConstants.leftFrontMotor_PORT, MotorType.kBrushless);
-  private CANSparkMax rightFrontMotor = new CANSparkMax(DrivetrainConstants.rightFrontMotor_PORT,
-      MotorType.kBrushless);
+  private CANSparkMax rightFrontMotor = new CANSparkMax(DrivetrainConstants.rightFrontMotor_PORT,MotorType.kBrushless);
   private CANSparkMax leftRearMotor = new CANSparkMax(DrivetrainConstants.leftRearMotor_PORT, MotorType.kBrushless);
   private CANSparkMax rightRearMotor = new CANSparkMax(DrivetrainConstants.rightRearMotor_PORT, MotorType.kBrushless);
 
+
+  // Encoders
+  private RelativeEncoder leftFrontEncoder = leftFrontMotor.getEncoder();
+  private RelativeEncoder leftRearEncoder = leftRearMotor.getEncoder();
+  private RelativeEncoder rightFrontEncoder = rightFrontMotor.getEncoder();
+  private RelativeEncoder rightRearEncoder = rightRearMotor.getEncoder();
+
+
+  // Gyro
   private ADIS16470_IMU Gyroscope = new ADIS16470_IMU();
 
-  MecanumDrive m_drive = new MecanumDrive(leftFrontMotor::set, leftRearMotor::set, rightFrontMotor::set,
-      rightRearMotor::set);
+  // Drive w joystick
+  MecanumDrive m_drive = new MecanumDrive(leftFrontMotor::set, leftRearMotor::set, rightFrontMotor::set, rightRearMotor::set);
 
  /*  private final SysIdRoutine m_sysIdRoutine = 
   new SysIdRoutine(
@@ -73,6 +91,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
+
       DoubleSupplier rightTrigger, DoubleSupplier leftTrigger, BooleanSupplier toggleButton) {
 
         if(toggleButton.getAsBoolean()){
@@ -126,6 +145,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     
   }
 
+
+
   /* public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.quasistatic(direction);
   }
@@ -137,6 +158,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     super.periodic();
+
+    // drivetrain encoder pos
+    SmartDashboard.putNumber( "left front", leftFrontEncoder.getPosition());
+    SmartDashboard.putNumber( "left rear", leftRearEncoder.getPosition());
+    SmartDashboard.putNumber( "right front", rightFrontEncoder.getPosition());
+    SmartDashboard.putNumber( "right rear", rightRearEncoder.getPosition());
+
+
     SmartDashboard.putNumber("Gyroscope", Gyroscope.getAngle(IMUAxis.kYaw));
     System.out.println(toggleDrive);
   }
