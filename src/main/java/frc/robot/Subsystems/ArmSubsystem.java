@@ -56,9 +56,15 @@ public class ArmSubsystem extends SubsystemBase {
     return runOnce(() -> pid.setSetpoint(Setpoint));
   }
 
-   public void manualSetpoint() {
-      Setpoint += 0.001;
+   public void manualSetpointFront() {
+      Setpoint = pid.getSetpoint() + 0.01;
       pid.setSetpoint(Setpoint);
+    }
+    
+    public void manualSetpointBack(){
+      Setpoint = pid.getSetpoint() - 0.01;
+      pid.setSetpoint(Setpoint);
+
     }
    
     public Boolean isUp(){
@@ -71,7 +77,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public Boolean isOnFront(){
-      if(arm_Encoder.getAbsolutePosition() < 0.62){
+      if(arm_Encoder.getAbsolutePosition() < 0.47){
         return true;
       }
       else{
@@ -79,8 +85,13 @@ public class ArmSubsystem extends SubsystemBase {
       }
     }
 
+    
+    public void setpointStop(){
+      Setpoint = arm_Encoder.getAbsolutePosition();
+      pid.setSetpoint(Setpoint);
     }
-
+    
+  }
 
   /*
    * public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier

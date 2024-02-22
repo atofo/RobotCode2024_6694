@@ -3,7 +3,8 @@ package frc.robot;
 public class Constants {
 
     public class OperatorConstants {
-        public static final int controllerPort = 0;
+        public static final int firstcontrollerPort = 0;
+        public static final int secondcontrollerPort = 1;
     }
 
     public class DrivetrainConstants {
