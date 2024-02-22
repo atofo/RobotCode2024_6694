@@ -23,29 +23,29 @@ public class RightClimber extends SubsystemBase {
   }
 
   public void rightClimberUp(){
-    if(m_RightEncoder.getPosition() > 68){
+    if(m_RightEncoder.getPosition() > 170){
       m_RightClimber.set(0);
     }
     else{
       m_RightClimber.set(0.3);
-    }
+    } 
   }
 
   public void rightClimberDown(){
-    if(m_RightEncoder.getPosition() < 5){
+    if(m_RightEncoder.getPosition() < 2){
       m_RightClimber.set(0);
     }
     else{
       m_RightClimber.set(-0.3);
-    } 
-  }
+    }
+  } 
 
   public void rightClimberOFF(){
     m_RightClimber.set(0);
   }
 
   public Boolean RightisUp(){
-    if(m_RightEncoder.getPosition() > 0.40 && m_RightEncoder.getPosition() < 0.100){
+    if(m_RightEncoder.getPosition() >= 3 && m_RightEncoder.getPosition() <= 168){
       return true;
     }
       else{

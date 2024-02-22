@@ -24,39 +24,32 @@ public class LeftClimber extends SubsystemBase {
   }
 
   public void leftClimberUp(){
-    m_LeftClimber.set(0.3);
-    if(m_LeftEncoder.getPosition() > 68){
+  
+    if(m_LeftEncoder.getPosition() > 170){
       m_LeftClimber.set(0);
     }
     else{
       m_LeftClimber.set(0.3);
-    } 
+    }  
   }
 
   public void leftClimberDown(){
-if(m_LeftEncoder.getPosition() < 5){
+    if(m_LeftEncoder.getPosition() < 2){
+  m_LeftClimber.set(-0.3);
       m_LeftClimber.set(0);
     }
     else{
-      m_LeftClimber.set(-0.3);
-    }
+
+    } 
   }
 
   public void leftClimberOFF(){
     m_LeftClimber.set(0);
   }
 
-  public void leftClimberEmergency(){
-    if(m_LeftEncoder.getPosition() < 5){
-          m_LeftClimber.set(0);
-        }
-        else{
-          m_LeftClimber.set(-0.8);
-        }
-      }
 
   public Boolean LeftisUp(){
-    if(m_LeftEncoder.getPosition() > 0.40 && m_LeftEncoder.getPosition() < 0.100){
+    if(m_LeftEncoder.getPosition() >= 3 && m_LeftEncoder.getPosition() <= 168){
       return true;
     }
       else{
