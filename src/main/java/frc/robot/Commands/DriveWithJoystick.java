@@ -4,9 +4,11 @@
 
 package frc.robot.Commands;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 
 public class DriveWithJoystick extends Command {
@@ -14,19 +16,19 @@ public class DriveWithJoystick extends Command {
 
   private final DrivetrainSubsystem drivetrain;
   private final DoubleSupplier joystickX;
-  private DoubleSupplier joystickY;
   private final DoubleSupplier joystickZ;
   private final DoubleSupplier rightTrigger;
   private final DoubleSupplier leftTrigger;
+  private final boolean buttonToggle;
 
-  public DriveWithJoystick(DrivetrainSubsystem drivetrain, DoubleSupplier joystickX, DoubleSupplier joystickY,
-      DoubleSupplier joystickZ, DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
+  public DriveWithJoystick(DrivetrainSubsystem drivetrain, DoubleSupplier joystickX, 
+      DoubleSupplier joystickZ, DoubleSupplier rightTrigger, DoubleSupplier leftTrigger, boolean buttonToggle ) {
     this.drivetrain = drivetrain;
     this.joystickX = joystickX;
-    this.joystickY = joystickY;
     this.joystickZ = joystickZ;
     this.rightTrigger = rightTrigger;
     this.leftTrigger = leftTrigger;
+    this.buttonToggle = buttonToggle;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -36,7 +38,7 @@ public class DriveWithJoystick extends Command {
   public void initialize() {
     //Boolean Inverted = false;
     
-    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
+    drivetrain.drive(joystickX, joystickZ, rightTrigger, leftTrigger, buttonToggle);
   
     
   }
@@ -45,8 +47,8 @@ public class DriveWithJoystick extends Command {
   @Override
   public void execute() {
    
-    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
-  
+    drivetrain.drive(joystickX, joystickZ, rightTrigger, leftTrigger, buttonToggle);
+
     //drivetrain.drive(joystickX, joystickY, joystickZ);
   }
 
@@ -58,6 +60,6 @@ public class DriveWithJoystick extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

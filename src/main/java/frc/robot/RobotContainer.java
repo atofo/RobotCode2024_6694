@@ -36,7 +36,8 @@ public class RobotContainer {
 
   //First Driver Triggers
   private Trigger L31 = m_firstDriverController.leftStick();
-  
+  private Trigger aButton1 = m_firstDriverController.a();
+
   private Trigger start1 = m_firstDriverController.start();
   private Trigger back1 = m_firstDriverController.back();
   
@@ -67,11 +68,22 @@ public class RobotContainer {
 
 
   //Drivetrain
+
+  private boolean buttonToggle = false;
+
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
-      () -> m_firstDriverController.getRawAxis(1), () -> m_firstDriverController.getRawAxis(0),
-      () -> m_firstDriverController.getRawAxis(4), () -> m_firstDriverController.getRawAxis(3),
-      () -> m_firstDriverController.getRawAxis(2));
+      () -> m_firstDriverController.getRawAxis(0), 
+      () -> m_firstDriverController.getRawAxis(4),
+      () -> m_firstDriverController.getRawAxis(3), 
+      () -> m_firstDriverController.getRawAxis(2),
+       buttonToggle);
+
+  
+
+
+
+
 
 
   //Arm
@@ -102,8 +114,23 @@ public class RobotContainer {
   public RobotContainer() {
 
     //Drivetrain
-    m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
 
+    //INVERTIDO QUEDA PENDIENTE CHAVALES
+    if(aButton1.getAsBoolean() == true){
+    buttonToggle = !buttonToggle;
+    Commands.print("No autonomous command configured");
+    System.out.println("Se cambio el toggle");
+  }
+  else{
+    
+  }
+  
+  m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
+      
+    
+
+
+    
     //Arm
     // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
     L31.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 1
@@ -119,7 +146,7 @@ public class RobotContainer {
 
     //Intake
     aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note
-    yButton2.whileTrue(m_Intake_returnNote); //Intake return Note
+    yButton2.onTrue(m_Intake_returnNote); //Intake return Note
     
     //Launcher
     LB2.toggleOnTrue(m_LauncherWithJoystick); //Toggle Shoot
