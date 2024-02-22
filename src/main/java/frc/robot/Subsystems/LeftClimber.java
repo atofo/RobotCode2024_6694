@@ -16,8 +16,11 @@ public class LeftClimber extends SubsystemBase {
   /** Creates a new LeftClimber. */
   private CANSparkMax m_LeftClimber = new CANSparkMax(ClimberConstants.climber_leftMotor_PORT, MotorType.kBrushless);
   private RelativeEncoder m_LeftEncoder = m_LeftClimber.getEncoder();
+
   public LeftClimber() {
     m_LeftClimber.setInverted(true);
+    m_LeftClimber.burnFlash();
+    m_LeftClimber.restoreFactoryDefaults();
   }
 
   public void leftClimberUp(){

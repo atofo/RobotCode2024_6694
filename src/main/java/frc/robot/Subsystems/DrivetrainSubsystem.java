@@ -17,9 +17,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DrivetrainConstants;
 import java.util.function.DoubleSupplier;
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 
 public class DrivetrainSubsystem extends SubsystemBase {
+
+  private boolean toggleDrive = false;
 
   private CANSparkMax leftFrontMotor = new CANSparkMax(DrivetrainConstants.leftFrontMotor_PORT, MotorType.kBrushless);
   private CANSparkMax rightFrontMotor = new CANSparkMax(DrivetrainConstants.rightFrontMotor_PORT,
@@ -51,34 +55,75 @@ public class DrivetrainSubsystem extends SubsystemBase {
     rightFrontMotor.setInverted(true);
     rightRearMotor.setInverted(true);
 
+    rightFrontMotor.restoreFactoryDefaults();
+    rightRearMotor.restoreFactoryDefaults();
+    leftFrontMotor.restoreFactoryDefaults();
+    leftRearMotor.restoreFactoryDefaults();
+
+    rightFrontMotor.burnFlash();
+    rightRearMotor.burnFlash();
+    leftFrontMotor.burnFlash();
+    leftRearMotor.burnFlash();
+
+
+
     Gyroscope.calibrate();
 
     
   }
 
   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
-      DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
+      DoubleSupplier rightTrigger, DoubleSupplier leftTrigger, BooleanSupplier toggleButton) {
 
-    if (rightTrigger.getAsDouble() > 0.1) {
-      if (Math.abs(joystickX.getAsDouble()) < 0.1 && Math.abs(joystickY.getAsDouble()) < 0.1
-          && Math.abs(joystickZ.getAsDouble()) < 0.1 && Math.abs(rightTrigger.getAsDouble()) < 0.1
-          && Math.abs(leftTrigger.getAsDouble()) < 0.1) {
-        m_drive.driveCartesian(0, 0, 0);
-      } else {
-        m_drive.driveCartesian(rightTrigger.getAsDouble(), joystickY.getAsDouble(), joystickZ.getAsDouble());
-      }
-    }
+        if(toggleButton.getAsBoolean()){
+            toggleDrive =! toggleDrive;
+        }
 
-    else {
-      if (Math.abs(joystickX.getAsDouble()) < 0.1 && Math.abs(joystickY.getAsDouble()) < 0.1
-          && Math.abs(joystickZ.getAsDouble()) < 0.1 && Math.abs(rightTrigger.getAsDouble()) < 0.1
-          && Math.abs(leftTrigger.getAsDouble()) < 0.1) {
-        m_drive.driveCartesian(0, 0, 0);
-      } else {
-        m_drive.driveCartesian(-leftTrigger.getAsDouble(), joystickY.getAsDouble(), joystickZ.getAsDouble());
-      }
-    }
+        if(toggleDrive == false){
+            if (rightTrigger.getAsDouble() > 0.1) {
+                if (Math.abs(joystickX.getAsDouble()) < 0.1 && Math.abs(joystickY.getAsDouble()) < 0.1
+                    && Math.abs(joystickZ.getAsDouble()) < 0.1 && Math.abs(rightTrigger.getAsDouble()) < 0.1
+                    && Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+                  m_drive.driveCartesian(0, 0, 0);
+                } else {
+                  m_drive.driveCartesian(joystickZ.getAsDouble(), joystickY.getAsDouble(), rightTrigger.getAsDouble());
+                }
+              }
+          
+              else {
+                if (Math.abs(joystickX.getAsDouble()) < 0.1 && Math.abs(joystickY.getAsDouble()) < 0.1
+                    && Math.abs(joystickZ.getAsDouble()) < 0.1 && Math.abs(rightTrigger.getAsDouble()) < 0.1
+                    && Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+                  m_drive.driveCartesian(0, 0, 0);
+                } else {
+                  m_drive.driveCartesian(joystickZ.getAsDouble(), joystickY.getAsDouble(), -leftTrigger.getAsDouble());
+                }
+              }
+        } else if(toggleDrive == true){
+            if (rightTrigger.getAsDouble() > 0.1) {
+                if (Math.abs(joystickX.getAsDouble()) < 0.1 && Math.abs(joystickY.getAsDouble()) < 0.1
+                    && Math.abs(joystickZ.getAsDouble()) < 0.1 && Math.abs(rightTrigger.getAsDouble()) < 0.1
+                    && Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+                  m_drive.driveCartesian(0, 0, 0);
+                } else {
+                  m_drive.driveCartesian(-joystickZ.getAsDouble(), -joystickY.getAsDouble(), -rightTrigger.getAsDouble());
+                }
+              }
+          
+              else {
+                if (Math.abs(joystickX.getAsDouble()) < 0.1 && Math.abs(joystickY.getAsDouble()) < 0.1
+                    && Math.abs(joystickZ.getAsDouble()) < 0.1 && Math.abs(rightTrigger.getAsDouble()) < 0.1
+                    && Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+                  m_drive.driveCartesian(0, 0, 0);
+                } else {
+                  m_drive.driveCartesian(-joystickZ.getAsDouble(), -joystickY.getAsDouble(), leftTrigger
+                  .getAsDouble());
+                }
+              }
+        }
 
+        
+    
   }
 
   /* public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -93,5 +138,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void periodic() {
     super.periodic();
     SmartDashboard.putNumber("Gyroscope", Gyroscope.getAngle(IMUAxis.kYaw));
+    System.out.println(toggleDrive);
   }
 }

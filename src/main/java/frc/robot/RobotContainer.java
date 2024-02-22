@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Commands.Arm_manualSetpoint;
+//import frc.robot.Commands.Arm_manualSetpoint;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.Intake_getNote;
@@ -19,7 +19,6 @@ import frc.robot.Commands.LeftClimberUp;
 import frc.robot.Commands.RightClimberUp;
 import frc.robot.Commands.RightClimberDown;
 import frc.robot.Commands.Intake_ThrowNote;
-import frc.robot.Commands.LeftEmergencyDown;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
@@ -31,7 +30,6 @@ public class RobotContainer {
 
   private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.controllerPort);
 
-  //Triggers
   private Trigger start = m_driverController.start();
   private Trigger back = m_driverController.back();
 
@@ -46,79 +44,76 @@ public class RobotContainer {
   private Trigger LT = m_driverController.leftTrigger();
 
 
+
   private Trigger povRight = m_driverController.povRight();
-  private Trigger povLeft = m_driverController.povLeft();
+  private Trigger povLeft = m_driverController.povLeft(); 
   private Trigger povDown = m_driverController.povDown();
   private Trigger povUp = m_driverController.povUp();
 
   private Trigger L3 = m_driverController.leftStick();
+  private Trigger R3 = m_driverController.rightStick();
 
-  //Drivetrain
+  
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
-      () -> m_driverController.getRawAxis(1), () -> m_driverController.getRawAxis(0),
+      () -> m_driverController.getRawAxis(1), () -> -m_driverController.getRawAxis(0),
       () -> m_driverController.getRawAxis(4), () -> m_driverController.getRawAxis(3),
-      () -> m_driverController.getRawAxis(2));
+      () -> m_driverController.getRawAxis(2), m_driverController.rightBumper());
 
-
-  //Arm
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
-  private final Arm_manualSetpoint m_Arm_manualSetpoint = new Arm_manualSetpoint(m_ArmSubsystem);
 
-  //Intake
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final Intake_getNote m_Intake_getNote = new Intake_getNote(m_IntakeSubsystem);
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
   private final Intake_ThrowNote m_Intake_throwNote = new Intake_ThrowNote(m_IntakeSubsystem);
+  //private final Arm_manualSetpoint m_Arm_manualSetpoint = new Arm_manualSetpoint(m_ArmSubsystem);
 
-  //Launcher
+
   private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
   private final LauncherWithJoystick m_LauncherWithJoystick = new LauncherWithJoystick(m_LauncherSubsystem);
 
-  //Climbers
   private final LeftClimber m_LeftClimberSubsystem = new LeftClimber();
   private final RightClimber m_RightClimberSubsystem = new RightClimber();
 
-  private final LeftClimberUp m_LeftClimberUp = new LeftClimberUp(m_LeftClimberSubsystem);
   private final LeftClimberDown m_LeftClimberDown = new LeftClimberDown(m_LeftClimberSubsystem);
-  private final LeftEmergencyDown m_LeftEmergencyDown = new LeftEmergencyDown(m_LeftClimberSubsystem);
-
-  private final RightClimberUp m_RightClimberUp = new RightClimberUp(m_RightClimberSubsystem);
+  private final LeftClimberUp m_LeftClimberUp = new LeftClimberUp(m_LeftClimberSubsystem);
   private final RightClimberDown m_RightClimberDown = new RightClimberDown(m_RightClimberSubsystem);
+  private final RightClimberUp m_RightClimberUp = new RightClimberUp(m_RightClimberSubsystem);
+
 
   public RobotContainer() {
 
-    //Drivetrain
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
    
-    //Arm
-    L3.whileTrue(m_ArmSubsystem.setSetpoint(0.30)); // Intake / Modo Correr
+    povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.60)); // 90 degrees
+    povRight.whileTrue(m_ArmSubsystem.setSetpoint(0.425)); // 90 degrees
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.279)); // Shoot
-    povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.60)); // Position 1: 90 degrees
-    povRight.whileTrue(m_ArmSubsystem.setSetpoint(0.425)); // Position 2: 90 degrees
+    L3.whileTrue(m_ArmSubsystem.setSetpoint(0.13)); // Intake/Modo Correr
+    //RT.onTrue(m_Arm_manualSetpoint);
 
-    //Intake
+    
+
+
     bButton.toggleOnTrue(m_Intake_getNote); //Intake get Note
     aButton.whileTrue(m_Intake_returnNote); //Intake return Note  
     yButton.whileTrue(m_Intake_throwNote); //Intake return Note  
 
-    //Launcher
-    RB.toggleOnTrue(m_LauncherWithJoystick); //Toggle Shoot
-    
-    //Climbers
-    start.whileTrue((m_RightClimberUp).unless(() -> m_ArmSubsystem.isUp()));
-    back.whileTrue((m_LeftClimberUp).unless(() -> m_ArmSubsystem.isUp()));
+    //RB.toggleOnTrue(m_LauncherWithJoystick); //Toggle Shoot
+
+    start.whileTrue(m_RightClimberUp);
+    back.whileTrue(m_LeftClimberUp);
     xButton.whileTrue(m_RightClimberDown);
     LB.whileTrue(m_LeftClimberDown);
-    povLeft.whileTrue(m_LeftEmergencyDown);
 
+    R3.toggleOnTrue(m_DriveWithJoystick);
 
-    //SysID Triggers
+    
+
     /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     bButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     xButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
     yButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse)); */
- 
+
     configureBindings();
   }
 

@@ -33,13 +33,13 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     arm_leftMotor.follow(arm_rightMotor);
-    pid.setSetpoint(0.425);
+    pid.setSetpoint(0.20);
   }
 
 
   @Override
   public void periodic() {
-    super.periodic();
+  super.periodic();
     processVar = pid.calculate(arm_Encoder.getAbsolutePosition());
     arm_rightMotor.set(-processVar * 0.8);  
     arm_leftMotor.set(-processVar * 0.8);

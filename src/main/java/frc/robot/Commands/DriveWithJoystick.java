@@ -5,6 +5,8 @@
 package frc.robot.Commands;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.BooleanSupplier;
+
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.DrivetrainSubsystem;
@@ -18,15 +20,17 @@ public class DriveWithJoystick extends Command {
   private final DoubleSupplier joystickZ;
   private final DoubleSupplier rightTrigger;
   private final DoubleSupplier leftTrigger;
+  private final BooleanSupplier toggleButton;
 
   public DriveWithJoystick(DrivetrainSubsystem drivetrain, DoubleSupplier joystickX, DoubleSupplier joystickY,
-      DoubleSupplier joystickZ, DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
+      DoubleSupplier joystickZ, DoubleSupplier rightTrigger, DoubleSupplier leftTrigger, BooleanSupplier toggleButton) {
     this.drivetrain = drivetrain;
     this.joystickX = joystickX;
     this.joystickY = joystickY;
     this.joystickZ = joystickZ;
     this.rightTrigger = rightTrigger;
     this.leftTrigger = leftTrigger;
+    this.toggleButton = toggleButton;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -36,7 +40,7 @@ public class DriveWithJoystick extends Command {
   public void initialize() {
     //Boolean Inverted = false;
     
-    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
+    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger, toggleButton);
   
     
   }
@@ -45,7 +49,7 @@ public class DriveWithJoystick extends Command {
   @Override
   public void execute() {
    
-    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
+    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger, toggleButton);
   
     //drivetrain.drive(joystickX, joystickY, joystickZ);
   }

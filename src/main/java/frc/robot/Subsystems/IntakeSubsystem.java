@@ -18,7 +18,11 @@ public class IntakeSubsystem extends SubsystemBase {
   private DigitalInput intakeSwitch = new DigitalInput(IntakeLauncherConstants.intakelauncher_intakeSwitch_PORT);
   private int state=0;
 
-  public IntakeSubsystem() {}
+  public IntakeSubsystem() {
+    m_intakeMotor.restoreFactoryDefaults();
+    m_intakeMotor.burnFlash();
+
+  }
 
   public void getNote(){
     if(intakeSwitch.get()){

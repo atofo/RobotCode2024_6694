@@ -18,7 +18,8 @@ public class RightClimber extends SubsystemBase {
   private RelativeEncoder m_RightEncoder = m_RightClimber.getEncoder();
 
   public RightClimber() {
-
+    m_RightClimber.restoreFactoryDefaults();
+    m_RightClimber.burnFlash();
   }
 
   public void rightClimberUp(){
