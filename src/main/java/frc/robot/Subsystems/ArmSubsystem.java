@@ -6,17 +6,13 @@ package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.IntakeLauncherConstants;
 import frc.robot.Constants.PIDConstants;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -61,17 +57,5 @@ public class ArmSubsystem extends SubsystemBase {
     }
    
 
-  /*
-   * public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier
-   * povRight) {
-   * if (povLeft.getAsBoolean() == true) {
-   * Setpoint = Setpoint -1;
-   * }
-   * if (povRight.getAsBoolean() == true) {
-   * Setpoint = Setpoint +1;
-   * }
-   * 
-   * return runOnce(() -> pid.setSetpoint(Setpoint));
-   * }
-   */
+ 
    }
