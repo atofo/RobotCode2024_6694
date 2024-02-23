@@ -57,14 +57,18 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
    public void manualSetpointFront() {
-      Setpoint = pid.getSetpoint() + 0.01;
+    if (pid.getSetpoint() > 0.2) {
+      Setpoint = pid.getSetpoint() - 0.01;
       pid.setSetpoint(Setpoint);
+    }  
+    
     }
     
     public void manualSetpointBack(){
-      Setpoint = pid.getSetpoint() - 0.01;
+      if (pid.getSetpoint() < 0.6) {
+      Setpoint = pid.getSetpoint() + 0.01;
       pid.setSetpoint(Setpoint);
-
+    }  
     }
    
     public Boolean isUp(){

@@ -9,9 +9,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.Arm_manualSetpointFront;
+import frc.robot.Commands.DriveWithInvertedJoystick;
 import frc.robot.Commands.Arm_manualSetpointBack;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Commands.DriveWithJoystick;
+import frc.robot.Commands.DriveWithNormalJoystick;
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
 import frc.robot.Commands.LauncherWithJoystick;
@@ -69,22 +70,20 @@ public class RobotContainer {
 
   //Drivetrain
 
-  private boolean buttonToggle = false;
-
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-  private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
+  private final DriveWithNormalJoystick m_DriveWithNormalJoystick = new DriveWithNormalJoystick(m_drivetrainSubsystem,
       () -> m_firstDriverController.getRawAxis(0), 
+      () -> m_firstDriverController.getRawAxis(1), 
       () -> m_firstDriverController.getRawAxis(4),
       () -> m_firstDriverController.getRawAxis(3), 
-      () -> m_firstDriverController.getRawAxis(2),
-       buttonToggle);
-
-  
-
-
-
-
-
+      () -> m_firstDriverController.getRawAxis(2));
+    
+  private final DriveWithInvertedJoystick m_DriveWithInvertedJoystick = new DriveWithInvertedJoystick(m_drivetrainSubsystem,
+      () -> m_firstDriverController.getRawAxis(0), 
+      () -> m_firstDriverController.getRawAxis(1), 
+      () -> m_firstDriverController.getRawAxis(4),
+      () -> m_firstDriverController.getRawAxis(3), 
+      () -> m_firstDriverController.getRawAxis(2));
 
   //Arm
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
@@ -116,6 +115,7 @@ public class RobotContainer {
     //Drivetrain
 
     //INVERTIDO QUEDA PENDIENTE CHAVALES
+  /* 
     if(aButton1.getAsBoolean() == true){
     buttonToggle = !buttonToggle;
     Commands.print("No autonomous command configured");
@@ -124,13 +124,13 @@ public class RobotContainer {
   else{
     
   }
-  
-  m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
+  */
+  m_drivetrainSubsystem.setDefaultCommand(m_DriveWithNormalJoystick);
       
     
 
-
-    
+    aButton1.toggleOnFalse(m_DriveWithNormalJoystick);
+    aButton1.toggleOnTrue(m_DriveWithInvertedJoystick);
     //Arm
     // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
     L31.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 1

@@ -25,8 +25,7 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 public class DrivetrainSubsystem extends SubsystemBase {
 
   private CANSparkMax leftFrontMotor = new CANSparkMax(DrivetrainConstants.leftFrontMotor_PORT, MotorType.kBrushless);
-  private CANSparkMax rightFrontMotor = new CANSparkMax(DrivetrainConstants.rightFrontMotor_PORT,
-      MotorType.kBrushless);
+  private CANSparkMax rightFrontMotor = new CANSparkMax(DrivetrainConstants.rightFrontMotor_PORT,MotorType.kBrushless);
   private CANSparkMax leftRearMotor = new CANSparkMax(DrivetrainConstants.leftRearMotor_PORT, MotorType.kBrushless);
   private CANSparkMax rightRearMotor = new CANSparkMax(DrivetrainConstants.rightRearMotor_PORT, MotorType.kBrushless);
 
@@ -61,11 +60,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
-  public void drive(DoubleSupplier joystickX, DoubleSupplier joystickZ,
-      DoubleSupplier rightTrigger, DoubleSupplier leftTrigger, boolean buttonToggle) {
+  public void drive(DoubleSupplier joystickX, DoubleSupplier joystickU, DoubleSupplier joystickZ,
+      DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
 
-
-    if(buttonToggle == true){
       if (rightTrigger.getAsDouble() > 0.1) {
             if (Math.abs(joystickX.getAsDouble()) < 0.1
                 && Math.abs(joystickZ.getAsDouble()) < 0.1 && Math.abs(rightTrigger.getAsDouble()) < 0.1
@@ -85,11 +82,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
               m_drive.driveCartesian(joystickZ.getAsDouble(), -joystickX.getAsDouble(), -leftTrigger.getAsDouble());
             }
           }
-    }
+      }
+  
 
-    else{
+  public void invertDrive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
+      DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
 
-      if (rightTrigger.getAsDouble() > 0.1) {
+     if (rightTrigger.getAsDouble() > 0.1) {
             if (Math.abs(joystickX.getAsDouble()) < 0.1
                 && Math.abs(joystickZ.getAsDouble()) < 0.1 && Math.abs(rightTrigger.getAsDouble()) < 0.1
                 && Math.abs(leftTrigger.getAsDouble()) < 0.1) {
@@ -110,8 +109,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
           }
 
     }
-
-  }
 
 
   /*

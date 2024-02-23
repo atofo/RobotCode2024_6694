@@ -11,24 +11,24 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 
-public class DriveWithJoystick extends Command {
+public class DriveWithInvertedJoystick extends Command {
   /** Creates a new DriveWithJoystick. */
 
   private final DrivetrainSubsystem drivetrain;
   private final DoubleSupplier joystickX;
+  private final DoubleSupplier joystickY;
   private final DoubleSupplier joystickZ;
   private final DoubleSupplier rightTrigger;
   private final DoubleSupplier leftTrigger;
-  private final boolean buttonToggle;
 
-  public DriveWithJoystick(DrivetrainSubsystem drivetrain, DoubleSupplier joystickX, 
-      DoubleSupplier joystickZ, DoubleSupplier rightTrigger, DoubleSupplier leftTrigger, boolean buttonToggle ) {
+  public DriveWithInvertedJoystick(DrivetrainSubsystem drivetrain, DoubleSupplier joystickX, DoubleSupplier joystickY,
+      DoubleSupplier joystickZ, DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
     this.drivetrain = drivetrain;
     this.joystickX = joystickX;
+    this.joystickY = joystickY;
     this.joystickZ = joystickZ;
     this.rightTrigger = rightTrigger;
     this.leftTrigger = leftTrigger;
-    this.buttonToggle = buttonToggle;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -38,7 +38,7 @@ public class DriveWithJoystick extends Command {
   public void initialize() {
     //Boolean Inverted = false;
     
-    drivetrain.drive(joystickX, joystickZ, rightTrigger, leftTrigger, buttonToggle);
+    drivetrain.invertDrive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
   
     
   }
@@ -47,7 +47,7 @@ public class DriveWithJoystick extends Command {
   @Override
   public void execute() {
    
-    drivetrain.drive(joystickX, joystickZ, rightTrigger, leftTrigger, buttonToggle);
+    drivetrain.invertDrive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
 
     //drivetrain.drive(joystickX, joystickY, joystickZ);
   }
