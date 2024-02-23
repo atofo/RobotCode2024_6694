@@ -49,7 +49,7 @@ public class Constants {
             1.0 / (double) kEncoderCPR;
     
         public static final double kShooterFreeRPS = 96; //El maximo de RPS que puede dar
-        public static final double kShooterTargetRPS = 88; //Al que queremos llegar
+        public static final double kShooterTargetRPS = 90; //Al que queremos llegar
         public static final double kShooterToleranceRPS = 2; //Tolerancia de error 
     
         // Ojo, valores experimentales de kP, kI y kD, hay que experimentar.
