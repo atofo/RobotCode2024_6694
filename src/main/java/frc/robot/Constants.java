@@ -54,8 +54,8 @@ public class Constants {
     
         // Ojo, valores experimentales de kP, kI y kD, hay que experimentar.
         public static final double kP = 0.004;
-        public static final double kI = 0.0;
-        public static final double kD = 0.008;
+        public static final double kI = 0.002;
+        public static final double kD = 0.002;
     
         // On a real robot the feedforward constants should be empirically determined; these are
         // reasonable guesses.

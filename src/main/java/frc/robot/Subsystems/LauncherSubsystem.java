@@ -7,18 +7,27 @@ package frc.robot.Subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
-
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeLauncherConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class LauncherSubsystem extends SubsystemBase {
 
   private CANSparkMax m_downMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_downMotor_PORT, MotorType.kBrushless);
   private CANSparkMax m_upMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_upMotor_PORT, MotorType.kBrushless);
+    private final Encoder m_shooterEncoder =
+      new Encoder(
+          ShooterConstants.kEncoderPorts[0],
+          ShooterConstants.kEncoderPorts[1],
+          ShooterConstants.kEncoderReversed);
 
 
   public LauncherSubsystem() {
     m_upMotor.setInverted(true);
+    m_shooterEncoder.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
+
   }
 
   public void throwNote(){
@@ -31,8 +40,9 @@ public class LauncherSubsystem extends SubsystemBase {
       m_upMotor.set(0);
   }
 
-/*   @Override
+ @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-  } */
+    super.periodic();
+      SmartDashboard.putNumber("Shooter Rate", m_shooterEncoder.getRate());
+  } 
 }
