@@ -29,8 +29,8 @@ public class RightClimber extends SubsystemBase {
     m_RightClimber.set(0);
   }
 
-  @Override
+/*   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  }
+  } */
 }

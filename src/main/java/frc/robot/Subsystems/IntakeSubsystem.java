@@ -59,10 +59,10 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intakeMotor.set(-1);
   }
 
-  @Override
+/*   @Override
   public void periodic() {
     super.periodic();
     SmartDashboard.putBoolean("Switch", intakeSwitch.get());
 
-  }
+  } */
 }

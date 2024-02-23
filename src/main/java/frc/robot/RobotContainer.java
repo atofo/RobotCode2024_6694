@@ -60,15 +60,13 @@ public class RobotContainer {
 
 /*   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem(); */
 
+
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final Intake_getNote m_Intake_getNote = new Intake_getNote(m_IntakeSubsystem);
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
   private final Intake_ThrowNote m_Intake_throwNote = new Intake_ThrowNote(m_IntakeSubsystem);
+  
 
-
-
-  //private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
-  //private final LauncherWithJoystick m_LauncherWithJoystick = new LauncherWithJoystick(m_LauncherSubsystem);
 
  /*  private final LeftClimber m_LeftClimberSubsystem = new LeftClimber();
   private final RightClimber m_RightClimberSubsystem = new RightClimber();
@@ -95,14 +93,13 @@ public class RobotContainer {
 
   
 
-
     bButton.toggleOnTrue(m_Intake_getNote); //Intake get Note
     aButton.whileTrue(m_Intake_returnNote); //Intake return Note  
-    yButton.whileTrue(m_Intake_throwNote); //Intake return Note  
-
+/*     yButton.whileTrue(m_LauncherWithJoystick); //Intake return Note  
+ */
     //RB.toggleOnTrue(m_LauncherWithJoystick); //Toggle Shoot
 
-    /* start.whileTrue(m_RightClimberUp);
+    /* start.whileTrue(m_RightClimberUp); 
     back.whileTrue(m_LeftClimberUp);
     xButton.whileTrue(m_RightClimberDown);
     LB.whileTrue(m_LeftClimberDown); */
@@ -116,9 +113,9 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-
     RB.onTrue(m_spinUpShooter); //Empezar a girar lanzador
     LB.onTrue(m_stopShooter); //Parar lanzador
+
 
     Command shoot =
       Commands.either(
@@ -134,6 +131,7 @@ public class RobotContainer {
 
     //disparar cuando se presione el boton X
     xButton.onTrue(shoot).onFalse(stopIntake);
+
 
   }
 

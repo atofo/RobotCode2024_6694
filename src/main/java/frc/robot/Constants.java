@@ -41,21 +41,21 @@ public class Constants {
     public class ShooterConstants {
         /* El Motor NEO puede maximo ~5800 RPM. Si necesitamos RPS (Rotaciones por segundo) hay que dividir entre 60
          5800 / 60 = 96.66 */
-        public static final int[] kEncoderPorts = new int[] {4, 5};
+        public static final int[] kEncoderPorts = new int[] {0, 1};
         public static final boolean kEncoderReversed = false;
-        public static final int kEncoderCPR = 8192; // REV Through Bore Encoder CPR
+        public static final int kEncoderCPR = 2048; // REV Through Bore Encoder CPR
         public static final double kEncoderDistancePerPulse =
             // Distance units will be rotations
             1.0 / (double) kEncoderCPR;
     
         public static final double kShooterFreeRPS = 96; //El maximo de RPS que puede dar
-        public static final double kShooterTargetRPS = 92; //Al que queremos llegar
+        public static final double kShooterTargetRPS = 88; //Al que queremos llegar
         public static final double kShooterToleranceRPS = 2; //Tolerancia de error 
     
         // Ojo, valores experimentales de kP, kI y kD, hay que experimentar.
-        public static final double kP = 0.1;
-        public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kP = 0.004;
+        public static final double kI = 0.0;
+        public static final double kD = 0.008;
     
         // On a real robot the feedforward constants should be empirically determined; these are
         // reasonable guesses.

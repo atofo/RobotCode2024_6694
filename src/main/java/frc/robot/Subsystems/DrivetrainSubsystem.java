@@ -66,9 +66,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
 
-  @Override
+/*   @Override
   public void periodic() {
     super.periodic();
     SmartDashboard.putNumber("Gyroscope", Gyroscope.getAngle(IMUAxis.kYaw));
-  }
+  } */
 }

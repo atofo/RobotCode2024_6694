@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import frc.robot.Constants.IntakeLauncherConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -52,5 +53,12 @@ public class ShooterSubsystem extends PIDSubsystem {
     return m_controller.atSetpoint();
   }
 
-  
+  @Override
+  public void periodic(){
+    super.periodic();
+      SmartDashboard.putNumber("Shooter Rate", m_shooterEncoder.getRate());
+      SmartDashboard.putNumber("Applied Output", m_downMotor.getAppliedOutput());
+      SmartDashboard.putBoolean("At Setpoint", m_controller.atSetpoint());
+  }
+
 }

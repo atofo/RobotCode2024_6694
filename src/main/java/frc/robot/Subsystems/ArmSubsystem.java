@@ -28,11 +28,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     arm_leftMotor.follow(arm_rightMotor);
-    pid.setSetpoint(0.425);
+    //pid.setSetpoint(0.425);
   }
 
 
-  @Override
+/*   @Override
   public void periodic() {
     super.periodic();
     processVar = pid.calculate(arm_Encoder.getAbsolutePosition());
@@ -44,7 +44,7 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Process Variable: ", processVar);
     SmartDashboard.putNumber("Error ", pid.getPositionError());
 
-  }
+  } */
 
   public Command setSetpoint(double Setpoint) {
     // this.Setpoint = Setpoint;
