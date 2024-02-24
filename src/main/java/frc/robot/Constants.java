@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 public class Constants {
 
     public class OperatorConstants {
@@ -7,11 +9,25 @@ public class Constants {
         public static final int secondcontrollerPort = 1;
     }
 
+    public class AutoConstants{
+    public static final double kTimeoutSeconds = 10; //El tiempo que va estar haciendo eso
+    public static final double kDriveDistanceMeters = 2000;
+    public static final double kDriveSpeed = 0.35;
+    }
+
     public class DrivetrainConstants {
         public static final int leftFrontMotor_PORT = 14;
         public static final int rightFrontMotor_PORT = 12;
         public static final int leftRearMotor_PORT = 13;
         public static final int rightRearMotor_PORT = 11;
+
+        public static final int kEncoderCPR = 535; // 42 CPRs del NEO * 12.76:1 (transmision de las mecanums), probablmente habra que multiplicar la transmision en otro lado y no aqui
+        public static final double kWheelDiameterMeters = Units.inchesToMeters(6);
+        public static final double kEncoderDistancePerPulse =
+            // Assumes the encoders are directly mounted on the wheel shafts
+            (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
+
+        public static final double kEncoderConversionFactor = Math.PI * kWheelDiameterMeters * 12.76; 
     }
 
     public class PIDConstants {

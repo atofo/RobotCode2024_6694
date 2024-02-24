@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.Arm_manualSetpointFront;
 import frc.robot.Commands.Arm_manualSetpointBack;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
@@ -87,9 +88,9 @@ public class RobotContainer {
 
 
   //Arm
-  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
+ /*  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private final Arm_manualSetpointFront m_Arm_manualSetpointFront = new Arm_manualSetpointFront(m_ArmSubsystem);
-  private final Arm_manualSetpointBack m_Arm_manualSetpointBack = new Arm_manualSetpointBack(m_ArmSubsystem);
+  private final Arm_manualSetpointBack m_Arm_manualSetpointBack = new Arm_manualSetpointBack(m_ArmSubsystem); */
 
   //Intake
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
@@ -133,7 +134,7 @@ public class RobotContainer {
     
     //Arm
     // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
-    L32.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 2
+    /* L32.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 2
 
     povDown2.whileTrue(m_ArmSubsystem.setSetpoint(0.2448)); // Shoot
     povUp2.whileTrue(m_ArmSubsystem.setSetpoint(0.4536).unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))); // Position 1: 90 degrees
@@ -141,7 +142,7 @@ public class RobotContainer {
     povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.50).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 3: 90 degrees
 
     xButton2.whileTrue(m_Arm_manualSetpointFront);
-    bButton2.whileTrue(m_Arm_manualSetpointBack);
+    bButton2.whileTrue(m_Arm_manualSetpointBack); */
 
     //Intake
     aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note
@@ -152,8 +153,8 @@ public class RobotContainer {
     RB2.whileTrue(m_Intake_throwNote); //Intake throw Note 
     
     //Climbers
-    start1.whileTrue((m_RightClimberUp).unless(() -> m_ArmSubsystem.isUp()));
-    back1.whileTrue((m_LeftClimberUp).unless(() -> m_ArmSubsystem.isUp()));
+   /*  start1.whileTrue((m_RightClimberUp).unless(() -> m_ArmSubsystem.isUp()));
+    back1.whileTrue((m_LeftClimberUp).unless(() -> m_ArmSubsystem.isUp())); */
     LB1.whileTrue(m_LeftClimberDown);
     RB1.whileTrue(m_RightClimberDown);
 
@@ -171,6 +172,9 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    /* return Commands.print("No autonomous command configured"); */
+    return m_drivetrainSubsystem
+        .driveDistanceCommand(AutoConstants.kDriveDistanceMeters, AutoConstants.kDriveSpeed)
+        .withTimeout(AutoConstants.kTimeoutSeconds);
   }
 }

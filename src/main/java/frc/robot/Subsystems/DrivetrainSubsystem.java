@@ -6,19 +6,16 @@ package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 
-import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DrivetrainConstants;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 
@@ -30,32 +27,29 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private CANSparkMax leftRearMotor = new CANSparkMax(DrivetrainConstants.leftRearMotor_PORT, MotorType.kBrushless);
   private CANSparkMax rightRearMotor = new CANSparkMax(DrivetrainConstants.rightRearMotor_PORT, MotorType.kBrushless);
 
+
+
   private ADIS16470_IMU Gyroscope = new ADIS16470_IMU();
 
   MecanumDrive m_drive = new MecanumDrive(leftFrontMotor::set, leftRearMotor::set, rightFrontMotor::set,
       rightRearMotor::set);
 
 
-  /*
-   * private final SysIdRoutine m_sysIdRoutine =
-   * new SysIdRoutine(
-   * new SysIdRoutine.Config(),
-   * new SysIdRoutine.Mechanism(
-   * (volts) -> {
-   * leftFrontMotor.setVoltage(volts.in(Volts));
-   * rightFrontMotor.setVoltage(volts.in(Volts));
-   * leftRearMotor.setVoltage(volts.in(Volts));
-   * rightRearMotor.setVoltage(volts.in(Volts));
-   * },
-   * null, // No log consumer, since data is recorded by URCL
-   * this
-   * )
-   * );
-   */
-
+  //private RelativeEncoder leftFrontEncoder = leftFrontMotor.getEncoder();
+  //private RelativeEncoder rightFrontEncoder = rightFrontMotor.getEncoder();
+  private RelativeEncoder leftRearEncoder = leftRearMotor.getEncoder();
+  private RelativeEncoder rightFrontEncoder = rightFrontMotor.getEncoder();
+  
+  
   public DrivetrainSubsystem() {
-    leftFrontMotor.setInverted(true);
-    rightRearMotor.setInverted(true);
+    
+    rightFrontMotor.setInverted(true);
+    leftRearMotor.setInverted(true);
+
+    leftRearEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor); //esto usa rotaciones y se multiplica por el argumento
+    rightFrontEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor);
+
+    //rightFrontEncoder.setInverted(true);
 
     Gyroscope.calibrate();
 
@@ -113,20 +107,40 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
-
-  /*
-   * public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-   * return m_sysIdRoutine.quasistatic(direction);
-   * }
-   * 
-   * public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-   * return m_sysIdRoutine.dynamic(direction);
-   * }
+/**
+   * Returns a command that drives the robot forward a specified distance at a specified speed.
+   *
+   * @param distanceMeters The distance to drive forward in meters
+   * @param speed The fraction of max speed at which to drive
    */
+  public Command driveDistanceCommand(double distanceMeters, double speed) {
+    rightFrontMotor.setInverted(true);
+    leftRearMotor.setInverted(true);
+    return runOnce(
+            () -> {
+              // Reset encoders at the start of the command
+              leftRearEncoder.setPosition(0);
+              rightFrontEncoder.setPosition(0);
+            })
+
+        // Drive forward at specified speed
+        .andThen(run(() -> m_drive.driveCartesian(0, speed, 0)))
+        // End command when we've traveled the specified distance
+        .until(
+            () ->
+                Math.max(leftRearEncoder.getPosition(), rightFrontEncoder.getPosition())
+                    >= distanceMeters)
+        // Stop the drive when the command ends
+        .finallyDo(interrupted -> m_drive.stopMotor());
+    
+      }
+        
 
   @Override
   public void periodic() {
     super.periodic();
+    SmartDashboard.putNumber("Encoder atras izquierdo: ", leftRearEncoder.getPosition());
+    SmartDashboard.putNumber("Encoder atras derecho: ", rightFrontEncoder.getPosition());
     SmartDashboard.putNumber("Gyroscope", Gyroscope.getAngle(IMUAxis.kYaw));
   }
 }
