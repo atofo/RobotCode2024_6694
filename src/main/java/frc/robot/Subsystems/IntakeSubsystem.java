@@ -17,7 +17,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private CANSparkMax m_intakeMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_intakeMotor_PORT, MotorType.kBrushless);
   private DigitalInput intakeSwitch = new DigitalInput(IntakeLauncherConstants.intakelauncher_intakeSwitch_PORT);
   private int state=0;
-  private int outswitch = 3;
+  private int outswitch = 0;
 
   public IntakeSubsystem() {
   }
