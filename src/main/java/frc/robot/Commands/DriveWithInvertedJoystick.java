@@ -38,7 +38,7 @@ public class DriveWithInvertedJoystick extends Command {
   public void initialize() {
     //Boolean Inverted = false;
     
-    drivetrain.invertDrive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
+    drivetrain.driveInverted(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
   
     
   }
@@ -47,7 +47,7 @@ public class DriveWithInvertedJoystick extends Command {
   @Override
   public void execute() {
    
-    drivetrain.invertDrive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
+    drivetrain.driveInverted(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
 
     //drivetrain.drive(joystickX, joystickY, joystickZ);
   }

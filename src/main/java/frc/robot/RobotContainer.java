@@ -87,8 +87,8 @@ public class RobotContainer {
 
   //Arm
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
-  private final Arm_manualSetpointFront m_Arm_manualSetpointFront = new Arm_manualSetpointFront(m_ArmSubsystem);
-  private final Arm_manualSetpointBack m_Arm_manualSetpointBack = new Arm_manualSetpointBack(m_ArmSubsystem);
+  //private final Arm_manualSetpointFront m_Arm_manualSetpointFront = new Arm_manualSetpointFront(m_ArmSubsystem);
+  //private final Arm_manualSetpointBack m_Arm_manualSetpointBack = new Arm_manualSetpointBack(m_ArmSubsystem);
 
   //Intake
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
@@ -128,21 +128,23 @@ public class RobotContainer {
   m_drivetrainSubsystem.setDefaultCommand(m_DriveWithNormalJoystick);
       
     
-
-    aButton1.toggleOnFalse(m_DriveWithNormalJoystick);
+    //Drivetrain
     aButton1.toggleOnTrue(m_DriveWithInvertedJoystick);
+    //aButton1.toggleOnFalse(m_DriveWithNormalJoystick);
+
+
     //Arm
     // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
     L31.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 1
     L32.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 2
 
-    povDown2.whileTrue(m_ArmSubsystem.setSetpoint(0.2448)); // Shoot
-    povUp2.whileTrue(m_ArmSubsystem.setSetpoint(0.4536).unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))); // Position 1: 90 degrees
+    //povDown2.whileTrue(m_ArmSubsystem.setSetpoint(0.2448)); // Shoot
+    //povUp2.whileTrue(m_ArmSubsystem.setSetpoint(0.4536).unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))); // Position 1: 90 degrees
     povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.65).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 2: 90 degrees
     povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.50).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 3: 90 degrees
 
-    xButton2.whileTrue(m_Arm_manualSetpointFront);
-    bButton2.whileTrue(m_Arm_manualSetpointBack);
+    //xButton2.whileTrue(m_Arm_manualSetpointFront);
+    //bButton2.whileTrue(m_Arm_manualSetpointBack);
 
     //Intake
     aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note
