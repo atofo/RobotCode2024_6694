@@ -12,6 +12,8 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
+import frc.robot.Commands.ManualSetpointDown;
+import frc.robot.Commands.ManualSetpointUp;
 import frc.robot.Commands.LauncherWithJoystick;
 import frc.robot.Commands.LeftClimberDown;
 import frc.robot.Commands.LeftClimberUp;
@@ -48,9 +50,9 @@ public class RobotContainer {
   private Trigger povLeft = m_driverController.povLeft();
   private Trigger povDown = m_driverController.povDown();
   private Trigger povUp = m_driverController.povUp();
-
+  
   private Trigger L3 = m_driverController.leftStick();
-
+  private Trigger R3 = m_driverController.rightStick();
   
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
@@ -65,6 +67,10 @@ public class RobotContainer {
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
   private final Intake_ThrowNote m_Intake_throwNote = new Intake_ThrowNote(m_IntakeSubsystem);
   
+
+  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
+  private final ManualSetpointDown m_ManualSetpointDown = new ManualSetpointDown(m_ArmSubsystem);
+  private final ManualSetpointUp m_ManualSetpointUp = new ManualSetpointUp(m_ArmSubsystem);
 
 
  /*  private final LeftClimber m_LeftClimberSubsystem = new LeftClimber();
@@ -90,6 +96,10 @@ private final ShooterSubsystem m_shooter = new ShooterSubsystem();
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0.13)); // Intake/Modo Correr */
     //RT.onTrue(m_Arm_manualSetpoint);
 
+    povUp.whileTrue(m_ManualSetpointUp);
+    povDown.whileTrue(m_ManualSetpointDown);
+
+
     yButton.whileTrue(m_Intake_throwNote);
     bButton.toggleOnTrue(m_Intake_getNote); //Intake get Note
     aButton.whileTrue(m_Intake_returnNote); //Intake return Note  
@@ -111,9 +121,13 @@ private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   }
 
   private void configureBindings() {
-   RB.onTrue(m_spinUpShooter); //Empezar a girar lanzador
-    LB.onTrue(m_stopShooter); //Parar lanzador
-
+  RB.onTrue(m_spinUpShooter); //Empezar a girar lanzador
+  LB.onTrue(m_stopShooter); //Parar lanzador
+  povLeft.whileTrue(m_ArmSubsystem.setSetpoint(-45));
+  povRight.whileTrue(m_ArmSubsystem.setSetpoint(-40));
+  R3.whileTrue(m_ArmSubsystem.setSetpoint(-35));
+  L3.whileTrue(m_ArmSubsystem.setSetpoint(-30));
+  
 
     Command shoot =
       Commands.either(

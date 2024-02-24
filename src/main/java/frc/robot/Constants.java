@@ -15,9 +15,9 @@ public class Constants {
 
     public class PIDConstants {
 
-        public static final double kP = 4;
+        public static final double kP = 0.02;
         public static final double kI = 0;
-        public static final double kD = 0.05;
+        public static final double kD = 0.005;
 
     }
 
@@ -49,12 +49,12 @@ public class Constants {
             1.0 / (double) kEncoderCPR;
     
         public static final double kShooterFreeRPS = 96; //El maximo de RPS que puede dar
-        public static final double kShooterTargetRPS = 90; //Al que queremos llegar
-        public static final double kShooterToleranceRPS = 2; //Tolerancia de error 
+        public static final double kShooterTargetRPS = 85; //Al que queremos llegar
+        public static final double kShooterToleranceRPS = 0; //Tolerancia de error 
     
         // Ojo, valores experimentales de kP, kI y kD, hay que experimentar.
-        public static final double kP = 0.004;
-        public static final double kI = 0.002;
+        public static final double kP = 0.08;
+        public static final double kI = 0;
         public static final double kD = 0.002;
     
         // On a real robot the feedforward constants should be empirically determined; these are
@@ -64,7 +64,7 @@ public class Constants {
             // Should have value 12V at free speed...
             12.0 / kShooterFreeRPS;
     
-            }
+            }   
 
 
 
