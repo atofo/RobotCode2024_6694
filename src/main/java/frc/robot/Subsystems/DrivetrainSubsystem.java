@@ -103,7 +103,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 } 
                 else
                 {
-                  m_drive.driveCartesian(-joystickZ.getAsDouble(), 
+                  m_drive.driveCartesian(joystickZ.getAsDouble(), 
                                          joystickY.getAsDouble(), 
                                          rightTrigger.getAsDouble());
                 }
@@ -115,12 +115,46 @@ public class DrivetrainSubsystem extends SubsystemBase {
                   Math.abs(leftTrigger.getAsDouble()) < 0.1) {
                 m_drive.driveCartesian(0, 0, 0);
               } else {
-                m_drive.driveCartesian(-joystickZ.getAsDouble(), 
+                m_drive.driveCartesian(joystickZ.getAsDouble(), 
                                        joystickY.getAsDouble(),
                                       -leftTrigger.getAsDouble());
               }
             }
     }
+
+    public void driveInverted(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
+    DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
+
+          if (rightTrigger.getAsDouble() > 0.1) {
+            if (Math.abs(joystickX.getAsDouble()) < 0.1 && 
+                Math.abs(joystickY.getAsDouble()) < 0.1 && 
+                Math.abs(joystickZ.getAsDouble()) < 0.1 && 
+                Math.abs(rightTrigger.getAsDouble()) < 0.1 && 
+                Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+
+                m_drive.driveCartesian(0, 0, 0);
+
+              } 
+              else
+              {
+                m_drive.driveCartesian(-joystickZ.getAsDouble(), 
+                                       -joystickY.getAsDouble(), 
+                                       -rightTrigger.getAsDouble());
+              }
+          } else {
+            if (Math.abs(joystickX.getAsDouble()) < 0.1 && 
+                Math.abs(joystickY.getAsDouble()) < 0.1 && 
+                Math.abs(joystickZ.getAsDouble()) < 0.1 &&
+                Math.abs(rightTrigger.getAsDouble()) < 0.1 && 
+                Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+              m_drive.driveCartesian(0, 0, 0);
+            } else {
+              m_drive.driveCartesian(-joystickZ.getAsDouble(), 
+                                     -joystickY.getAsDouble(),
+                                      leftTrigger.getAsDouble());
+            }
+          }
+  }
   
 
 

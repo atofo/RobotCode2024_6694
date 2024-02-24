@@ -16,7 +16,7 @@ public class DriveInverted extends Command {
 
   private final DrivetrainSubsystem drivetrain;
   private final DoubleSupplier joystickX;
-  private final  DoubleSupplier joystickY;
+  private final DoubleSupplier joystickY;
   private final DoubleSupplier joystickZ;
   private final DoubleSupplier rightTrigger;
   private final DoubleSupplier leftTrigger;
@@ -38,7 +38,7 @@ public class DriveInverted extends Command {
   public void initialize() {
     //Boolean Inverted = false;
     
-    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
+    drivetrain.driveInverted(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
   
     
   }
@@ -47,7 +47,7 @@ public class DriveInverted extends Command {
   @Override
   public void execute() {
    
-    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
+    drivetrain.driveInverted(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
   
     //drivetrain.drive(joystickX, joystickY, joystickZ);
   }

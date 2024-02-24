@@ -59,14 +59,14 @@ public class RobotContainer {
   
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
-      () -> m_driverController.getRawAxis(1), () -> m_driverController.getRawAxis(0),
+      () -> m_driverController.getRawAxis(1), () -> -m_driverController.getRawAxis(0),
       () -> m_driverController.getRawAxis(4), () -> m_driverController.getRawAxis(3),
       () -> m_driverController.getRawAxis(2));
 
   private final DriveInverted m_DriveInverted = new DriveInverted(m_drivetrainSubsystem,   
    () -> -m_driverController.getRawAxis(1), () -> -m_driverController.getRawAxis(0),
-   () -> -m_driverController.getRawAxis(4), () -> -m_driverController.getRawAxis(3),
-   () -> -m_driverController.getRawAxis(2));
+   () -> -m_driverController.getRawAxis(4), () -> m_driverController.getRawAxis(3),
+   () -> m_driverController.getRawAxis(2));
 
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
 
@@ -74,7 +74,7 @@ public class RobotContainer {
   private final Intake_getNote m_Intake_getNote = new Intake_getNote(m_IntakeSubsystem);
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
   private final Intake_ThrowNote m_Intake_throwNote = new Intake_ThrowNote(m_IntakeSubsystem);
-  //private final Arm_manualSetpoint m_Arm_manualSetpoint = new Arm_manualSetpoint(m_ArmSubsystem);
+  //private final Arm_manualSetpoint m_Arm_manuaslSetpoint = new Arm_manualSetpoint(m_ArmSubsystem);
 
 
   private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
@@ -96,12 +96,12 @@ public class RobotContainer {
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
 
   
-
+/* 
     povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.60)); // 90 degrees
     povRight.whileTrue(m_ArmSubsystem.setSetpoint(0.425)); // 90 degrees
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.279)); // Shoot
     L3.whileTrue(m_ArmSubsystem.setSetpoint(0.13)); // Intake/Modo Correr
-    //RT.onTrue(m_Arm_manualSetpoint);
+    //RT.onTrue(m_Arm_manualSetpoint);*/
 
     
 

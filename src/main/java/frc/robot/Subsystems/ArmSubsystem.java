@@ -36,7 +36,6 @@ public class ArmSubsystem extends SubsystemBase {
     //pid.setSetpoint(0.20);
   }
 
-
   @Override
   public void periodic() {
   super.periodic();
@@ -78,9 +77,7 @@ public class ArmSubsystem extends SubsystemBase {
         return false;
       }
     }
-
-    }
-
+  }
 
   /*
    * public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier
@@ -95,4 +92,3 @@ public class ArmSubsystem extends SubsystemBase {
    * return runOnce(() -> pid.setSetpoint(Setpoint));
    * }
    */
-   
