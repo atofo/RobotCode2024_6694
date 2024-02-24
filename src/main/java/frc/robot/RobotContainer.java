@@ -133,7 +133,6 @@ public class RobotContainer {
     
     //Arm
     // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
-    L31.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 1
     L32.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 2
 
     povDown2.whileTrue(m_ArmSubsystem.setSetpoint(0.2448)); // Shoot
