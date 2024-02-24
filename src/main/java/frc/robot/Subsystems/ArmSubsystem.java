@@ -33,7 +33,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     arm_leftMotor.follow(arm_rightMotor);
-    pid.setSetpoint(0.20);
+    //pid.setSetpoint(0.20);
   }
 
 

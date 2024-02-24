@@ -6,11 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 //import frc.robot.Commands.Arm_manualSetpoint;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Commands.DriveInverted;
 import frc.robot.Commands.DriveWithJoystick;
+
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
 import frc.robot.Commands.LauncherWithJoystick;
@@ -56,9 +59,14 @@ public class RobotContainer {
   
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
-      () -> m_driverController.getRawAxis(1), () -> -m_driverController.getRawAxis(0),
+      () -> m_driverController.getRawAxis(1), () -> m_driverController.getRawAxis(0),
       () -> m_driverController.getRawAxis(4), () -> m_driverController.getRawAxis(3),
-      () -> m_driverController.getRawAxis(2), m_driverController.rightBumper());
+      () -> m_driverController.getRawAxis(2));
+
+  private final DriveInverted m_DriveInverted = new DriveInverted(m_drivetrainSubsystem,   
+   () -> -m_driverController.getRawAxis(1), () -> -m_driverController.getRawAxis(0),
+   () -> -m_driverController.getRawAxis(4), () -> -m_driverController.getRawAxis(3),
+   () -> -m_driverController.getRawAxis(2));
 
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
 
@@ -86,7 +94,9 @@ public class RobotContainer {
   public RobotContainer() {
 
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
-   
+
+  
+
     povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.60)); // 90 degrees
     povRight.whileTrue(m_ArmSubsystem.setSetpoint(0.425)); // 90 degrees
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.279)); // Shoot
@@ -97,11 +107,12 @@ public class RobotContainer {
 
     //Arm
     // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
-    L3.whileTrue(m_ArmSubsystem.setSetpoint(0.30)); // Intake / Modo Correr
+    /*L3.whileTrue(m_ArmSubsystem.setSetpoint(0.30)); // Intake / Modo Correr
     povDown.whileTrue(m_ArmSubsystem.setSetpoint(0.425)); // Shoot
     povUp.whileTrue(m_ArmSubsystem.setSetpoint(0.60).unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))); // Position 1: 90 degrees
     povRight.whileTrue(m_ArmSubsystem.setSetpoint(0.80).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 2: 90 degrees
     povLeft.whileTrue(m_ArmSubsystem.setSetpoint(0.65).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 2: 90 degrees
+    */
 
     bButton.toggleOnTrue(m_Intake_getNote); //Intake get Note
     aButton.whileTrue(m_Intake_returnNote); //Intake return Note  
@@ -114,9 +125,11 @@ public class RobotContainer {
     xButton.whileTrue(m_RightClimberDown);
     LB.whileTrue(m_LeftClimberDown);
 
-    R3.toggleOnTrue(m_DriveWithJoystick);
+  // RB.toggleOnTrue(m_DriveInverted).onFalse(m_DriveWithJoystick);
+    RB.toggleOnTrue(m_DriveInverted);
+   //new ConditionalCommand(m_DriveInverted, m_DriveWithJoystick, RB);
 
-    
+ 
 
     /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     bButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));

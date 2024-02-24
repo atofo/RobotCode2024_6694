@@ -11,7 +11,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 
-public class DriveWithJoystick extends Command {
+public class DriveInverted extends Command {
   /** Creates a new DriveWithJoystick. */
 
   private final DrivetrainSubsystem drivetrain;
@@ -21,7 +21,7 @@ public class DriveWithJoystick extends Command {
   private final DoubleSupplier rightTrigger;
   private final DoubleSupplier leftTrigger;
 
-  public DriveWithJoystick(DrivetrainSubsystem drivetrain, DoubleSupplier joystickX, DoubleSupplier joystickY,
+  public DriveInverted(DrivetrainSubsystem drivetrain, DoubleSupplier joystickX, DoubleSupplier joystickY,
       DoubleSupplier joystickZ, DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
     this.drivetrain = drivetrain;
     this.joystickX = joystickX;
