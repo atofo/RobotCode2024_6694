@@ -77,12 +77,13 @@ public class RobotContainer {
 
   //Drivetrain
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
-      () -> m_firstDriverController.getRawAxis(0), 
-      () -> m_firstDriverController.getRawAxis(4),
-      () -> m_firstDriverController.getRawAxis(3), 
-      () -> m_firstDriverController.getRawAxis(2)
-       );
+      () -> m_firstDriverController.getRawAxis(1), 
+      () -> -m_firstDriverController.getRawAxis(0),
+      () -> m_firstDriverController.getRawAxis(4), 
+      () -> m_firstDriverController.getRawAxis(3),
+      () -> m_firstDriverController.getRawAxis(2));
 
   private final DriveInverted m_DriveInverted = new DriveInverted(m_drivetrainSubsystem,   
    () -> -m_firstDriverController.getRawAxis(1), 
