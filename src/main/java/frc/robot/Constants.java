@@ -51,7 +51,7 @@ public class Constants {
     public class ArmConstants {
         public static final int arm_leftMotor_PORT = 21;
         public static final int arm_rightMotor_PORT = 22;
-        public static final double kEncoderError = 0.605;
+        public static final double kEncoderError = 0.6275;
     }
 
     public class IntakeLauncherConstants {
