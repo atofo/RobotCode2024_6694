@@ -114,6 +114,7 @@ public class RobotContainer {
 
     m_chooser.setDefaultOption("Middle", middleRoutine());
     m_chooser.addOption("MiddlePID", middlePIDRoutine());
+    m_chooser.addOption("redAlliance_threeNotePID", redAlliance_threeNotePID());
     
     SmartDashboard.putData("Auto choices", m_chooser);
 
@@ -237,7 +238,7 @@ public class RobotContainer {
           new ParallelCommandGroup( //
         /*     m_IntakeSubsystem.autoGetNote()
             .until(() -> m_IntakeSubsystem.noteIn()), */
-            m_drivetrainSubsystem.calculatePID_drive(2, 2) //primero va el setpoint derecho y luego el setpoint izquierdo (no poner negativo para ir hacia adelante, el metodo ya lo hace)
+            m_drivetrainSubsystem.calculatePID_drive(2, 2, 0.7) //primero va el setpoint derecho y luego el setpoint izquierdo (no poner negativo para ir hacia adelante, el metodo ya lo hace)
             .until(() -> m_IntakeSubsystem.noteIn())
           )
 
@@ -245,7 +246,55 @@ public class RobotContainer {
 
     ); 
   }
+  
+  public Command redAlliance_threeNotePID(){
+    return new SequentialCommandGroup( //
+    /* 1. Avanzar dos metros con intake prendido y apagar intake cuando se detecte nota
+     * 2. Retroceder dos metros mientras ajustamos brazo y prendemos lanzador
+     * 3. Esperar 3 segundos a que cargue el lanzador y disparar (se va a reemplazar por setpoint cuando tengamos el encoder)
+     * 4, Apagar lanzador, intake y bajar brazo
+     * 5. Cuando el setpoint del brazo este abajo. Avanzar dos metros
+     * 5. Girar 90 grados a la derecha
+     * 6. Avanzar 1.48 metros con el intake prendido y apagar intake cuando se detecte nota
+     * 7. Girar 120 grados a la derecha mientras cargamos shooter
+     * 8. Acercarnos 1.5 metros mientras levantamos brazo 
+     * 9. Disparar 
+    */
 
+    // Initial Set and Shoot
+    m_ArmSubsystem.autoSetSetpoint(0.12), //
+    m_LauncherSubsystem.autoLaunchOn(), //
+    Commands.waitSeconds(3.0).asProxy(), // Aqui iria condicional de que si se llego a los RPS
+    m_IntakeSubsystem.autoIntakeShootOn(), //
+    Commands.waitSeconds(1).asProxy(), //
+    m_LauncherSubsystem.autoLaunchOff(), //
+    m_IntakeSubsystem.autoIntakeShootOff(), //
+    m_ArmSubsystem.autoSetSetpoint(0.002), //
+    Commands.waitUntil((() -> m_ArmSubsystem.autoRunMode())), //
+    
+    //Aqui meter condicional de que si llega a setpoint < 0.010 haga el siguiente comando
+    // Go to Next Note
+    new ParallelCommandGroup( //
+      m_drivetrainSubsystem.calculatePID_drive(2, 2, 0.5), //primero va el setpoint derecho y luego el setpoint izquierdo (no poner negativo para ir hacia adelante, el metodo ya lo hace)
+      m_IntakeSubsystem.autoGetNote() //
+      .until(() -> m_IntakeSubsystem.noteIn()) //
+      ), //
+      
+    new ParallelCommandGroup( //
+    m_drivetrainSubsystem.calculatePID_drive(-1.92, -1.92, 0.7), //
+    m_ArmSubsystem.autoSetSetpoint(0.12), //
+    m_LauncherSubsystem.autoLaunchOn()//
+    ),
+
+    Commands.waitSeconds(1.0).asProxy(), // Aqui iria condicional de que si se llego a los RPS
+    m_IntakeSubsystem.autoIntakeShootOn(), //
+    Commands.waitSeconds(1).asProxy(), //
+    m_LauncherSubsystem.autoLaunchOff(), //
+    m_IntakeSubsystem.autoIntakeShootOff(), //
+    m_ArmSubsystem.autoSetSetpoint(0.002) //
+
+    ); 
+  }
 
   public Command getAutonomousCommand() {
     return m_chooser.getSelected();

@@ -27,8 +27,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private CANSparkMax leftRearMotor = new CANSparkMax(DrivetrainConstants.leftRearMotor_PORT, MotorType.kBrushless);
   private CANSparkMax rightRearMotor = new CANSparkMax(DrivetrainConstants.rightRearMotor_PORT, MotorType.kBrushless);
 
-  PIDController pid_rightRear = new PIDController(DrivetrainConstants.kP, DrivetrainConstants.kI, DrivetrainConstants.kD);
-  PIDController pid_leftRear = new PIDController(DrivetrainConstants.kP, DrivetrainConstants.kI, DrivetrainConstants.kD);
+  PIDController pid_rightRear = new PIDController(DrivetrainConstants.kP, DrivetrainConstants.kI,
+      DrivetrainConstants.kD);
+  PIDController pid_leftRear = new PIDController(DrivetrainConstants.kP, DrivetrainConstants.kI,
+      DrivetrainConstants.kD);
 
   private double processVar_rightRear;
   private double processVar_leftRear;
@@ -42,23 +44,24 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // private RelativeEncoder rightFrontEncoder = rightFrontMotor.getEncoder();
   private RelativeEncoder rightRearEncoder = rightRearMotor.getEncoder();
   private RelativeEncoder leftRearEncoder = leftRearMotor.getEncoder();
-  //Este encoder leftRear da negativo
-
-
+  // Este encoder leftRear da negativo
 
   public DrivetrainSubsystem() {
-/*     leftFrontMotor.restoreFactoryDefaults();
-    rightFrontMotor.restoreFactoryDefaults();
-    leftRearMotor.restoreFactoryDefaults();
-    rightRearMotor.restoreFactoryDefaults();
- */
+    /*
+     * leftFrontMotor.restoreFactoryDefaults();
+     * rightFrontMotor.restoreFactoryDefaults();
+     * leftRearMotor.restoreFactoryDefaults();
+     * rightRearMotor.restoreFactoryDefaults();
+     */
     rightRearMotor.setInverted(true);
     leftRearMotor.setInverted(true);
 
-/*     leftFrontMotor.burnFlash();
-    rightFrontMotor.burnFlash();
-    leftRearMotor.burnFlash();
-    rightRearMotor.burnFlash(); */
+    /*
+     * leftFrontMotor.burnFlash();
+     * rightFrontMotor.burnFlash();
+     * leftRearMotor.burnFlash();
+     * rightRearMotor.burnFlash();
+     */
 
     leftRearEncoder.setPosition(0);
     rightRearEncoder.setPosition(0);
@@ -137,59 +140,67 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
-/*   public Command calculatePID_drive(double Setpoint_rightRear, double Setpoint_leftRear) {
-    return run(() -> {
-      resetEncoders();
-      boolean stop = false;
-      pid_rightRear.setSetpoint(Setpoint_rightRear);
-      pid_leftRear.setSetpoint(Setpoint_leftRear);
-      while (stop) {
-        processVar_rightRear = pid_rightRear.calculate(rightRearEncoder.getPosition());
-        processVar_leftRear = pid_leftRear.calculate(leftRearEncoder.getPosition());
+  /*
+   * public Command calculatePID_drive(double Setpoint_rightRear, double
+   * Setpoint_leftRear) {
+   * return run(() -> {
+   * resetEncoders();
+   * boolean stop = false;
+   * pid_rightRear.setSetpoint(Setpoint_rightRear);
+   * pid_leftRear.setSetpoint(Setpoint_leftRear);
+   * while (stop) {
+   * processVar_rightRear =
+   * pid_rightRear.calculate(rightRearEncoder.getPosition());
+   * processVar_leftRear = pid_leftRear.calculate(leftRearEncoder.getPosition());
+   * 
+   * rightRearMotor.set(processVar_rightRear * 0.7);
+   * rightFrontMotor.set(processVar_rightRear * 0.7);
+   * leftRearMotor.set(processVar_leftRear * 0.7);
+   * leftFrontMotor.set(processVar_leftRear * 0.7);
+   * 
+   * if ((rightRearEncoder.getPosition() > Setpoint_rightRear - 2)
+   * && (rightRearEncoder.getPosition() < Setpoint_rightRear + 2)
+   * && (leftRearEncoder.getPosition() > Setpoint_leftRear - 2)
+   * && (leftRearEncoder.getPosition() < Setpoint_leftRear + 2)) {
+   * stop = true;
+   * }
+   * }
+   * resetEncoders();
+   * stopCommand = true;
+   * }).until(() -> ((rightRearEncoder.getPosition() > Setpoint_rightRear - 2)
+   * && (rightRearEncoder.getPosition() < Setpoint_rightRear + 2)
+   * && (leftRearEncoder.getPosition() > Setpoint_leftRear - 2)
+   * && (leftRearEncoder.getPosition() < Setpoint_leftRear + 2)));
+   * }
+   */
 
-        rightRearMotor.set(processVar_rightRear * 0.7);
-        rightFrontMotor.set(processVar_rightRear * 0.7);
-        leftRearMotor.set(processVar_leftRear * 0.7);
-        leftFrontMotor.set(processVar_leftRear * 0.7);
-
-        if ((rightRearEncoder.getPosition() > Setpoint_rightRear - 2)
-            && (rightRearEncoder.getPosition() < Setpoint_rightRear + 2)
-            && (leftRearEncoder.getPosition() > Setpoint_leftRear - 2)
-            && (leftRearEncoder.getPosition() < Setpoint_leftRear + 2)) {
-          stop = true;
-        }
-      }
-      resetEncoders();
-      stopCommand = true;
-    }).until(() -> ((rightRearEncoder.getPosition() > Setpoint_rightRear - 2)
-            && (rightRearEncoder.getPosition() < Setpoint_rightRear + 2)
-            && (leftRearEncoder.getPosition() > Setpoint_leftRear - 2)
-            && (leftRearEncoder.getPosition() < Setpoint_leftRear + 2)));
-  } */
-
-  public Command calculatePID_drive(double Setpoint_rightRear, double Setpoint_leftRear) {
+  public Command calculatePID_drive(double Setpoint_rightRear, double Setpoint_leftRear, double speed) {
     return runOnce(() -> {
-      
+
       resetEncoders();
       pid_rightRear.setSetpoint(Setpoint_rightRear);
-      pid_leftRear.setSetpoint(-Setpoint_leftRear);}) //Este encoder leftRear da negativo el setpoint debe ser negativo
-      .andThen(run(()-> {
-      processVar_rightRear = pid_rightRear.calculate(rightRearEncoder.getPosition());
-      processVar_leftRear = pid_leftRear.calculate(leftRearEncoder.getPosition());
+      pid_leftRear.setSetpoint(-Setpoint_leftRear);
+    }) // Este encoder leftRear da negativo el setpoint debe ser negativo
+        .andThen(run(() -> {
+          processVar_rightRear = pid_rightRear.calculate(rightRearEncoder.getPosition());
+          processVar_leftRear = pid_leftRear.calculate(leftRearEncoder.getPosition());
 
-      rightRearMotor.set(processVar_rightRear * 0.5); //este esta invertido
-      rightFrontMotor.set(processVar_rightRear * -0.5); // cuando le meto este se invierte wtf
+          rightRearMotor.set(processVar_rightRear * speed); // este esta invertido
+          rightFrontMotor.set(processVar_rightRear * -speed); // cuando le meto este se invierte wtf
 
-      leftRearMotor.set(processVar_leftRear * 0.5); //este esta invertido
-      leftFrontMotor.set(processVar_leftRear * -0.5);
-      }))
-      .until(()-> ((rightRearEncoder.getPosition() == Setpoint_rightRear*0.99)
-            && (leftRearEncoder.getPosition() == -Setpoint_rightRear*0.99)
-            ));
-  
+          leftRearMotor.set(processVar_leftRear * speed); // este esta invertido
+          leftFrontMotor.set(processVar_leftRear * -speed);
+        }))
+        .until(() -> ((Math.abs(rightRearEncoder.getPosition()) >= Math.abs(Setpoint_rightRear * 0.95))
+            && (Math.abs(leftRearEncoder.getPosition()) >= Math.abs(-Setpoint_leftRear * 0.95))))
+        .finallyDo(() -> {
+          rightRearMotor.set(0);
+          rightFrontMotor.set(0);
+          leftRearMotor.set(0); 
+          leftFrontMotor.set(0);
+        });
+
   }
-
-  
 
   @Override
   public void periodic() {

@@ -5,6 +5,9 @@
 package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -71,7 +74,16 @@ public class ArmSubsystem extends SubsystemBase {
     }
    
     public Boolean isUp(){
-      if(arm_Encoder.getAbsolutePosition() > 0.45 && arm_Encoder.getAbsolutePosition() < 0.62){
+      if(arm_Encoder.getAbsolutePosition() > 0.05 && arm_Encoder.getAbsolutePosition() < 0.62){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+
+    public Boolean autoRunMode(){
+      if((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < 0.02){
         return true;
       }
       else{
