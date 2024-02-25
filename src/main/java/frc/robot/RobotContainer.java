@@ -4,8 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.Arm_manualSetpointFront;
@@ -29,6 +32,9 @@ import frc.robot.Subsystems.LeftClimber;
 import frc.robot.Subsystems.RightClimber;
 
 public class RobotContainer {
+  //Sendabel Chooser
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
+
 
   //Controllers
   private final CommandXboxController m_firstDriverController = new CommandXboxController(OperatorConstants.firstcontrollerPort);
@@ -67,9 +73,7 @@ public class RobotContainer {
   private Trigger L32 = m_secondDriverController.leftStick();
 
 
-
   //Drivetrain
-
   private boolean buttonToggle = false;
 
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
@@ -80,17 +84,10 @@ public class RobotContainer {
       () -> m_firstDriverController.getRawAxis(2),
        buttonToggle);
 
-  
-
-
-
-
-
-
   //Arm
- /*  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
+  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private final Arm_manualSetpointFront m_Arm_manualSetpointFront = new Arm_manualSetpointFront(m_ArmSubsystem);
-  private final Arm_manualSetpointBack m_Arm_manualSetpointBack = new Arm_manualSetpointBack(m_ArmSubsystem); */
+  private final Arm_manualSetpointBack m_Arm_manualSetpointBack = new Arm_manualSetpointBack(m_ArmSubsystem);
 
   //Intake
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
@@ -114,27 +111,17 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    //Drivetrain
+    m_chooser.addOption("Left", middleRoutine());
+    m_chooser.setDefaultOption("Middle", middleRoutine());
+    m_chooser.addOption("Right", middleRoutine());
+    SmartDashboard.putData("Auto choices", m_chooser);
 
-    //INVERTIDO QUEDA PENDIENTE CHAVALES
-    if(aButton1.getAsBoolean() == true){
-    buttonToggle = !buttonToggle;
-    Commands.print("No autonomous command configured");
-    System.out.println("Se cambio el toggle");
-  }
-  else{
+    m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
     
-  }
-  
-  m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
-      
-    
-
-
     
     //Arm
     // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
-    /* L32.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 2
+    L32.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 2
 
     povDown2.whileTrue(m_ArmSubsystem.setSetpoint(0.2448)); // Shoot
     povUp2.whileTrue(m_ArmSubsystem.setSetpoint(0.4536).unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))); // Position 1: 90 degrees
@@ -142,7 +129,7 @@ public class RobotContainer {
     povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.50).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 3: 90 degrees
 
     xButton2.whileTrue(m_Arm_manualSetpointFront);
-    bButton2.whileTrue(m_Arm_manualSetpointBack); */
+    bButton2.whileTrue(m_Arm_manualSetpointBack); 
 
     //Intake
     aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note
@@ -171,10 +158,26 @@ public class RobotContainer {
   private void configureBindings() {
   }
 
+  public Command middleRoutine(){
+    return new SequentialCommandGroup( //
+        m_ArmSubsystem.setSetpoint(0.2448), //
+        Commands.waitSeconds(3.0).asProxy(), //
+        m_LauncherWithJoystick, //
+
+
+
+        m_drivetrainSubsystem.driveDistanceCommand(20, AutoConstants.kDriveSpeed)
+        .withTimeout(AutoConstants.kTimeoutSeconds) //
+
+      
+
+
+
+    );
+  }
+
+
   public Command getAutonomousCommand() {
-    /* return Commands.print("No autonomous command configured"); */
-    return m_drivetrainSubsystem
-        .driveDistanceCommand(AutoConstants.kDriveDistanceMeters, AutoConstants.kDriveSpeed)
-        .withTimeout(AutoConstants.kTimeoutSeconds);
+    return m_chooser.getSelected();
   }
 }
