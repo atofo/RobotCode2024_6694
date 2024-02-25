@@ -30,10 +30,11 @@ public LauncherSubsystem() {
     m_upMotor.restoreFactoryDefaults();
     m_downMotor.restoreFactoryDefaults();
     
+    m_upMotor.setInverted(true);
+    
     m_upMotor.burnFlash();
     m_downMotor.burnFlash();
 
-    m_upMotor.setInverted(true);
   }
 
   public void throwNote(){

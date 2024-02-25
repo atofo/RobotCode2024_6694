@@ -40,7 +40,7 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     super.periodic();
-    processVar = pid.calculate(arm_Encoder.getAbsolutePosition());
+    processVar = pid.calculate(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError);
     arm_rightMotor.set(-processVar * 0.8);  
     arm_leftMotor.set(-processVar * 0.8);
 

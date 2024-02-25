@@ -12,14 +12,18 @@ public class Constants {
     public class AutoConstants{
     public static final double kTimeoutSeconds = 10; //El tiempo que va estar haciendo eso
     public static final double kDriveDistanceMeters = 20;
-    public static final double kDriveSpeed = 0.35;
+    public static final double kDriveSpeed = 0.30;
     }
 
     public class DrivetrainConstants {
-        public static final int leftFrontMotor_PORT = 14;
+        public static final int leftFrontMotor_PORT = 13;
         public static final int rightFrontMotor_PORT = 12;
-        public static final int leftRearMotor_PORT = 13;
+        public static final int leftRearMotor_PORT = 14;
         public static final int rightRearMotor_PORT = 11;
+
+        public static final double kP = 0.53;
+        public static final double kI = 0.00005;
+        public static final double kD = 0.01;
 
 
         public static final double kGearRatio = 12.76;
@@ -47,6 +51,7 @@ public class Constants {
     public class ArmConstants {
         public static final int arm_leftMotor_PORT = 21;
         public static final int arm_rightMotor_PORT = 22;
+        public static final double kEncoderError = 0.605;
     }
 
     public class IntakeLauncherConstants {

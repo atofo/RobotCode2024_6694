@@ -112,9 +112,9 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    m_chooser.addOption("Left", middleRoutine());
     m_chooser.setDefaultOption("Middle", middleRoutine());
-    m_chooser.addOption("Right", middleRoutine());
+    m_chooser.addOption("MiddlePID", middlePIDRoutine());
+    
     SmartDashboard.putData("Auto choices", m_chooser);
 
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
@@ -131,7 +131,7 @@ public class RobotContainer {
 
 /*     xButton2.whileTrue(m_Arm_manualSetpointFront);
     bButton2.whileTrue(m_Arm_manualSetpointBack);  */
-
+ 
     //Intake
     aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note
     yButton2.onTrue(m_Intake_returnNote); //Intake return Note
@@ -162,31 +162,31 @@ public class RobotContainer {
   public Command middleRoutine(){
     return new SequentialCommandGroup( //
     // Initial Set and Shoot
-    m_ArmSubsystem.autoSetSetpoint(0.12), //
+ /*    m_ArmSubsystem.autoSetSetpoint(0.12), //
     m_LauncherSubsystem.autoLaunchOn(), //
-    Commands.waitSeconds(3.0).asProxy(), // Aqui iria condicional de que si se llego a los RPS
+    Commands.waitSeconds(4.0).asProxy(), // Aqui iria condicional de que si se llego a los RPS
     m_IntakeSubsystem.autoIntakeShootOn(), //
     Commands.waitSeconds(1.0).asProxy(), //
-    m_LauncherSubsystem.autoLaunchOff(), //
+    m_LauncherSubsystem.autoLaunchOff(), //s
     m_IntakeSubsystem.autoIntakeShootOff(), //
     m_ArmSubsystem.autoSetSetpoint(0.005), //
-    Commands.waitSeconds(2.0).asProxy(), // 
+    Commands.waitSeconds(2.0).asProxy(), //  */
     
     //Aqui meter condicional de que si llega a setpoint < 0.010 haga el siguiente comando
     // Go to Next Note
           new ParallelCommandGroup( //
             m_IntakeSubsystem.autoGetNote().until(() -> m_IntakeSubsystem.noteIn()), //
-            m_drivetrainSubsystem.driveDistanceCommand(20, AutoConstants.kDriveSpeed)
+            m_drivetrainSubsystem.driveDistanceCommand(18, AutoConstants.kDriveSpeed)
             .withTimeout(AutoConstants.kTimeoutSeconds) //
             .until(() -> m_IntakeSubsystem.noteIn()) //
-          ), //
+          )); //
 
-    m_ArmSubsystem.autoSetSetpoint(0.1524), //
+ /*    m_ArmSubsystem.autoSetSetpoint(0.166), //
     Commands.waitSeconds(1.0).asProxy(), //
     m_LauncherSubsystem.autoLaunchOn(), //
-    Commands.waitSeconds(3.0).asProxy(), //
+    Commands.waitSeconds(5.0).asProxy(), //
     m_IntakeSubsystem.autoIntakeShootOn(), //
-    Commands.waitSeconds(1.0).asProxy(), //
+    Commands.waitSeconds(2.0).asProxy(), //
     m_LauncherSubsystem.autoLaunchOff(), //
     m_IntakeSubsystem.autoIntakeShootOff(), //
     m_ArmSubsystem.autoSetSetpoint(0.005) //   aqui falta una coma
@@ -216,8 +216,36 @@ public class RobotContainer {
 
 
 
-    ); //
+    //); // */
   }
+
+  public Command middlePIDRoutine(){
+    return new SequentialCommandGroup( //
+    // Initial Set and Shoot
+    /* m_ArmSubsystem.autoSetSetpoint(0.12), //
+    m_LauncherSubsystem.autoLaunchOn(), //
+    Commands.waitSeconds(3.0).asProxy(), // Aqui iria condicional de que si se llego a los RPS
+    m_IntakeSubsystem.autoIntakeShootOn(), //
+    Commands.waitSeconds(1.0).asProxy(), //
+    m_LauncherSubsystem.autoLaunchOff(), //
+    m_IntakeSubsystem.autoIntakeShootOff(), //
+    m_ArmSubsystem.autoSetSetpoint(0.005), //
+    Commands.waitSeconds(2.0).asProxy(), //  */
+    
+    //Aqui meter condicional de que si llega a setpoint < 0.010 haga el siguiente comando
+    // Go to Next Note
+          new ParallelCommandGroup( //
+        /*     m_IntakeSubsystem.autoGetNote()
+            .until(() -> m_IntakeSubsystem.noteIn()), */
+            m_drivetrainSubsystem.calculatePID_drive(2, 2) //primero va el setpoint derecho y luego el setpoint izquierdo (no poner negativo para ir hacia adelante, el metodo ya lo hace)
+            .until(() -> m_IntakeSubsystem.noteIn())
+          )
+
+  
+
+    ); 
+  }
+
 
   public Command getAutonomousCommand() {
     return m_chooser.getSelected();
