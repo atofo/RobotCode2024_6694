@@ -5,22 +5,23 @@
 package frc.robot.Commands;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.BooleanSupplier;
 
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 
-public class DriveWithJoystick extends Command {
+public class DriveInverted extends Command {
   /** Creates a new DriveWithJoystick. */
 
   private final DrivetrainSubsystem drivetrain;
   private final DoubleSupplier joystickX;
-  private final  DoubleSupplier joystickY;
+  private final DoubleSupplier joystickY;
   private final DoubleSupplier joystickZ;
   private final DoubleSupplier rightTrigger;
   private final DoubleSupplier leftTrigger;
 
-  public DriveWithJoystick(DrivetrainSubsystem drivetrain, DoubleSupplier joystickX, DoubleSupplier joystickY,
+  public DriveInverted(DrivetrainSubsystem drivetrain, DoubleSupplier joystickX, DoubleSupplier joystickY,
       DoubleSupplier joystickZ, DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
     this.drivetrain = drivetrain;
     this.joystickX = joystickX;
@@ -37,7 +38,7 @@ public class DriveWithJoystick extends Command {
   public void initialize() {
     //Boolean Inverted = false;
     
-    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
+    drivetrain.driveInverted(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
   
     
   }
@@ -46,7 +47,7 @@ public class DriveWithJoystick extends Command {
   @Override
   public void execute() {
    
-    drivetrain.drive(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
+    drivetrain.driveInverted(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
   
     //drivetrain.drive(joystickX, joystickY, joystickZ);
   }
