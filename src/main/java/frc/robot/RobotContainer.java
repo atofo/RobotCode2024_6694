@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.Arm_manualSetpointBack; */
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Commands.DriveInverted;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
@@ -75,15 +76,21 @@ public class RobotContainer {
 
 
   //Drivetrain
-  private boolean buttonToggle = false;
-
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
-      () -> m_firstDriverController.getRawAxis(0), 
-      () -> m_firstDriverController.getRawAxis(4),
-      () -> m_firstDriverController.getRawAxis(3), 
-      () -> m_firstDriverController.getRawAxis(2),
-       buttonToggle);
+      () -> m_firstDriverController.getRawAxis(1), 
+      () -> -m_firstDriverController.getRawAxis(0),
+      () -> m_firstDriverController.getRawAxis(4), 
+      () -> m_firstDriverController.getRawAxis(3),
+      () -> m_firstDriverController.getRawAxis(2));
+
+  private final DriveInverted m_DriveInverted = new DriveInverted(m_drivetrainSubsystem,   
+   () -> -m_firstDriverController.getRawAxis(1), 
+   () -> -m_firstDriverController.getRawAxis(0),
+   () -> -m_firstDriverController.getRawAxis(4), 
+   () -> m_firstDriverController.getRawAxis(3),
+   () -> m_firstDriverController.getRawAxis(2));
 
   //Arm
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
