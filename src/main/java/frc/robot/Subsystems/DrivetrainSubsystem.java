@@ -75,6 +75,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     rightRearEncoder.setPosition(0);
   }
 
+  public void resetGyro(){
+    Gyroscope.reset();
+  }
+
   public double getRightEncoderPosition(){
     return -rightRearEncoder.getPosition();
   }
@@ -90,14 +94,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public double getLeftEncoderVelocity(){
     return -leftRearEncoder.getVelocity();
   }
-
-  public void tankDriveVolts(double leftVolts, double rightVolts){
-    leftFrontMotor.setVoltage(leftVolts);
-    rightFrontMotor.setVoltage(rightVolts);
-    leftRearMotor.setVoltage(leftVolts);
-    rightRearMotor.setVoltage(rightVolts);
-    m_drive.feed();
-  } 
 
   public double getAvarageEncoderDistance(){
     return ((getLeftEncoderPosition()+getRightEncoderPosition()) / 2);
@@ -183,6 +179,28 @@ public class DrivetrainSubsystem extends SubsystemBase {
     
       }
         
+    public Command autoTurnLeft(double angle) {
+    return runOnce(
+        // Reset gyroscope at the start of the command
+            () -> resetGyro())
+        // Turns Left at specified speed
+        .andThen(run(() -> {
+          if (Gyroscope.getAngle(IMUAxis.kYaw) < angle - 4) {
+            m_drive.driveCartesian(0, 0, -(0.25 + (Gyroscope.getAngle(IMUAxis. kYaw) * 0.005)));
+            } else if (Gyroscope.getAngle(IMUAxis.kYaw) > angle + 4) {         
+            m_drive.driveCartesian(0, 0, 0.25 + (Gyroscope.getAngle (IMUAxis.kYaw) * 0.005));
+            } else {
+            m_drive.stopMotor();
+            }
+          }))
+        // End command when we've traveled the specified distance
+        .until( 
+          () -> 
+              (Gyroscope.getAngle(IMUAxis.kYaw) < (angle + 4) && Gyroscope.getAngle(IMUAxis.kYaw) > (angle - 4)))  
+        // Stop the drive when the command ends
+        .finallyDo(interrupted -> m_drive.stopMotor());
+      }  
+
 
   @Override
   public void periodic() {

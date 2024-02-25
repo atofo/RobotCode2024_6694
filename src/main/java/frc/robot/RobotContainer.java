@@ -8,11 +8,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Commands.Arm_manualSetpointFront;
-import frc.robot.Commands.Arm_manualSetpointBack;
+/* import frc.robot.Commands.Arm_manualSetpointFront;
+import frc.robot.Commands.Arm_manualSetpointBack; */
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Commands.DriveWithJoystick;
@@ -86,9 +87,9 @@ public class RobotContainer {
 
   //Arm
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
-  private final Arm_manualSetpointFront m_Arm_manualSetpointFront = new Arm_manualSetpointFront(m_ArmSubsystem);
+/*   private final Arm_manualSetpointFront m_Arm_manualSetpointFront = new Arm_manualSetpointFront(m_ArmSubsystem);
   private final Arm_manualSetpointBack m_Arm_manualSetpointBack = new Arm_manualSetpointBack(m_ArmSubsystem);
-
+ */
   //Intake
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final Intake_getNote m_Intake_getNote = new Intake_getNote(m_IntakeSubsystem);
@@ -128,8 +129,8 @@ public class RobotContainer {
     povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.65).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 2: 90 degrees
     povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.50).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 3: 90 degrees
 
-    xButton2.whileTrue(m_Arm_manualSetpointFront);
-    bButton2.whileTrue(m_Arm_manualSetpointBack); 
+/*     xButton2.whileTrue(m_Arm_manualSetpointFront);
+    bButton2.whileTrue(m_Arm_manualSetpointBack);  */
 
     //Intake
     aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note
@@ -160,22 +161,63 @@ public class RobotContainer {
 
   public Command middleRoutine(){
     return new SequentialCommandGroup( //
-        m_ArmSubsystem.setSetpoint(0.2448), //
-        Commands.waitSeconds(3.0).asProxy(), //
-        m_LauncherWithJoystick, //
+    // Initial Set and Shoot
+    m_ArmSubsystem.autoSetSetpoint(0.12), //
+    m_LauncherSubsystem.autoLaunchOn(), //
+    Commands.waitSeconds(3.0).asProxy(), // Aqui iria condicional de que si se llego a los RPS
+    m_IntakeSubsystem.autoIntakeShootOn(), //
+    Commands.waitSeconds(1.0).asProxy(), //
+    m_LauncherSubsystem.autoLaunchOff(), //
+    m_IntakeSubsystem.autoIntakeShootOff(), //
+    m_ArmSubsystem.autoSetSetpoint(0.005), //
+    Commands.waitSeconds(2.0).asProxy(), // 
+    
+    //Aqui meter condicional de que si llega a setpoint < 0.010 haga el siguiente comando
+    // Go to Next Note
+          new ParallelCommandGroup( //
+            m_IntakeSubsystem.autoGetNote().until(() -> m_IntakeSubsystem.noteIn()), //
+            m_drivetrainSubsystem.driveDistanceCommand(20, AutoConstants.kDriveSpeed)
+            .withTimeout(AutoConstants.kTimeoutSeconds) //
+            .until(() -> m_IntakeSubsystem.noteIn()) //
+          ), //
+
+    m_ArmSubsystem.autoSetSetpoint(0.1524), //
+    Commands.waitSeconds(1.0).asProxy(), //
+    m_LauncherSubsystem.autoLaunchOn(), //
+    Commands.waitSeconds(3.0).asProxy(), //
+    m_IntakeSubsystem.autoIntakeShootOn(), //
+    Commands.waitSeconds(1.0).asProxy(), //
+    m_LauncherSubsystem.autoLaunchOff(), //
+    m_IntakeSubsystem.autoIntakeShootOff(), //
+    m_ArmSubsystem.autoSetSetpoint(0.005) //   aqui falta una coma
+    
 
 
 
-        m_drivetrainSubsystem.driveDistanceCommand(20, AutoConstants.kDriveSpeed)
-        .withTimeout(AutoConstants.kTimeoutSeconds) //
+    /* m_drivetrainSubsystem.autoTurnLeft(90), //
+    
+    // Go to 3rd Note
+    new ParallelCommandGroup( //
+    m_IntakeSubsystem.autoGetNote().until(() -> m_IntakeSubsystem.noteIn()), //
+    m_drivetrainSubsystem.driveDistanceCommand(20, AutoConstants.kDriveSpeed)
+    .withTimeout(AutoConstants.kTimeoutSeconds).until(() -> m_IntakeSubsystem.noteIn()) //
+    ), //
 
-      
+    m_drivetrainSubsystem.autoTurnLeft(45), //
+    m_ArmSubsystem.autoSetSetpoint(0.1524), //
+    Commands.waitSeconds(1.0).asProxy(), //
+    m_LauncherSubsystem.autoLaunchOn(), //
+    Commands.waitSeconds(3.0).asProxy(), //
+    m_IntakeSubsystem.autoIntakeShootOn(), //
+    Commands.waitSeconds(1.0).asProxy(), //
+    m_LauncherSubsystem.autoLaunchOff(), //
+    m_IntakeSubsystem.autoIntakeShootOff(), //
+    m_ArmSubsystem.autoSetSetpoint(0.005) //  */  
 
 
 
-    );
+    ); //
   }
-
 
   public Command getAutonomousCommand() {
     return m_chooser.getSelected();

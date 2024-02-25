@@ -29,7 +29,7 @@ public class ArmSubsystem extends SubsystemBase {
   PIDController pid = new PIDController(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
 
   private double processVar;
-  private double Setpoint;
+  private double Setpoint;  
 
   public ArmSubsystem() {
     arm_leftMotor.follow(arm_rightMotor);
@@ -52,7 +52,10 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public Command setSetpoint(double Setpoint) {
-    // this.Setpoint = Setpoint;
+    return runOnce(() -> pid.setSetpoint(Setpoint));
+  }
+
+  public Command autoSetSetpoint(double Setpoint) {
     return runOnce(() -> pid.setSetpoint(Setpoint));
   }
 
