@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 /* import frc.robot.Commands.Arm_manualSetpointFront;
 import frc.robot.Commands.Arm_manualSetpointBack; */
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Commands.DriveInverted;
 import frc.robot.Commands.DriveWithJoystick;
@@ -79,18 +80,18 @@ public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
-      () -> m_firstDriverController.getRawAxis(1), 
-      () -> -m_firstDriverController.getRawAxis(0),
+      () -> -m_firstDriverController.getRawAxis(0), 
+      () -> m_firstDriverController.getRawAxis(1),
       () -> m_firstDriverController.getRawAxis(4), 
       () -> m_firstDriverController.getRawAxis(3),
       () -> m_firstDriverController.getRawAxis(2));
 
   private final DriveInverted m_DriveInverted = new DriveInverted(m_drivetrainSubsystem,   
-   () -> -m_firstDriverController.getRawAxis(1), 
-   () -> -m_firstDriverController.getRawAxis(0),
+   () -> m_firstDriverController.getRawAxis(0), 
+   () -> -m_firstDriverController.getRawAxis(1),
    () -> -m_firstDriverController.getRawAxis(4), 
-   () -> m_firstDriverController.getRawAxis(3),
-   () -> m_firstDriverController.getRawAxis(2));
+   () -> -m_firstDriverController.getRawAxis(3),
+   () -> -m_firstDriverController.getRawAxis(2));
 
   //Arm
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
@@ -126,16 +127,18 @@ public class RobotContainer {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
+
+
     
     
     //Arm
     // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
     L32.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 2
 
-    povDown2.whileTrue(m_ArmSubsystem.setSetpoint(0.2448)); // Shoot
-    povUp2.whileTrue(m_ArmSubsystem.setSetpoint(0.4536).unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))); // Position 1: 90 degrees
-    povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.65).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 2: 90 degrees
-    povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.50).unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))); // Position 3: 90 degrees
+    povDown2.whileTrue(m_ArmSubsystem.setSetpoint(0.268)); // Shoot
+    povUp2.whileTrue(m_ArmSubsystem.setSetpoint(0.322));/* .unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))) */ // Position 1: 90 degrees
+    povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.65));/* .unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))) */ // Position 2: 90 degrees
+    povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.50));/* .unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))) */ // Position 3: 90 degrees
 
 /*     xButton2.whileTrue(m_Arm_manualSetpointFront);
     bButton2.whileTrue(m_Arm_manualSetpointBack);  */
@@ -151,9 +154,14 @@ public class RobotContainer {
     //Climbers
    /*  start1.whileTrue((m_RightClimberUp).unless(() -> m_ArmSubsystem.isUp()));
     back1.whileTrue((m_LeftClimberUp).unless(() -> m_ArmSubsystem.isUp())); */
-    LB1.whileTrue(m_LeftClimberDown);
-    RB1.whileTrue(m_RightClimberDown);
+    LB1.whileTrue(m_LeftClimberUp);
+    RB1.whileTrue(m_RightClimberUp);
+    back1.whileTrue(m_LeftClimberDown);
+    start1.whileTrue(m_RightClimberDown);
 
+    //aButton1.toggleOnTrue(m_DriveInverted);
+
+    aButton1.onTrue(m_drivetrainSubsystem.driveTest());
 
     //SysID Triggers
     /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));

@@ -47,21 +47,21 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // Este encoder leftRear da negativo
 
   public DrivetrainSubsystem() {
-    /*
-     * leftFrontMotor.restoreFactoryDefaults();
-     * rightFrontMotor.restoreFactoryDefaults();
-     * leftRearMotor.restoreFactoryDefaults();
-     * rightRearMotor.restoreFactoryDefaults();
-     */
+    
+      leftFrontMotor.restoreFactoryDefaults();
+      rightFrontMotor.restoreFactoryDefaults();
+      leftRearMotor.restoreFactoryDefaults();
+      rightRearMotor.restoreFactoryDefaults();
+
     rightRearMotor.setInverted(true);
     leftRearMotor.setInverted(true);
 
-    /*
-     * leftFrontMotor.burnFlash();
-     * rightFrontMotor.burnFlash();
-     * leftRearMotor.burnFlash();
-     * rightRearMotor.burnFlash();
-     */
+    
+    leftFrontMotor.burnFlash();
+    rightFrontMotor.burnFlash();
+    leftRearMotor.burnFlash();
+    rightRearMotor.burnFlash();
+    
 
     leftRearEncoder.setPosition(0);
     rightRearEncoder.setPosition(0);
@@ -122,6 +122,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     });
 
   }
+
+   
 
   public Command calculatePID_leftRear(double Setpoint) {
     return run(() -> {
@@ -210,6 +212,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Gyroscope", Gyroscope.getAngle(IMUAxis.kYaw));
   }
 
+  public Command driveTest(){
+    return run(() ->{
+      m_drive.driveCartesian(0, 0.3, 0);
+    });
+  }
+
   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
   DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
 
@@ -225,9 +233,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
             } 
             else
             {
-              m_drive.driveCartesian(joystickZ.getAsDouble(), 
-                                     joystickY.getAsDouble(), 
-                                     rightTrigger.getAsDouble());
+              m_drive.driveCartesian(joystickX.getAsDouble(), 
+                                     rightTrigger.getAsDouble(), 
+                                     joystickZ.getAsDouble());
             }
         } else {
           if (Math.abs(joystickX.getAsDouble()) < 0.1 && 
@@ -237,9 +245,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
               Math.abs(leftTrigger.getAsDouble()) < 0.1) {
             m_drive.driveCartesian(0, 0, 0);
           } else {
-            m_drive.driveCartesian(joystickZ.getAsDouble(), 
-                                   joystickY.getAsDouble(),
-                                  -leftTrigger.getAsDouble());
+            m_drive.driveCartesian(joystickX.getAsDouble(), 
+                                   -leftTrigger.getAsDouble(),
+                                   joystickZ.getAsDouble());
           }
         }
 }
@@ -259,9 +267,9 @@ DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
           } 
           else
           {
-            m_drive.driveCartesian(-joystickZ.getAsDouble(), 
-                                   -joystickY.getAsDouble(), 
-                                   -rightTrigger.getAsDouble());
+            m_drive.driveCartesian(joystickY.getAsDouble(), 
+                                   rightTrigger.getAsDouble(), 
+                                   joystickZ.getAsDouble());
           }
       } else {
         if (Math.abs(joystickX.getAsDouble()) < 0.1 && 
@@ -271,12 +279,13 @@ DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
             Math.abs(leftTrigger.getAsDouble()) < 0.1) {
           m_drive.driveCartesian(0, 0, 0);
         } else {
-          m_drive.driveCartesian(-joystickZ.getAsDouble(), 
-                                 -joystickY.getAsDouble(),
-                                  leftTrigger.getAsDouble());
+          m_drive.driveCartesian(joystickY.getAsDouble(), 
+                                 -leftTrigger.getAsDouble(),
+                                 joystickZ.getAsDouble());
         }
       }
 }
+
 
 
   /*
