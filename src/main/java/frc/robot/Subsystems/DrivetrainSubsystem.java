@@ -306,4 +306,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
         .finallyDo(interrupted -> m_drive.stopMotor());
   }
 
+  public Command autoTurnToAngle(double angle){
+    return runOnce(
+    () -> Gyroscope.reset())
+      .andThen(run(
+      () -> {
+        double error = angle - Gyroscope.getAngle(IMUAxis.kYaw);
+        m_drive.driveCartesian(error*DrivetrainConstants.kgyrokP, 0, 0);
+      }))
+      .until(
+        () -> (Math.abs(angle - Gyroscope.getAngle(IMUAxis.kYaw)) < 2));
+  }
+
 }

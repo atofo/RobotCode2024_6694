@@ -291,7 +291,13 @@ public class RobotContainer {
     Commands.waitSeconds(1).asProxy(), //
     m_LauncherSubsystem.autoLaunchOff(), //
     m_IntakeSubsystem.autoIntakeShootOff(), //
-    m_ArmSubsystem.autoSetSetpoint(0.002) //
+    m_ArmSubsystem.autoSetSetpoint(0.002), //
+
+    m_drivetrainSubsystem.calculatePID_drive(1.8, 1.8, 0.6), //primero va el setpoint derecho y luego el setpoint izquierdo (no poner negativo para ir hacia adelante, el metodo ya lo hace)
+
+    m_drivetrainSubsystem.autoTurnToAngle(90), //
+    Commands.waitSeconds(2).asProxy(), //
+    m_drivetrainSubsystem.autoTurnLeft(90)
 
     ); 
   }

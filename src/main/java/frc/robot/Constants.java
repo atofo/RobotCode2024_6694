@@ -36,6 +36,7 @@ public class Constants {
 
         public static final double kEncoderConversionFactor = (Units.inchesToMeters(1 / (kGearRatio * 2 * Math.PI * kWheelRadiusMeters) * 10));
         
+        public static final double kgyrokP = 0.0002;
 
 
     }
