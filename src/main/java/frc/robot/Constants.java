@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 public class Constants {
 
     public class OperatorConstants {
@@ -8,9 +10,9 @@ public class Constants {
     }
 
     public class DrivetrainConstants {
-        public static final int leftFrontMotor_PORT = 14;
+        public static final int leftFrontMotor_PORT = 13;
         public static final int rightFrontMotor_PORT = 12;
-        public static final int leftRearMotor_PORT = 13;
+        public static final int leftRearMotor_PORT = 14;
         public static final int rightRearMotor_PORT = 11;
     }
 
@@ -58,5 +60,14 @@ public class Constants {
         public static final double minPIDOutput = 1.0;
         public static final double maxPIDOutput = 0.0;
         }
+    
+    public class AutonomoDrivetrain{
+        public static final double kGearRatio = 0;//ENCUENTRA ESTE VALOR CON SYSID
+        public static final double kWheelRadiusInches = 0;//ENCUENTRA ESTE VALOR CON CINTA METRICA
+
+        public static final double kLinerDistanceConversionFactor = 
+            (Units.inchesToMeters(1/kGearRatio*2*Math.PI*Units.inchesToMeters(kWheelRadiusInches)*10));
+
+    }
 
 }

@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.Arm_manualSetpointFront;
+import frc.robot.Commands.Autonomo;
 import frc.robot.Commands.DriveWithInvertedJoystick;
 import frc.robot.Commands.Arm_manualSetpointBack;
 import frc.robot.Constants.OperatorConstants;
@@ -84,12 +86,15 @@ public class RobotContainer {
       () -> m_firstDriverController.getRawAxis(4),
       () -> m_firstDriverController.getRawAxis(3), 
       () -> m_firstDriverController.getRawAxis(2));
+    
+    private final Autonomo m_Autonomo = new Autonomo(m_drivetrainSubsystem);
+
 
   //Arm
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   //private final Arm_manualSetpointFront m_Arm_manualSetpointFront = new Arm_manualSetpointFront(m_ArmSubsystem);
   //private final Arm_manualSetpointBack m_Arm_manualSetpointBack = new Arm_manualSetpointBack(m_ArmSubsystem);
-
+/*
   //Intake
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final Intake_getNote m_Intake_getNote = new Intake_getNote(m_IntakeSubsystem);
@@ -109,7 +114,7 @@ public class RobotContainer {
 
   private final RightClimberUp m_RightClimberUp = new RightClimberUp(m_RightClimberSubsystem);
   private final RightClimberDown m_RightClimberDown = new RightClimberDown(m_RightClimberSubsystem);
-
+*/
   public RobotContainer() {
 
     //Drivetrain
@@ -124,7 +129,7 @@ public class RobotContainer {
   else{
     
   }
-  */
+  
   m_drivetrainSubsystem.setDefaultCommand(m_DriveWithNormalJoystick);
       
     
@@ -165,15 +170,20 @@ public class RobotContainer {
     /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     bButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     xButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    yButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse)); */
- 
+    yButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse)); 
+*/
+
+  aButton1.whileTrue(m_Autonomo);
+  RB1.whileTrue(m_drivetrainSubsystem.driveAutonomo2(45));
+
     configureBindings();
   }
 
   private void configureBindings() {
   }
 
-  public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+  public Command driveAutonomo() {
+  m_drivetrainSubsystem.setDefaultCommand(m_Autonomo);
+    return Commands.print("Autonomous command ended");
   }
 }
