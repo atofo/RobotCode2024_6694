@@ -241,7 +241,7 @@ public class AutoDriveApril extends SubsystemBase {
   }
 
   public double XSpeed(DoubleSupplier DYaw) {
-    if (limelight.Yaw() > DYaw.getAsDouble() + 1) {
+    if (limelight.Yaw() > DYaw.getAsDouble() + 1) { //Rango de error para VelocidadX ((SOLO CAMBIAR DYaw)
       return -0.2;
     } else if (limelight.Yaw() < DYaw.getAsDouble() - 1) {
       return 0.2;
@@ -251,21 +251,21 @@ public class AutoDriveApril extends SubsystemBase {
   }
 
   public double YSpeed(DoubleSupplier DArea) {
-    if (limelight.Area() > DArea.getAsDouble() + 1 && limelight.Area() > 0) {
-      return -0.15;
-    } else if (limelight.Area() < DArea.getAsDouble() - 1 && limelight.Area() > 0) {
+    if (limelight.Area() < DArea.getAsDouble() + 1 && limelight.Area() > 0) { //Rango de error para VelocidadY ((SOLO CAMBIAR DArea)
       return 0.15;
-    } else {
+    } else if (limelight.Area() > DArea.getAsDouble() - 1 && limelight.Area() > 0) {
+      return -0.15;
+    }else{
       return 0;
     }
   }
 
   public double ZSpeed() {
 
-    if (Gyroscope.getZ() <  -4) {
-      return 0.15 + (Gyroscope.getZ() * 0.005);
-    } else if (Gyroscope.getZ() > 4) {
-      return -(0.15 + (Gyroscope.getZ() * 0.005));
+    if (Gyroscope.getZ() <  -4) {//Declara un rango de error
+      return 0.15 + (Gyroscope.getZ() * 0.005); //Regresa una velocidad relativa al angulo considerando 0 como setpoint
+    } else if (Gyroscope.getZ() > 4) {//Declara un rango de error
+      return -(0.15 + (Gyroscope.getZ() * 0.005)); //Regresa una velocidad relativa al angulo considerando 0 como setpoint invertido
     } else {
       return 0;
     }
@@ -273,15 +273,17 @@ public class AutoDriveApril extends SubsystemBase {
   }
   public double GyroSpeed(DoubleSupplier DAngle) {
 
-    if (Gyroscope.getZ() < DAngle.getAsDouble() - 4) {
-      return -(0.15 + ((Gyroscope.getZ() + (Gyroscope.getZ() - DAngle.getAsDouble())) * 0.001));
-    } else if (Gyroscope.getZ() > DAngle.getAsDouble() + 4) {
-      return 0.15 + ((Gyroscope.getZ() - (Gyroscope.getZ() - DAngle.getAsDouble())) * 0.001);
+    if (Gyroscope.getZ() < DAngle.getAsDouble() - 4) { //Declara un rango de error
+      return -(0.15 + ((Gyroscope.getZ() + (Gyroscope.getZ() - DAngle.getAsDouble())) * 0.001));  //Regresa una velocidad relativa al angulo considerando considerando DAngulo como setpoint invertido(no esta calado al cien, jugar con los signos y posicion de DAngle en esta linea)
+    } else if (Gyroscope.getZ() > DAngle.getAsDouble() + 4) { //Declara un rango de error
+      return 0.15 + ((Gyroscope.getZ() - (Gyroscope.getZ() - DAngle.getAsDouble())) * 0.001); //Regresa una velocidad relativa al angulo considerando DAngulo como setpoint (no esta calado al cien, jugar con los signos y posicion de DAngle en esta linea)
     } else {
       return 0;
     }
 
   }
+
+  
 
   /*
    * public Command DriveAuto(DoubleSupplier DesiredYaw, DoubleSupplier
