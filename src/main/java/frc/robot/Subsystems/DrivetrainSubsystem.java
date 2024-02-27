@@ -46,22 +46,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // Este encoder leftRear da negativo
 
   public DrivetrainSubsystem() {
-    
-      leftFrontMotor.restoreFactoryDefaults();
-      rightFrontMotor.restoreFactoryDefaults();
-      leftRearMotor.restoreFactoryDefaults();
-      rightRearMotor.restoreFactoryDefaults();
-
     rightRearMotor.setInverted(true);
-    leftRearMotor.setInverted(true);
+    rightFrontMotor.setInverted(true);
 
     
-    leftFrontMotor.burnFlash();
-    rightFrontMotor.burnFlash();
-    leftRearMotor.burnFlash();
-    rightRearMotor.burnFlash();
-    
-
     leftRearEncoder.setPosition(0);
     rightRearEncoder.setPosition(0);
 
@@ -144,17 +132,17 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
       resetEncoders();
       pid_rightRear.setSetpoint(Setpoint_rightRear);
-      pid_leftRear.setSetpoint(-Setpoint_leftRear);
+      pid_leftRear.setSetpoint(Setpoint_leftRear);
     }) // Este encoder leftRear da negativo el setpoint debe ser negativo
         .andThen(run(() -> {
           processVar_rightRear = pid_rightRear.calculate(rightRearEncoder.getPosition());
           processVar_leftRear = pid_leftRear.calculate(leftRearEncoder.getPosition());
 
           rightRearMotor.set(processVar_rightRear * speed); // este esta invertido
-          rightFrontMotor.set(processVar_rightRear * -speed); // cuando le meto este se invierte wtf
+          rightFrontMotor.set(processVar_rightRear * speed); // cuando le meto este se invierte wtf
 
           leftRearMotor.set(processVar_leftRear * speed); // este esta invertido
-          leftFrontMotor.set(processVar_leftRear * -speed);
+          leftFrontMotor.set(processVar_leftRear * speed);
         }))
         .until(() -> ((Math.abs(rightRearEncoder.getPosition()) >= Math.abs(Setpoint_rightRear * 0.95))
             && (Math.abs(leftRearEncoder.getPosition()) >= Math.abs(-Setpoint_leftRear * 0.95))))

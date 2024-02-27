@@ -39,8 +39,6 @@ public class DriveInverted extends Command {
     //Boolean Inverted = false;
     
     drivetrain.driveInverted(joystickX, joystickY, joystickZ, rightTrigger, leftTrigger);
-  
-    
   }
 
   // Called every time the scheduler runs while the command is scheduled.

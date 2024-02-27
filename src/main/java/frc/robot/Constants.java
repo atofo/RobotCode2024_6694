@@ -4,6 +4,12 @@ import edu.wpi.first.math.util.Units;
 
 public class Constants {
 
+    public class LEDConstants {
+        public static final int armLED = 6;
+        public static final int rightClimberLED = 5;
+        public static final int leftClimberLED = 7;
+    }
+
     public class OperatorConstants {
         public static final int firstcontrollerPort = 0;
         public static final int secondcontrollerPort = 1;
@@ -52,7 +58,7 @@ public class Constants {
     public class ArmConstants {
         public static final int arm_leftMotor_PORT = 21;
         public static final int arm_rightMotor_PORT = 22;
-        public static final double kEncoderError = 0.615;
+        public static final double kEncoderError = 0.611;
     }
 
     public class IntakeLauncherConstants {
