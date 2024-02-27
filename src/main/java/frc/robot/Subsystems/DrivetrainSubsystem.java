@@ -49,7 +49,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     rightRearMotor.setInverted(true);
     rightFrontMotor.setInverted(true);
 
-    
     leftRearEncoder.setPosition(0);
     rightRearEncoder.setPosition(0);
 
@@ -165,7 +164,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public Command driveTest(){
     return run(() ->{
-      m_drive.driveCartesian(0, 0.3, 0);
+      m_drive.driveCartesian(0, 0.2, 0);
     });
   }
 
@@ -185,9 +184,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
             } 
             else
             {
-              m_drive.driveCartesian(joystickX.getAsDouble(), 
-                                     rightTrigger.getAsDouble(), 
-                                     joystickZ.getAsDouble());
+              m_drive.driveCartesian(rightTrigger.getAsDouble(), 
+                                    -joystickX.getAsDouble(), 
+                                    joystickZ.getAsDouble());
             }
         } else {
           if (Math.abs(joystickX.getAsDouble()) < 0.1 && 
@@ -197,8 +196,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
               Math.abs(leftTrigger.getAsDouble()) < 0.1) {
             m_drive.driveCartesian(0, 0, 0);
           } else {
-            m_drive.driveCartesian(joystickX.getAsDouble(), 
-                                   -leftTrigger.getAsDouble(),
+            m_drive.driveCartesian(-leftTrigger.getAsDouble(),
+                                   -joystickX.getAsDouble(), 
                                    joystickZ.getAsDouble());
           }
         }
