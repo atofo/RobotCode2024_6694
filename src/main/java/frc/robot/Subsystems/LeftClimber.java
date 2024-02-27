@@ -21,23 +21,23 @@ public class LeftClimber extends SubsystemBase {
   }
 
   public void leftClimberUp(){
+    m_LeftClimber.set(0.3);
   
-    if(m_LeftEncoder.getPosition() > 170){
+/*     if(m_LeftEncoder.getPosition() > 170){
       m_LeftClimber.set(0);
     }
     else{
-      m_LeftClimber.set(0.3);
-    }  
+    }   */
   }
 
   public void leftClimberDown(){
-    if(m_LeftEncoder.getPosition() < 2){
-  m_LeftClimber.set(-0.3);
+    m_LeftClimber.set(-0.3);
+/*     if(m_LeftEncoder.getPosition() < 2){
       m_LeftClimber.set(0);
     }
     else{
 
-    } 
+    }  */
   }
 
   public void leftClimberOFF(){

@@ -5,6 +5,9 @@
 package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -21,8 +24,6 @@ import frc.robot.Constants.PIDConstants;
 
 public class ArmSubsystem extends SubsystemBase {
 
-  Limelight limelight = new Limelight();
-
   private CANSparkMax arm_leftMotor = new CANSparkMax(ArmConstants.arm_leftMotor_PORT, MotorType.kBrushless);
   private CANSparkMax arm_rightMotor = new CANSparkMax(ArmConstants.arm_rightMotor_PORT, MotorType.kBrushless);
 
@@ -31,89 +32,93 @@ public class ArmSubsystem extends SubsystemBase {
   PIDController pid = new PIDController(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
 
   private double processVar;
-  private double Setpoint;
+  private double Setpoint;  
 
   public ArmSubsystem() {
     arm_leftMotor.follow(arm_rightMotor);
-    pid.setSetpoint(0.12);
-    // pid.setSetpoint(0.425);
+    //pid.setSetpoint(0.425);
   }
+
 
   @Override
   public void periodic() {
     super.periodic();
-    processVar = pid.calculate(arm_Encoder.getAbsolutePosition() - 0.628);
-    arm_rightMotor.set(-processVar * 0.8);
+    processVar = pid.calculate(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError);
+    arm_rightMotor.set(-processVar * 0.8);  
     arm_leftMotor.set(-processVar * 0.8);
 
     SmartDashboard.putNumber("Arm Setpoint: ", pid.getSetpoint());
-    SmartDashboard.putNumber("Arm AbsEncoder: ", arm_Encoder.getAbsolutePosition() - 0.628);
+    SmartDashboard.putNumber("Arm AbsEncoder: ", arm_Encoder.getAbsolutePosition());
     SmartDashboard.putNumber("Arm ProcessVar: ", processVar);
     SmartDashboard.putNumber("Arm Error ", pid.getPositionError());
 
   }
 
   public Command setSetpoint(double Setpoint) {
-    // this.Setpoint = Setpoint;
     return runOnce(() -> pid.setSetpoint(Setpoint));
   }
 
-  public Command setAprilSetpoint() {
-    // this.Setpoint = Setpoint;
-    return runOnce(() -> {
+  public Command autoSetSetpoint(double Setpoint) {
+    return runOnce(() -> pid.setSetpoint(Setpoint));
+  }
 
-      if (limelight.Area() > 0.28) {
-        pid.setSetpoint((-0.1090375 * limelight.Area() + 0.1835));
-      } else {
-        pid.setSetpoint((-0.052 * limelight.Area() + 0.16706));
+   public void manualSetpointFront() {
+      Setpoint = pid.getSetpoint() + 0.01;
+      pid.setSetpoint(Setpoint);
+    }
+    
+    public void manualSetpointBack(){
+      Setpoint = pid.getSetpoint() - 0.01;
+      pid.setSetpoint(Setpoint);
+
+    }
+   
+    public Boolean isUp(){
+      if(arm_Encoder.getAbsolutePosition() > 0.05 && arm_Encoder.getAbsolutePosition() < 0.62){
+        return true;
       }
-    });
-  }
-
-  public void manualSetpointFront() {
-    Setpoint = pid.getSetpoint() + 0.01;
-    pid.setSetpoint(Setpoint);
-  }
-
-  public void manualSetpointBack() {
-    Setpoint = pid.getSetpoint() - 0.01;
-    pid.setSetpoint(Setpoint);
-
-  }
-
-  public Boolean isUp() {
-    if (arm_Encoder.getAbsolutePosition() > 0.45 && arm_Encoder.getAbsolutePosition() < 0.62) {
-      return true;
-    } else {
-      return false;
+      else{
+        return false;
+      }
     }
-  }
 
-  public Boolean isOnFront() {
-    if (arm_Encoder.getAbsolutePosition() < 0.47) {
-      return true;
-    } else {
-      return false;
+    public Boolean autoRunMode(){
+      if((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < 0.02){
+        return true;
+      }
+      else{
+        return false;
+      }
     }
+
+    public Boolean isOnFront(){
+      if(arm_Encoder.getAbsolutePosition() < 0.47){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+
+    
+    public void setpointStop(){
+      Setpoint = arm_Encoder.getAbsolutePosition();
+      pid.setSetpoint(Setpoint);
+    }
+    
   }
 
-  public void setpointStop() {
-    Setpoint = arm_Encoder.getAbsolutePosition();
-    pid.setSetpoint(Setpoint);
-  }
-
-}
-
-/*
- * public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier
- * povRight) {
- * if (povLeft.getAsBoolean() == true) {
- * Setpoint = Setpoint -1;
- * }
- * if (povRight.getAsBoolean() == true) {
- * Setpoint = Setpoint +1;
- * }
- * 
- * return runOnce(() -> pid.setSetpoint(Setpoint));
- * }
- */
+  /*
+   * public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier
+   * povRight) {
+   * if (povLeft.getAsBoolean() == true) {
+   * Setpoint = Setpoint -1;
+   * }
+   * if (povRight.getAsBoolean() == true) {
+   * Setpoint = Setpoint +1;
+   * }
+   * 
+   * return runOnce(() -> pid.setSetpoint(Setpoint));
+   * }
+   */
+   

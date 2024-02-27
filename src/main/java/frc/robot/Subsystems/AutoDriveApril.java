@@ -283,8 +283,6 @@ public class AutoDriveApril extends SubsystemBase {
 
   }
 
-  
-
   /*
    * public Command DriveAuto(DoubleSupplier DesiredYaw, DoubleSupplier
    * DesiredArea, DoubleSupplier DesiredAngle) {

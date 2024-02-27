@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 public class Constants {
 
     public class OperatorConstants {
@@ -7,16 +9,41 @@ public class Constants {
         public static final int secondcontrollerPort = 1;
     }
 
+    public class AutoConstants{
+    public static final double kTimeoutSeconds = 10; //El tiempo que va estar haciendo eso
+    public static final double kDriveDistanceMeters = 20;
+    public static final double kDriveSpeed = 0.30;
+    }
+
     public class DrivetrainConstants {
-        public static final int leftFrontMotor_PORT = 11;
-        public static final int rightFrontMotor_PORT = 14;
-        public static final int leftRearMotor_PORT = 12;
-        public static final int rightRearMotor_PORT = 13;
+        public static final int leftFrontMotor_PORT = 13;
+        public static final int rightFrontMotor_PORT = 12;
+        public static final int leftRearMotor_PORT = 14;
+        public static final int rightRearMotor_PORT = 11;
+
+        public static final double kP = 0.53;
+        public static final double kI = 0.00005;
+        public static final double kD = 0.01;
+
+
+        public static final double kGearRatio = 12.76;
+        public static final int kEncoderCPR = 535; // 42 CPRs del NEO * 12.76:1 (transmision de las mecanums), probablmente habra que multiplicar la transmision en otro lado y no aqui
+        public static final double kWheelRadiusMeters = Units.inchesToMeters(3);
+        
+        //public static final double kEncoderDistancePerPulse =
+            // Assumes the encoders are directly mounted on the wheel shafts
+            //(kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
+
+        public static final double kEncoderConversionFactor = (Units.inchesToMeters(1 / (kGearRatio * 2 * Math.PI * kWheelRadiusMeters) * 10));
+        
+        public static final double kgyrokP = 0.0002;
+
+
     }
 
     public class PIDConstants {
 
-        public static final double kP = 4.5;
+        public static final double kP = 4;
         public static final double kI = 0;
         public static final double kD = 0.05;
 
@@ -25,6 +52,7 @@ public class Constants {
     public class ArmConstants {
         public static final int arm_leftMotor_PORT = 21;
         public static final int arm_rightMotor_PORT = 22;
+        public static final double kEncoderError = 0.615;
     }
 
     public class IntakeLauncherConstants {

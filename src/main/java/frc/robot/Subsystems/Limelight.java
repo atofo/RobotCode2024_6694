@@ -7,6 +7,7 @@ package frc.robot.Subsystems;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -45,10 +46,17 @@ public class Limelight extends SubsystemBase {
 
     PhotonTrackedTarget target;
 
+    Transform3d bestCameraToTarget;
+    Transform3d alternateCameraToTarget;
+
 
     if (hasTargets == true) {
 
       target = result.getBestTarget();
+
+      bestCameraToTarget = target.getBestCameraToTarget();
+      alternateCameraToTarget = target.getAlternateCameraToTarget();
+      
 
       Id = target.getFiducialId();
       yaw = target.getYaw();

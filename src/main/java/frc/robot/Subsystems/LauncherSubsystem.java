@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeLauncherConstants;
 import frc.robot.Constants.PIDConstants;
@@ -29,10 +30,11 @@ public LauncherSubsystem() {
     m_upMotor.restoreFactoryDefaults();
     m_downMotor.restoreFactoryDefaults();
     
+    m_upMotor.setInverted(true);
+    
     m_upMotor.burnFlash();
     m_downMotor.burnFlash();
 
-    m_upMotor.setInverted(true);
   }
 
   public void throwNote(){
@@ -43,6 +45,19 @@ public LauncherSubsystem() {
   public void launcherOFF(){
       m_downMotor.set(0);
       m_upMotor.set(0);
+  }
+
+    public Command autoLaunchOn() {
+    return runOnce(() -> {
+    m_downMotor.set(1);
+    m_upMotor.set(1);
+    });
+  }
+    public Command autoLaunchOff() {
+    return runOnce(() -> {
+    m_downMotor.set(0);
+    m_upMotor.set(0);
+    });
   }
 
   @Override
