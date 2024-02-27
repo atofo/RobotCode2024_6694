@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.Constants.PIDConstants;
 
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
@@ -66,9 +65,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     leftRearEncoder.setPosition(0);
     rightRearEncoder.setPosition(0);
 
-    leftRearEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor); // esto usa rotaciones y
-                                                                                               // se multiplica por el
-                                                                                               // argumento
+    leftRearEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor); // esto usa rotaciones y  // se multiplica por el // argumento
     rightRearEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor);
     leftRearEncoder.setVelocityConversionFactor(DrivetrainConstants.kEncoderConversionFactor / 60);
     rightRearEncoder.setVelocityConversionFactor(DrivetrainConstants.kEncoderConversionFactor / 60);
@@ -122,7 +119,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     });
 
   }
-
    
 
   public Command calculatePID_leftRear(double Setpoint) {
@@ -142,39 +138,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
-  /*
-   * public Command calculatePID_drive(double Setpoint_rightRear, double
-   * Setpoint_leftRear) {
-   * return run(() -> {
-   * resetEncoders();
-   * boolean stop = false;
-   * pid_rightRear.setSetpoint(Setpoint_rightRear);
-   * pid_leftRear.setSetpoint(Setpoint_leftRear);
-   * while (stop) {
-   * processVar_rightRear =
-   * pid_rightRear.calculate(rightRearEncoder.getPosition());
-   * processVar_leftRear = pid_leftRear.calculate(leftRearEncoder.getPosition());
-   * 
-   * rightRearMotor.set(processVar_rightRear * 0.7);
-   * rightFrontMotor.set(processVar_rightRear * 0.7);
-   * leftRearMotor.set(processVar_leftRear * 0.7);
-   * leftFrontMotor.set(processVar_leftRear * 0.7);
-   * 
-   * if ((rightRearEncoder.getPosition() > Setpoint_rightRear - 2)
-   * && (rightRearEncoder.getPosition() < Setpoint_rightRear + 2)
-   * && (leftRearEncoder.getPosition() > Setpoint_leftRear - 2)
-   * && (leftRearEncoder.getPosition() < Setpoint_leftRear + 2)) {
-   * stop = true;
-   * }
-   * }
-   * resetEncoders();
-   * stopCommand = true;
-   * }).until(() -> ((rightRearEncoder.getPosition() > Setpoint_rightRear - 2)
-   * && (rightRearEncoder.getPosition() < Setpoint_rightRear + 2)
-   * && (leftRearEncoder.getPosition() > Setpoint_leftRear - 2)
-   * && (leftRearEncoder.getPosition() < Setpoint_leftRear + 2)));
-   * }
-   */
 
   public Command calculatePID_drive(double Setpoint_rightRear, double Setpoint_leftRear, double speed) {
     return runOnce(() -> {
@@ -218,6 +181,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     });
   }
 
+
   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
   DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
 
@@ -252,8 +216,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         }
 }
 
-public void driveInverted(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
-DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
+
+  public void driveInverted(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
+    DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
 
       if (rightTrigger.getAsDouble() > 0.1) {
         if (Math.abs(joystickX.getAsDouble()) < 0.1 && 
@@ -287,17 +252,6 @@ DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
 }
 
 
-
-  /*
-   * Returns a command that drives the robot forward a specified distance at a
-   * specified speed.
-   * 
-   * @param distanceMeters The distance to drive forward in meters
-   * 
-   * @param speed The fraction of max speed at which to drive
-   * 
-   */
-
   public Command driveDistanceCommand(double distanceMeters, double speed) {
     return runOnce(
         // Reset encoders at the start of the command
@@ -311,38 +265,32 @@ DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
         .finallyDo(interrupted -> m_drive.stopMotor());
 
   }
-
-  public Command autoTurnLeft(double angle) {
-    return runOnce(
-        // Reset gyroscope at the start of the command
-        () -> resetGyro())
-        // Turns Left at specified speed
-        .andThen(run(() -> {
-          if (Gyroscope.getAngle(IMUAxis.kYaw) < angle - 4) {
-            m_drive.driveCartesian(0, 0, -(0.25 + (Gyroscope.getAngle(IMUAxis.kYaw) * 0.005)));
-          } else if (Gyroscope.getAngle(IMUAxis.kYaw) > angle + 4) {
-            m_drive.driveCartesian(0, 0, 0.25 + (Gyroscope.getAngle(IMUAxis.kYaw) * 0.005));
-          } else {
-            m_drive.stopMotor();
-          }
-        }))
-        // End command when we've traveled the specified distance
-        .until(
-            () -> (Gyroscope.getAngle(IMUAxis.kYaw) < (angle + 4) && Gyroscope.getAngle(IMUAxis.kYaw) > (angle - 4)))
-        // Stop the drive when the command ends
-        .finallyDo(interrupted -> m_drive.stopMotor());
+  
+  public Command autoTurnLeft(Double angle) {
+    return 
+    runOnce(() -> resetGyro()).andThen(() ->    
+    run(() -> {
+    if (Gyroscope.getAngle(IMUAxis.kYaw) > -angle - 4){
+      m_drive.driveCartesian(0, 0, (0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) + (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
+    } 
+    else if (Gyroscope.getAngle(IMUAxis.kYaw) < -angle + 4) {
+      m_drive.driveCartesian(0, 0, -(0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) - (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
+    }
+  }).until(() -> (Gyroscope.getAngle(IMUAxis.kYaw) < angle - 4) && (Gyroscope.getAngle(IMUAxis.kYaw) > angle + 4))).finallyDo(interrupted -> m_drive.stopMotor());
+  }
+  
+  public Command autoTurnRight(Double angle) {
+    return 
+    runOnce(() -> resetGyro()).andThen(() ->     
+    run(() -> {
+    if (Gyroscope.getAngle(IMUAxis.kYaw) < angle - 4){
+      m_drive.driveCartesian(0, 0, -(0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) + (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
+    } 
+    else if (Gyroscope.getAngle(IMUAxis.kYaw) > angle + 4) {
+      m_drive.driveCartesian(0, 0, 0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) - (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001));
+    }
+  }).until(() -> (Gyroscope.getAngle(IMUAxis.kYaw) > angle - 4) && (Gyroscope.getAngle(IMUAxis.kYaw) < angle + 4))).finallyDo(interrupted -> m_drive.stopMotor());
   }
 
-  public Command autoTurnToAngle(double angle){
-    return runOnce(
-    () -> Gyroscope.reset())
-      .andThen(run(
-      () -> {
-        double error = angle - Gyroscope.getAngle(IMUAxis.kYaw);
-        m_drive.driveCartesian(error*DrivetrainConstants.kgyrokP, 0, 0);
-      }))
-      .until(
-        () -> (Math.abs(angle - Gyroscope.getAngle(IMUAxis.kYaw)) < 2));
-  }
 
 }
