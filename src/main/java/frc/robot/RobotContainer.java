@@ -120,6 +120,7 @@ public class RobotContainer {
 
     //Drivetrain
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
+    bButton1.onTrue(m_drivetrainSubsystem.DriveAuto(0, 0.50));
     
     //Climbers
     LB1.whileTrue(m_LeftClimberUp); // Left Climber Up

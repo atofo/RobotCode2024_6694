@@ -21,6 +21,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivetrainConstants;
 
 import java.util.function.DoubleSupplier;
+
+import javax.smartcardio.CommandAPDU;
+
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 
 public class DrivetrainSubsystem extends SubsystemBase {
@@ -64,7 +67,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     leftRearEncoder.setPosition(0);
     rightRearEncoder.setPosition(0);
 
-    leftRearEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor); // esto usa rotaciones y  // se multiplica por el // argumento
+    leftRearEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor); // esto usa rotaciones y
+                                                                                               // // se multiplica por
+                                                                                               // el // argumento
     rightRearEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor);
     leftRearEncoder.setVelocityConversionFactor(DrivetrainConstants.kEncoderConversionFactor / 60);
     rightRearEncoder.setVelocityConversionFactor(DrivetrainConstants.kEncoderConversionFactor / 60);
@@ -121,7 +126,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     });
 
   }
-   
 
   public Command calculatePID_leftRear(double Setpoint) {
     return run(() -> {
@@ -139,7 +143,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     });
 
   }
-
 
   public Command calculatePID_drive(double Setpoint_rightRear, double Setpoint_leftRear, double speed) {
     return runOnce(() -> {
@@ -163,7 +166,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         .finallyDo(() -> {
           rightRearMotor.set(0);
           rightFrontMotor.set(0);
-          leftRearMotor.set(0); 
+          leftRearMotor.set(0);
           leftFrontMotor.set(0);
         });
 
@@ -177,14 +180,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Gyroscope", Gyroscope.getAngle(IMUAxis.kYaw));
     var result = Limelight.getLatestResult();
 
-
     if (result.hasTargets()) {
 
       target = result.getBestTarget();
 
       bestCameraToTarget = target.getBestCameraToTarget();
       alternateCameraToTarget = target.getAlternateCameraToTarget();
-      
 
       Id = target.getFiducialId();
       yaw = target.getYaw();
@@ -202,85 +203,77 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     }
 
-
   }
 
-  public Command driveTest(){
-    return run(() ->{
+  public Command driveTest() {
+    return run(() -> {
       m_drive.driveCartesian(0, 0.2, 0);
     });
   }
 
-
   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
-  DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
+      DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
 
-        if (rightTrigger.getAsDouble() > 0.1) {
-          if (Math.abs(joystickX.getAsDouble()) < 0.1 && 
-              Math.abs(joystickY.getAsDouble()) < 0.1 && 
-              Math.abs(joystickZ.getAsDouble()) < 0.1 && 
-              Math.abs(rightTrigger.getAsDouble()) < 0.1 && 
-              Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+    if (rightTrigger.getAsDouble() > 0.1) {
+      if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
+          Math.abs(joystickY.getAsDouble()) < 0.1 &&
+          Math.abs(joystickZ.getAsDouble()) < 0.1 &&
+          Math.abs(rightTrigger.getAsDouble()) < 0.1 &&
+          Math.abs(leftTrigger.getAsDouble()) < 0.1) {
 
-              m_drive.driveCartesian(0, 0, 0);
+        m_drive.driveCartesian(0, 0, 0);
 
-            } 
-            else
-            {
-              m_drive.driveCartesian(rightTrigger.getAsDouble(), 
-                                    -joystickX.getAsDouble(), 
-                                    joystickZ.getAsDouble());
-            }
-        } else {
-          if (Math.abs(joystickX.getAsDouble()) < 0.1 && 
-              Math.abs(joystickY.getAsDouble()) < 0.1 && 
-              Math.abs(joystickZ.getAsDouble()) < 0.1 &&
-              Math.abs(rightTrigger.getAsDouble()) < 0.1 && 
-              Math.abs(leftTrigger.getAsDouble()) < 0.1) {
-            m_drive.driveCartesian(0, 0, 0);
-          } else {
-            m_drive.driveCartesian(-leftTrigger.getAsDouble(),
-                                   -joystickX.getAsDouble(), 
-                                   joystickZ.getAsDouble());
-          }
-        }
-}
-
+      } else {
+        m_drive.driveCartesian(rightTrigger.getAsDouble(),
+            -joystickX.getAsDouble(),
+            joystickZ.getAsDouble());
+      }
+    } else {
+      if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
+          Math.abs(joystickY.getAsDouble()) < 0.1 &&
+          Math.abs(joystickZ.getAsDouble()) < 0.1 &&
+          Math.abs(rightTrigger.getAsDouble()) < 0.1 &&
+          Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+        m_drive.driveCartesian(0, 0, 0);
+      } else {
+        m_drive.driveCartesian(-leftTrigger.getAsDouble(),
+            -joystickX.getAsDouble(),
+            joystickZ.getAsDouble());
+      }
+    }
+  }
 
   public void driveInverted(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
-    DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
+      DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
 
-      if (rightTrigger.getAsDouble() > 0.1) {
-        if (Math.abs(joystickX.getAsDouble()) < 0.1 && 
-            Math.abs(joystickY.getAsDouble()) < 0.1 && 
-            Math.abs(joystickZ.getAsDouble()) < 0.1 && 
-            Math.abs(rightTrigger.getAsDouble()) < 0.1 && 
-            Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+    if (rightTrigger.getAsDouble() > 0.1) {
+      if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
+          Math.abs(joystickY.getAsDouble()) < 0.1 &&
+          Math.abs(joystickZ.getAsDouble()) < 0.1 &&
+          Math.abs(rightTrigger.getAsDouble()) < 0.1 &&
+          Math.abs(leftTrigger.getAsDouble()) < 0.1) {
 
-            m_drive.driveCartesian(0, 0, 0);
+        m_drive.driveCartesian(0, 0, 0);
 
-          } 
-          else
-          {
-            m_drive.driveCartesian(joystickY.getAsDouble(), 
-                                   rightTrigger.getAsDouble(), 
-                                   joystickZ.getAsDouble());
-          }
       } else {
-        if (Math.abs(joystickX.getAsDouble()) < 0.1 && 
-            Math.abs(joystickY.getAsDouble()) < 0.1 && 
-            Math.abs(joystickZ.getAsDouble()) < 0.1 &&
-            Math.abs(rightTrigger.getAsDouble()) < 0.1 && 
-            Math.abs(leftTrigger.getAsDouble()) < 0.1) {
-          m_drive.driveCartesian(0, 0, 0);
-        } else {
-          m_drive.driveCartesian(joystickY.getAsDouble(), 
-                                 -leftTrigger.getAsDouble(),
-                                 joystickZ.getAsDouble());
-        }
+        m_drive.driveCartesian(joystickY.getAsDouble(),
+            rightTrigger.getAsDouble(),
+            joystickZ.getAsDouble());
       }
-}
-
+    } else {
+      if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
+          Math.abs(joystickY.getAsDouble()) < 0.1 &&
+          Math.abs(joystickZ.getAsDouble()) < 0.1 &&
+          Math.abs(rightTrigger.getAsDouble()) < 0.1 &&
+          Math.abs(leftTrigger.getAsDouble()) < 0.1) {
+        m_drive.driveCartesian(0, 0, 0);
+      } else {
+        m_drive.driveCartesian(joystickY.getAsDouble(),
+            -leftTrigger.getAsDouble(),
+            joystickZ.getAsDouble());
+      }
+    }
+  }
 
   public Command driveDistanceCommand(double distanceMeters, double speed) {
     return runOnce(
@@ -295,34 +288,81 @@ public class DrivetrainSubsystem extends SubsystemBase {
         .finallyDo(interrupted -> m_drive.stopMotor());
 
   }
-  
+
   public Command autoTurnLeft(Double angle) {
-    return 
-    runOnce(() -> resetGyro()).andThen(() ->    
-    run(() -> {
-    if (Gyroscope.getAngle(IMUAxis.kYaw) > -angle - 4){
-      m_drive.driveCartesian(0, 0, (0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) + (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
-    } 
-    else if (Gyroscope.getAngle(IMUAxis.kYaw) < -angle + 4) {
-      m_drive.driveCartesian(0, 0, -(0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) - (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
-    }
-  }).until(() -> (Gyroscope.getAngle(IMUAxis.kYaw) < angle - 4) && (Gyroscope.getAngle(IMUAxis.kYaw) > angle + 4))).finallyDo(interrupted -> m_drive.stopMotor());
-  }
-  
-  public Command autoTurnRight(Double angle) {
-    return 
-    runOnce(() -> resetGyro()).andThen(() ->     
-    run(() -> {
-    if (Gyroscope.getAngle(IMUAxis.kYaw) < angle - 4){
-      m_drive.driveCartesian(0, 0, -(0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) + (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
-    } 
-    else if (Gyroscope.getAngle(IMUAxis.kYaw) > angle + 4) {
-      m_drive.driveCartesian(0, 0, 0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) - (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001));
-    }
-  }).until(() -> (Gyroscope.getAngle(IMUAxis.kYaw) > angle - 4) && (Gyroscope.getAngle(IMUAxis.kYaw) < angle + 4))).finallyDo(interrupted -> m_drive.stopMotor());
+    return runOnce(() -> resetGyro()).andThen(() -> run(() -> {
+      if (Gyroscope.getAngle(IMUAxis.kYaw) > -angle - 4) {
+        m_drive.driveCartesian(0, 0,
+            (0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) + (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
+      } else if (Gyroscope.getAngle(IMUAxis.kYaw) < -angle + 4) {
+        m_drive.driveCartesian(0, 0,
+            -(0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) - (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
+      }
+    }).until(() -> (Gyroscope.getAngle(IMUAxis.kYaw) < angle - 4) && (Gyroscope.getAngle(IMUAxis.kYaw) > angle + 4)))
+        .finallyDo(interrupted -> m_drive.stopMotor());
   }
 
-  public void limelightZero(){
+  public Command autoTurnRight(Double angle) {
+    return runOnce(() -> resetGyro()).andThen(() -> run(() -> {
+      if (Gyroscope.getAngle(IMUAxis.kYaw) < angle - 4) {
+        m_drive.driveCartesian(0, 0,
+            -(0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) + (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
+      } else if (Gyroscope.getAngle(IMUAxis.kYaw) > angle + 4) {
+        m_drive.driveCartesian(0, 0,
+            0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) - (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001));
+      }
+    }).until(() -> (Gyroscope.getAngle(IMUAxis.kYaw) > angle - 4) && (Gyroscope.getAngle(IMUAxis.kYaw) < angle + 4)))
+        .finallyDo(interrupted -> m_drive.stopMotor());
+  }
+
+  public Command DriveAuto(DoubleSupplier DesiredX, DoubleSupplier DesiredY) {
+
+    return run(() ->
+    m_drive.driveCartesian(XSpeed(DesiredX), YSpeed(DesiredY), ZSpeed()))
+        .until(() -> XSpeed(() -> 0) == 0 && YSpeed(() -> 0) == 0 && ZSpeed() == 0);
+  }
+
+  public double XSpeed(DoubleSupplier DYaw) {
+    if (limelight.Yaw() > DYaw.getAsDouble() + 1) { // Rango de error para VelocidadX ((SOLO CAMBIAR DYaw)
+      return -0.2;
+    } else if (limelight.Yaw() < DYaw.getAsDouble() - 1) {
+      return 0.2;
+    } else {
+      return 0;
+    }
+  }
+
+  public double YSpeed(DoubleSupplier DArea) {
+    if (limelight.Area() < DArea.getAsDouble() + 1 && limelight.Area() > 0) { // Rango de error para VelocidadY ((SOLO CAMBIAR DArea)
+      return 0.15;
+    } else if (limelight.Area() > DArea.getAsDouble() - 1 && limelight.Area() > 0) {
+      return -0.15;
+    } else {
+      return 0;
+    }
+  }
+
+  public double ZSpeed() {
+    if (Gyroscope.getAngle(IMUAxis.kYaw) > 35 || Gyroscope.getAngle(IMUAxis.kYaw) < -35) {
+      if (Gyroscope.getAngle(IMUAxis.kYaw) < -4) {// Declara un rango de error
+        return 0.15 + (Gyroscope.getAngle(IMUAxis.kYaw) * 0.005); // Regresa una velocidad relativa al angulo considerando 0 como setpoint
+      } else if (Gyroscope.getAngle(IMUAxis.kYaw) > 4) {// Declara un rango de error
+        return -(0.15 + (Gyroscope.getAngle(IMUAxis.kYaw) * 0.005)); // Regresa una velocidad relativa al angulo considerando 0 como setpoint invertido
+      } else {
+        return 0;
+      }
+    } else {
+      if (limelight.Yaw() > 1) { // Rango de error para VelocidadX ((SOLO CAMBIAR DYaw)
+        return -0.2;
+      } else if (limelight.Yaw() < - 1) {
+        return 0.2;
+      } else {
+        return 0;
+      }
+    }
+  }
+
+  public void limelightZero() {
     Id = 0;
     yaw = 0;
     pitch = 0;
@@ -330,9 +370,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     skew = 0;
   }
 
-  public double limelightArea(){
+  public double limelightArea() {
     return area;
   }
-
 
 }
