@@ -20,9 +20,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivetrainConstants;
 
+import java.lang.annotation.Target;
 import java.util.function.DoubleSupplier;
-
-import javax.smartcardio.CommandAPDU;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 
@@ -315,50 +314,20 @@ public class DrivetrainSubsystem extends SubsystemBase {
         .finallyDo(interrupted -> m_drive.stopMotor());
   }
 
-  public Command DriveAuto(DoubleSupplier DesiredX, DoubleSupplier DesiredY) {
+  public Command StraightApril(){
 
-    return run(() ->
-    m_drive.driveCartesian(XSpeed(DesiredX), YSpeed(DesiredY), ZSpeed()))
-        .until(() -> XSpeed(() -> 0) == 0 && YSpeed(() -> 0) == 0 && ZSpeed() == 0);
+    return run(() -> m_drive.driveCartesian(0, 0, XSpeed(() -> 0.00))).until(() -> XSpeed(() -> 0) == 0);
+
   }
 
+
   public double XSpeed(DoubleSupplier DYaw) {
-    if (limelight.Yaw() > DYaw.getAsDouble() + 1) { // Rango de error para VelocidadX ((SOLO CAMBIAR DYaw)
+    if (target.getYaw() > DYaw.getAsDouble() + 1) { // Rango de error para VelocidadX ((SOLO CAMBIAR DYaw)
       return -0.2;
-    } else if (limelight.Yaw() < DYaw.getAsDouble() - 1) {
+    } else if (target.getYaw() < DYaw.getAsDouble() - 1) {
       return 0.2;
     } else {
       return 0;
-    }
-  }
-
-  public double YSpeed(DoubleSupplier DArea) {
-    if (limelight.Area() < DArea.getAsDouble() + 1 && limelight.Area() > 0) { // Rango de error para VelocidadY ((SOLO CAMBIAR DArea)
-      return 0.15;
-    } else if (limelight.Area() > DArea.getAsDouble() - 1 && limelight.Area() > 0) {
-      return -0.15;
-    } else {
-      return 0;
-    }
-  }
-
-  public double ZSpeed() {
-    if (Gyroscope.getAngle(IMUAxis.kYaw) > 35 || Gyroscope.getAngle(IMUAxis.kYaw) < -35) {
-      if (Gyroscope.getAngle(IMUAxis.kYaw) < -4) {// Declara un rango de error
-        return 0.15 + (Gyroscope.getAngle(IMUAxis.kYaw) * 0.005); // Regresa una velocidad relativa al angulo considerando 0 como setpoint
-      } else if (Gyroscope.getAngle(IMUAxis.kYaw) > 4) {// Declara un rango de error
-        return -(0.15 + (Gyroscope.getAngle(IMUAxis.kYaw) * 0.005)); // Regresa una velocidad relativa al angulo considerando 0 como setpoint invertido
-      } else {
-        return 0;
-      }
-    } else {
-      if (limelight.Yaw() > 1) { // Rango de error para VelocidadX ((SOLO CAMBIAR DYaw)
-        return -0.2;
-      } else if (limelight.Yaw() < - 1) {
-        return 0.2;
-      } else {
-        return 0;
-      }
     }
   }
 
