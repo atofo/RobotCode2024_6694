@@ -8,7 +8,11 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,6 +24,13 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 
 public class DrivetrainSubsystem extends SubsystemBase {
+
+  private final PhotonCamera Limelight;
+  private int Id;
+  private double yaw;
+  private double pitch;
+  private double area;
+  private double skew;
 
   private CANSparkMax leftFrontMotor = new CANSparkMax(DrivetrainConstants.leftFrontMotor_PORT, MotorType.kBrushless);
   private CANSparkMax rightFrontMotor = new CANSparkMax(DrivetrainConstants.rightFrontMotor_PORT, MotorType.kBrushless);
@@ -39,11 +50,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   MecanumDrive m_drive = new MecanumDrive(leftFrontMotor::set, leftRearMotor::set, rightFrontMotor::set,
       rightRearMotor::set);
 
-  // private RelativeEncoder leftFrontEncoder = leftFrontMotor.getEncoder();
-  // private RelativeEncoder rightFrontEncoder = rightFrontMotor.getEncoder();
   private RelativeEncoder rightRearEncoder = rightRearMotor.getEncoder();
   private RelativeEncoder leftRearEncoder = leftRearMotor.getEncoder();
-  // Este encoder leftRear da negativo
+
+  private PhotonTrackedTarget target;
+  private Transform3d bestCameraToTarget;
+  private Transform3d alternateCameraToTarget;
 
   public DrivetrainSubsystem() {
     rightRearMotor.setInverted(true);
@@ -56,6 +68,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     rightRearEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor);
     leftRearEncoder.setVelocityConversionFactor(DrivetrainConstants.kEncoderConversionFactor / 60);
     rightRearEncoder.setVelocityConversionFactor(DrivetrainConstants.kEncoderConversionFactor / 60);
+
+    Limelight = new PhotonCamera("photonvision");
+    limelightZero();
 
     Gyroscope.calibrate();
   }
@@ -160,6 +175,34 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Posicion atras izquierdo: ", getLeftEncoderPosition());
     SmartDashboard.putNumber("Posicion atras derecho: ", getRightEncoderPosition());
     SmartDashboard.putNumber("Gyroscope", Gyroscope.getAngle(IMUAxis.kYaw));
+    var result = Limelight.getLatestResult();
+
+
+    if (result.hasTargets()) {
+
+      target = result.getBestTarget();
+
+      bestCameraToTarget = target.getBestCameraToTarget();
+      alternateCameraToTarget = target.getAlternateCameraToTarget();
+      
+
+      Id = target.getFiducialId();
+      yaw = target.getYaw();
+      pitch = target.getPitch();
+      area = target.getArea();
+      skew = target.getSkew();
+
+    } else {
+
+      Id = 0;
+      yaw = 0;
+      pitch = 0;
+      area = 0;
+      skew = 0;
+
+    }
+
+
   }
 
   public Command driveTest(){
@@ -277,6 +320,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
       m_drive.driveCartesian(0, 0, 0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) - (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001));
     }
   }).until(() -> (Gyroscope.getAngle(IMUAxis.kYaw) > angle - 4) && (Gyroscope.getAngle(IMUAxis.kYaw) < angle + 4))).finallyDo(interrupted -> m_drive.stopMotor());
+  }
+
+  public void limelightZero(){
+    Id = 0;
+    yaw = 0;
+    pitch = 0;
+    area = 0;
+    skew = 0;
+  }
+
+  public double limelightArea(){
+    return area;
   }
 
 

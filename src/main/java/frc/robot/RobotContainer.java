@@ -12,12 +12,9 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-/* import frc.robot.Commands.Arm_manualSetpointFront;
-import frc.robot.Commands.Arm_manualSetpointBack; */
+import frc.robot.Commands.Arm_manualSetpointFront;
+import frc.robot.Commands.Arm_manualSetpointBack;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Commands.DriveInverted;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
@@ -25,7 +22,6 @@ import frc.robot.Commands.LeftClimberDown;
 import frc.robot.Commands.LeftClimberUp;
 import frc.robot.Commands.RightClimberUp;
 import frc.robot.Commands.RightClimberDown;
-import frc.robot.Commands.Intake_ThrowNote;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
@@ -46,6 +42,7 @@ public class RobotContainer {
   //First Driver Triggers
   private Trigger L31 = m_firstDriverController.leftStick();
   private Trigger aButton1 = m_firstDriverController.a();
+  private Trigger bButton1 = m_firstDriverController.a();
 
   private Trigger start1 = m_firstDriverController.start();
   private Trigger back1 = m_firstDriverController.back();
@@ -87,19 +84,23 @@ public class RobotContainer {
 
   //Arm
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
-/*   private final Arm_manualSetpointFront m_Arm_manualSetpointFront = new Arm_manualSetpointFront(m_ArmSubsystem);
+  private final Arm_manualSetpointFront m_Arm_manualSetpointFront = new Arm_manualSetpointFront(m_ArmSubsystem);
   private final Arm_manualSetpointBack m_Arm_manualSetpointBack = new Arm_manualSetpointBack(m_ArmSubsystem);
- */
+ 
   //Intake
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final Intake_getNote m_Intake_getNote = new Intake_getNote(m_IntakeSubsystem);
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
-  private final Intake_ThrowNote m_Intake_throwNote = new Intake_ThrowNote(m_IntakeSubsystem);
 
   //Shooter
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private final Command m_spinUpShooter = Commands.runOnce(m_shooter::enable, m_shooter);
   private final Command m_stopShooter = Commands.runOnce(m_shooter::disable, m_shooter);
+  private final Command m_spinUpShooter = Commands.runOnce(m_shooter::enable, m_shooter)
+  .until(() -> !m_IntakeSubsystem.noteIn()).finallyDo(
+    interrupted -> {
+      Commands.waitSeconds(1).asProxy().andThen(m_stopShooter);
+    }
+    );
   private final Command m_autoSpinUpShooter = Commands.runOnce(m_shooter::enable, m_shooter);
   private final Command m_autoStopShooter = Commands.runOnce(m_shooter::disable, m_shooter);
 
@@ -117,37 +118,36 @@ public class RobotContainer {
     m_chooser.setDefaultOption("redAlliance_threeNotePID", redAlliance_threeNotePID());
     SmartDashboard.putData("Auto choices", m_chooser);
 
+    //Drivetrain
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
     
+    //Climbers
+    LB1.whileTrue(m_LeftClimberUp); // Left Climber Up
+    start1.whileTrue(m_RightClimberDown); // Right Climber Down
+    RB1.whileTrue(m_RightClimberUp); // Right Climber Up
+    back1.whileTrue(m_LeftClimberDown); // Left Climber Down
     
     //Arm
     // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
     L32.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 2
+    povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.65));
+    povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.50));
+    povDown2.whileTrue(m_ArmSubsystem.setSetpoint(-0.1090375 * m_drivetrainSubsystem.limelightArea() + 0.1835)); // Shoot (meter unless uno de los dos climbers esten arriba)
+    LT2.whileTrue(m_Arm_manualSetpointFront);
+    RT2.whileTrue(m_Arm_manualSetpointBack);
 
-    povDown2.whileTrue(m_ArmSubsystem.setSetpoint(0.268)); // Shoot
-    povUp2.whileTrue(m_ArmSubsystem.setSetpoint(0.322));/* .unless(() ->  (m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()))) */ // Position 1: 90 degrees
-    povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.65));/* .unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))) */ // Position 2: 90 degrees
-    povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.50));/* .unless(() ->  ((m_LeftClimberSubsystem.LeftisUp() || m_RightClimberSubsystem.RightisUp()) && (m_ArmSubsystem.isOnFront())))) */ // Position 3: 90 degrees
-
-/*     xButton2.whileTrue(m_Arm_manualSetpointFront);
-    bButton2.whileTrue(m_Arm_manualSetpointBack);  */
+    
+    /* xButton2.whileTrue(m_Arm_manualSetpointFront); //Arm manual setpoint Up
+    bButton2.whileTrue(m_Arm_manualSetpointBack); //Arm manual setpoint  Down */
  
     //Intake
     aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note
-    yButton2.onTrue(m_Intake_returnNote); //Intake return Note
+    yButton2.whileTrue(m_Intake_returnNote);
     
     //Shooter
     RB2.onTrue(m_spinUpShooter); //Empezar a girar lanzador
     LB2.onTrue(m_stopShooter); //Parar lanzador
     
-    //Climbers
-   /*  start1.whileTrue((m_RightClimberUp).unless(() -> m_ArmSubsystem.isUp()));
-    back1.whileTrue((m_LeftClimberUp).unless(() -> m_ArmSubsystem.isUp())); */
-    LB1.whileTrue(m_LeftClimberUp);
-    RB1.whileTrue(m_RightClimberUp);
-    back1.whileTrue(m_LeftClimberDown);
-    start1.whileTrue(m_RightClimberDown);
-
     //SysID Triggers
     /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     bButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));

@@ -108,17 +108,3 @@ public class ArmSubsystem extends SubsystemBase {
     
   }
 
-  /*
-   * public Command setSetpointManual(BooleanSupplier povLeft, BooleanSupplier
-   * povRight) {
-   * if (povLeft.getAsBoolean() == true) {
-   * Setpoint = Setpoint -1;
-   * }
-   * if (povRight.getAsBoolean() == true) {
-   * Setpoint = Setpoint +1;
-   * }
-   * 
-   * return runOnce(() -> pid.setSetpoint(Setpoint));
-   * }
-   */
-   
