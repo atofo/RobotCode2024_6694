@@ -21,7 +21,6 @@ import frc.robot.Commands.DriveInverted;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
-import frc.robot.Commands.LauncherWithJoystick;
 import frc.robot.Commands.LeftClimberDown;
 import frc.robot.Commands.LeftClimberUp;
 import frc.robot.Commands.RightClimberUp;
@@ -30,12 +29,12 @@ import frc.robot.Commands.Intake_ThrowNote;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
-import frc.robot.Subsystems.LauncherSubsystem;
+import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.LeftClimber;
 import frc.robot.Subsystems.RightClimber;
 
 public class RobotContainer {
-  //Sendabel Chooser
+  //Sendable Chooser
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
 
@@ -86,13 +85,6 @@ public class RobotContainer {
       () -> m_firstDriverController.getRawAxis(3),
       () -> m_firstDriverController.getRawAxis(2));
 
-  private final DriveInverted m_DriveInverted = new DriveInverted(m_drivetrainSubsystem,   
-   () -> m_firstDriverController.getRawAxis(0), 
-   () -> -m_firstDriverController.getRawAxis(1),
-   () -> -m_firstDriverController.getRawAxis(4), 
-   () -> -m_firstDriverController.getRawAxis(3),
-   () -> -m_firstDriverController.getRawAxis(2));
-
   //Arm
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
 /*   private final Arm_manualSetpointFront m_Arm_manualSetpointFront = new Arm_manualSetpointFront(m_ArmSubsystem);
@@ -104,9 +96,12 @@ public class RobotContainer {
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
   private final Intake_ThrowNote m_Intake_throwNote = new Intake_ThrowNote(m_IntakeSubsystem);
 
-  //Launcher
-  private final LauncherSubsystem m_LauncherSubsystem = new LauncherSubsystem();
-  private final LauncherWithJoystick m_LauncherWithJoystick = new LauncherWithJoystick(m_LauncherSubsystem);
+  //Shooter
+  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private final Command m_spinUpShooter = Commands.runOnce(m_shooter::enable, m_shooter);
+  private final Command m_stopShooter = Commands.runOnce(m_shooter::disable, m_shooter);
+  private final Command m_autoSpinUpShooter = Commands.runOnce(m_shooter::enable, m_shooter);
+  private final Command m_autoStopShooter = Commands.runOnce(m_shooter::disable, m_shooter);
 
   //Climbers
   private final LeftClimber m_LeftClimberSubsystem = new LeftClimber();
@@ -141,9 +136,9 @@ public class RobotContainer {
     aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note
     yButton2.onTrue(m_Intake_returnNote); //Intake return Note
     
-    //Launcher
-    LB2.toggleOnTrue(m_LauncherWithJoystick); //Toggle Shoot
-    RB2.whileTrue(m_Intake_throwNote); //Intake throw Note 
+    //Shooter
+    RB2.onTrue(m_spinUpShooter); //Empezar a girar lanzador
+    LB2.onTrue(m_stopShooter); //Parar lanzador
     
     //Climbers
    /*  start1.whileTrue((m_RightClimberUp).unless(() -> m_ArmSubsystem.isUp()));
@@ -152,10 +147,6 @@ public class RobotContainer {
     RB1.whileTrue(m_RightClimberUp);
     back1.whileTrue(m_LeftClimberDown);
     start1.whileTrue(m_RightClimberDown);
-
-    //aButton1.toggleOnTrue(m_DriveInverted);
-
-    aButton1.onTrue(m_drivetrainSubsystem.driveTest());
 
     //SysID Triggers
     /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -166,7 +157,21 @@ public class RobotContainer {
     configureBindings();
   }
 
-  private void configureBindings() {
+  private void configureBindings() {  
+    Command shoot =
+        Commands.either(
+              // Run the feeder
+              Commands.runOnce(m_IntakeSubsystem::throwNote, m_IntakeSubsystem), //Va a lanzar si se alcanza la velocidad deseada
+              // Do nothing
+              Commands.none(),
+              // Determine which of the above to do based on whether the shooter has reached the
+              // desired speed
+              m_shooter::atSetpoint);
+  
+      Command stopIntake = Commands.runOnce(m_IntakeSubsystem::intakeOFF, m_IntakeSubsystem);
+  
+      //disparar cuando se presione el boton X
+      xButton2.onTrue(shoot).onFalse(stopIntake);
   }
 
   
@@ -174,33 +179,33 @@ public class RobotContainer {
     return new SequentialCommandGroup( //
     // Initial Set and Shoot
     m_ArmSubsystem.autoSetSetpoint(0.12), //
-    m_LauncherSubsystem.autoLaunchOn(), //
-    Commands.waitSeconds(3.0).asProxy(), // Aqui iria condicional de que si se llego a los RPS
+    m_autoSpinUpShooter, //
+    Commands.waitUntil((() -> m_shooter.atSetpoint())),
     m_IntakeSubsystem.autoIntakeShootOn(), //
-    Commands.waitSeconds(1).asProxy(), //
-    m_LauncherSubsystem.autoLaunchOff(), //
+    Commands.waitSeconds(.5).asProxy(), //
+    m_autoStopShooter, //
     m_IntakeSubsystem.autoIntakeShootOff(), //
     m_ArmSubsystem.autoSetSetpoint(0.002), //
     Commands.waitUntil((() -> m_ArmSubsystem.autoRunMode())), //
-    
-    //Aqui meter condicional de que si llega a setpoint < 0.010 haga el siguiente comando
+
     // Go to Next Note
     new ParallelCommandGroup( //
       m_drivetrainSubsystem.calculatePID_drive(2, 2, 0.5), //primero va el setpoint derecho y luego el setpoint izquierdo (no poner negativo para ir hacia adelante, el metodo ya lo hace)
       m_IntakeSubsystem.autoGetNote() //
       .until(() -> m_IntakeSubsystem.noteIn()) //
       ), //
-      
+    
+    // Return beneath speaker
     new ParallelCommandGroup( //
     m_drivetrainSubsystem.calculatePID_drive(-1.92, -1.92, 0.7), //
     m_ArmSubsystem.autoSetSetpoint(0.12), //
-    m_LauncherSubsystem.autoLaunchOn()//
+    m_autoSpinUpShooter //
     ),
 
-    Commands.waitSeconds(1.0).asProxy(), // Aqui iria condicional de que si se llego a los RPS
+    Commands.waitUntil((() -> m_shooter.atSetpoint())),
     m_IntakeSubsystem.autoIntakeShootOn(), //
-    Commands.waitSeconds(1).asProxy(), //
-    m_LauncherSubsystem.autoLaunchOff(), //
+    Commands.waitSeconds(.5).asProxy(), //
+    m_autoStopShooter, //
     m_IntakeSubsystem.autoIntakeShootOff(), //
     m_ArmSubsystem.autoSetSetpoint(0.002), //
 
