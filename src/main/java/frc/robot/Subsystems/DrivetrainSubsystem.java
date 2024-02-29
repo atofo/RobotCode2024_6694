@@ -225,7 +225,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
       } else {
         m_drive.driveCartesian(rightTrigger.getAsDouble(),
             -joystickX.getAsDouble(),
-            joystickZ.getAsDouble());
+            -joystickZ.getAsDouble());
       }
     } else {
       if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
@@ -237,7 +237,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
       } else {
         m_drive.driveCartesian(-leftTrigger.getAsDouble(),
             -joystickX.getAsDouble(),
-            joystickZ.getAsDouble());
+            -joystickZ.getAsDouble());
       }
     }
   }
@@ -255,8 +255,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_drive.driveCartesian(0, 0, 0);
 
       } else {
-        m_drive.driveCartesian(joystickY.getAsDouble(),
-            rightTrigger.getAsDouble(),
+        m_drive.driveCartesian(-rightTrigger.getAsDouble(),
+            joystickY.getAsDouble(),    
             joystickZ.getAsDouble());
       }
     } else {
@@ -267,8 +267,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
           Math.abs(leftTrigger.getAsDouble()) < 0.1) {
         m_drive.driveCartesian(0, 0, 0);
       } else {
-        m_drive.driveCartesian(joystickY.getAsDouble(),
-            -leftTrigger.getAsDouble(),
+        m_drive.driveCartesian(leftTrigger.getAsDouble(),
+            joystickY.getAsDouble(),
             joystickZ.getAsDouble());
       }
     }

@@ -76,7 +76,7 @@ public class Constants {
     public class ShooterConstants {
         /* El Motor NEO puede maximo ~5800 RPM. Si necesitamos RPS (Rotaciones por segundo) hay que dividir entre 60
          5800 / 60 = 96.66 */
-        public static final int[] kEncoderPorts = new int[] {5, 6};
+        public static final int[] kEncoderPorts = new int[] {1, 2};
         public static final boolean kEncoderReversed = false;
         public static final int kEncoderCPR = 2048; // REV Through Bore Encoder CPR
         public static final double kEncoderDistancePerPulse =

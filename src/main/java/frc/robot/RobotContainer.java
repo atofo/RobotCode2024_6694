@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.Arm_manualSetpointFront;
+import frc.robot.Commands.DriveInverted;
 import frc.robot.Commands.Arm_manualSetpointBack;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
@@ -76,11 +77,18 @@ public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
-      () -> -m_firstDriverController.getRawAxis(0), 
+      () -> m_firstDriverController.getRawAxis(0), 
       () -> m_firstDriverController.getRawAxis(1),
       () -> m_firstDriverController.getRawAxis(4), 
       () -> m_firstDriverController.getRawAxis(3),
       () -> m_firstDriverController.getRawAxis(2));
+
+  private final DriveInverted m_driveInverted = new DriveInverted(m_drivetrainSubsystem,
+  () -> m_firstDriverController.getRawAxis(0), 
+  () -> m_firstDriverController.getRawAxis(1),
+  () -> m_firstDriverController.getRawAxis(4), 
+  () -> m_firstDriverController.getRawAxis(3),
+  () -> m_firstDriverController.getRawAxis(2));
 
   //Arm
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
@@ -121,6 +129,7 @@ public class RobotContainer {
     //Drivetrain
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
     bButton1.onTrue(m_drivetrainSubsystem.StraightApril());
+    aButton1.toggleOnTrue(m_driveInverted);
     
     //Climbers
     LB1.whileTrue(m_LeftClimberUp); // Left Climber Up
@@ -187,9 +196,11 @@ public class RobotContainer {
     m_autoStopShooter, //
     m_IntakeSubsystem.autoIntakeShootOff(), //
     m_ArmSubsystem.autoSetSetpoint(0.002), //
-    Commands.waitUntil((() -> m_ArmSubsystem.autoRunMode())), //
+    Commands.waitUntil((() -> m_ArmSubsystem.autoRunMode())) //
 
-    // Go to Next Note
+    );
+
+   /*  // Go to Next Note
     new ParallelCommandGroup( //
       m_drivetrainSubsystem.calculatePID_drive(2, 2, 0.5), //primero va el setpoint derecho y luego el setpoint izquierdo (no poner negativo para ir hacia adelante, el metodo ya lo hace)
       m_IntakeSubsystem.autoGetNote() //
@@ -221,7 +232,7 @@ public class RobotContainer {
       ) //
     
 
-    ); 
+    );  */
   }
 
   public Command getAutonomousCommand() {
