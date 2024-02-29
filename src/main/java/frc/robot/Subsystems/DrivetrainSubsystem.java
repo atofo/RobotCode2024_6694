@@ -204,11 +204,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
-  public Command driveTest() {
-    return run(() -> {
-      m_drive.driveCartesian(0, 0.2, 0);
-    });
-  }
 
   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
       DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
@@ -224,8 +219,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
       } else {
         m_drive.driveCartesian(rightTrigger.getAsDouble(),
-            -joystickX.getAsDouble(),
-            -joystickZ.getAsDouble());
+                                 -joystickX.getAsDouble(),
+                                 -joystickZ.getAsDouble());
       }
     } else {
       if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
@@ -236,8 +231,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_drive.driveCartesian(0, 0, 0);
       } else {
         m_drive.driveCartesian(-leftTrigger.getAsDouble(),
-            -joystickX.getAsDouble(),
-            -joystickZ.getAsDouble());
+                               -joystickX.getAsDouble(),
+                               -joystickZ.getAsDouble());
       }
     }
   }
@@ -256,8 +251,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
       } else {
         m_drive.driveCartesian(-rightTrigger.getAsDouble(),
-            joystickY.getAsDouble(),    
-            joystickZ.getAsDouble());
+                                joystickX.getAsDouble(),    
+                                joystickZ.getAsDouble());
       }
     } else {
       if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
@@ -268,8 +263,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_drive.driveCartesian(0, 0, 0);
       } else {
         m_drive.driveCartesian(leftTrigger.getAsDouble(),
-            joystickY.getAsDouble(),
-            joystickZ.getAsDouble());
+                               joystickX.getAsDouble(),
+                               joystickZ.getAsDouble());
       }
     }
   }
@@ -322,9 +317,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
 
   public double XSpeed(DoubleSupplier DYaw) {
-    if (target.getYaw() > DYaw.getAsDouble() + 1) { // Rango de error para VelocidadX ((SOLO CAMBIAR DYaw)
+    if (yaw > DYaw.getAsDouble() + 1) { // Rango de error para VelocidadX ((SOLO CAMBIAR DYaw)
       return -0.2;
-    } else if (target.getYaw() < DYaw.getAsDouble() - 1) {
+    } else if (yaw < DYaw.getAsDouble() - 1) {
       return 0.2;
     } else {
       return 0;

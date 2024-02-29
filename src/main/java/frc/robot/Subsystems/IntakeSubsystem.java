@@ -26,7 +26,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command autoGetNote(){
     return run(() -> {
-    if(intakeSwitch.get()){
+    if(!intakeSwitch.get()){
       if(state == 0){
         state++;
       }
@@ -57,7 +57,7 @@ public class IntakeSubsystem extends SubsystemBase {
     
 
     public void getNote(){
-      if(intakeSwitch.get()){
+      if(!intakeSwitch.get()){
         if(state == 0){
           state++;
         }
@@ -93,19 +93,23 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intakeMotor.set(-1);
   }
 
+  public void returnNote(){
+    m_intakeMotor.set(.3);
+  }
+
   public Boolean noteIn(){
     if(state==2){
       switch (outswitch) {
         case 0:
           // Nota muy adentro
-          if(intakeSwitch.get()){
+          if(!intakeSwitch.get()){
             outswitch=1;
           }
           return true;
 
         case 1:
         // Nota apunto de salir / en limit switch
-          if(!intakeSwitch.get()){
+          if(intakeSwitch.get()){
             outswitch=2;
           } 
           return true;
@@ -141,7 +145,7 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     super.periodic();
-    SmartDashboard.putBoolean("Intake Switch", noteIn());
-
+    SmartDashboard.putBoolean("NoteIn", noteIn());
+    SmartDashboard.putBoolean("Intake Switch", !intakeSwitch.get());
   }
 }

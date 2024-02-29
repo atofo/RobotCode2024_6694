@@ -24,7 +24,7 @@ public class Intake_returnNote extends Command {
   @Override
   public void execute() {
 
-    //intake.returnNote();
+    intake.returnNote();
     
   }
 

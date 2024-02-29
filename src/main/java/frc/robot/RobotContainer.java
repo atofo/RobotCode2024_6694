@@ -43,7 +43,7 @@ public class RobotContainer {
   //First Driver Triggers
   private Trigger L31 = m_firstDriverController.leftStick();
   private Trigger aButton1 = m_firstDriverController.a();
-  private Trigger bButton1 = m_firstDriverController.a();
+  private Trigger bButton1 = m_firstDriverController.b();
 
   private Trigger start1 = m_firstDriverController.start();
   private Trigger back1 = m_firstDriverController.back();
@@ -77,14 +77,14 @@ public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
-      () -> m_firstDriverController.getRawAxis(0), 
+      () -> -m_firstDriverController.getRawAxis(0), 
       () -> m_firstDriverController.getRawAxis(1),
-      () -> m_firstDriverController.getRawAxis(4), 
+      () -> -m_firstDriverController.getRawAxis(4), 
       () -> m_firstDriverController.getRawAxis(3),
       () -> m_firstDriverController.getRawAxis(2));
 
   private final DriveInverted m_driveInverted = new DriveInverted(m_drivetrainSubsystem,
-  () -> m_firstDriverController.getRawAxis(0), 
+  () -> -m_firstDriverController.getRawAxis(0), 
   () -> m_firstDriverController.getRawAxis(1),
   () -> m_firstDriverController.getRawAxis(4), 
   () -> m_firstDriverController.getRawAxis(3),
@@ -103,12 +103,10 @@ public class RobotContainer {
   //Shooter
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final Command m_stopShooter = Commands.runOnce(m_shooter::disable, m_shooter);
+
   private final Command m_spinUpShooter = Commands.runOnce(m_shooter::enable, m_shooter)
-  .until(() -> !m_IntakeSubsystem.noteIn()).finallyDo(
-    interrupted -> {
-      Commands.waitSeconds(1).asProxy().andThen(m_stopShooter);
-    }
-    );
+  .until(() -> !m_IntakeSubsystem.noteIn()).andThen((Commands.waitSeconds(1).andThen(m_shooter::disable)));
+
   private final Command m_autoSpinUpShooter = Commands.runOnce(m_shooter::enable, m_shooter);
   private final Command m_autoStopShooter = Commands.runOnce(m_shooter::disable, m_shooter);
 
@@ -128,6 +126,7 @@ public class RobotContainer {
 
     //Drivetrain
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
+
     bButton1.onTrue(m_drivetrainSubsystem.StraightApril());
     aButton1.toggleOnTrue(m_driveInverted);
     
@@ -139,17 +138,13 @@ public class RobotContainer {
     
     //Arm
     // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
-    L32.whileTrue(m_ArmSubsystem.setSetpoint(0.16)); // Intake / Modo Correr 2
+    L32.whileTrue(m_ArmSubsystem.setSetpoint(0.001)); // Intake / Modo Correr 2
     povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.65));
     povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.50));
     povDown2.whileTrue(m_ArmSubsystem.setSetpoint(-0.1090375 * m_drivetrainSubsystem.limelightArea() + 0.1835)); // Shoot (meter unless uno de los dos climbers esten arriba)
     LT2.whileTrue(m_Arm_manualSetpointFront);
     RT2.whileTrue(m_Arm_manualSetpointBack);
 
-    
-    /* xButton2.whileTrue(m_Arm_manualSetpointFront); //Arm manual setpoint Up
-    bButton2.whileTrue(m_Arm_manualSetpointBack); //Arm manual setpoint  Down */
- 
     //Intake
     aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note
     yButton2.whileTrue(m_Intake_returnNote);

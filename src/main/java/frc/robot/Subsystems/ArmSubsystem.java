@@ -36,7 +36,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     arm_leftMotor.follow(arm_rightMotor);
-    //pid.setSetpoint(0.425);
+    pid.setSetpoint(0.001);
   }
 
 
@@ -102,7 +102,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     
     public void setpointStop(){
-      Setpoint = arm_Encoder.getAbsolutePosition();
+      Setpoint = arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError;
       pid.setSetpoint(Setpoint);
     }
     
