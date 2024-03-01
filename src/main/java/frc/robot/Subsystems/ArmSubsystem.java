@@ -7,6 +7,7 @@ package frc.robot.Subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -56,6 +57,17 @@ public class ArmSubsystem extends SubsystemBase {
 
   public Command setSetpoint(double Setpoint) {
     return runOnce(() -> pid.setSetpoint(Setpoint));
+  }
+
+  public Command setAprilSetpoint(DoubleSupplier Area) {
+    return runOnce(() -> {
+
+      if (Area.getAsDouble() > 0.28) {
+        pid.setSetpoint((-0.1090375 * Area.getAsDouble() + 0.1835));
+      } else {
+        pid.setSetpoint((-0.052 * Area.getAsDouble() + 0.16706));
+      }
+    });
   }
 
   public Command autoSetSetpoint(double Setpoint) {

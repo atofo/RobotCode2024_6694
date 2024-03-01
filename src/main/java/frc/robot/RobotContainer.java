@@ -144,6 +144,7 @@ public class RobotContainer {
     povDown2.whileTrue(m_ArmSubsystem.setSetpoint(-0.1090375 * m_drivetrainSubsystem.limelightArea() + 0.1835)); // Shoot (meter unless uno de los dos climbers esten arriba)
     LT2.whileTrue(m_Arm_manualSetpointFront);
     RT2.whileTrue(m_Arm_manualSetpointBack);
+    bButton2.onTrue(m_ArmSubsystem.setAprilSetpoint(() -> m_drivetrainSubsystem.limelightArea()));
 
     //Intake
     aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note

@@ -4,6 +4,8 @@
 
 package frc.robot.Subsystems;
 
+import java.util.List;
+
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -31,7 +33,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private int Id;
   private double yaw;
   private double pitch;
-  private double area;
+  private double Area;
   private double skew;
 
   private CANSparkMax leftFrontMotor = new CANSparkMax(DrivetrainConstants.leftFrontMotor_PORT, MotorType.kBrushless);
@@ -179,31 +181,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Gyroscope", Gyroscope.getAngle(IMUAxis.kYaw));
     var result = Limelight.getLatestResult();
 
-    if (result.hasTargets()) {
-
-      target = result.getBestTarget();
-
-      bestCameraToTarget = target.getBestCameraToTarget();
-      alternateCameraToTarget = target.getAlternateCameraToTarget();
-
-      Id = target.getFiducialId();
-      yaw = target.getYaw();
-      pitch = target.getPitch();
-      area = target.getArea();
-      skew = target.getSkew();
-
-    } else {
-
-      Id = 0;
-      yaw = 0;
-      pitch = 0;
-      area = 0;
-      skew = 0;
+    List<PhotonTrackedTarget> targets = result.getTargets();
+    if (targets.toArray().length > 0) {
+      Area = targets.get(0).getArea();
+      yaw = targets.get(0).getYaw();
+      SmartDashboard.putNumber("April ID 0", targets.get(0).getFiducialId());
 
     }
-
   }
-
 
   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
       DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
@@ -219,8 +204,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
       } else {
         m_drive.driveCartesian(rightTrigger.getAsDouble(),
-                                 -joystickX.getAsDouble(),
-                                 -joystickZ.getAsDouble());
+            -joystickX.getAsDouble(),
+            -joystickZ.getAsDouble());
       }
     } else {
       if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
@@ -231,8 +216,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_drive.driveCartesian(0, 0, 0);
       } else {
         m_drive.driveCartesian(-leftTrigger.getAsDouble(),
-                               -joystickX.getAsDouble(),
-                               -joystickZ.getAsDouble());
+            -joystickX.getAsDouble(),
+            -joystickZ.getAsDouble());
       }
     }
   }
@@ -251,8 +236,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
       } else {
         m_drive.driveCartesian(-rightTrigger.getAsDouble(),
-                                joystickX.getAsDouble(),    
-                                joystickZ.getAsDouble());
+            joystickX.getAsDouble(),
+            joystickZ.getAsDouble());
       }
     } else {
       if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
@@ -263,8 +248,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_drive.driveCartesian(0, 0, 0);
       } else {
         m_drive.driveCartesian(leftTrigger.getAsDouble(),
-                               joystickX.getAsDouble(),
-                               joystickZ.getAsDouble());
+            joystickX.getAsDouble(),
+            joystickZ.getAsDouble());
       }
     }
   }
@@ -309,12 +294,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         .finallyDo(interrupted -> m_drive.stopMotor());
   }
 
-  public Command StraightApril(){
+  public Command StraightApril() {
 
     return run(() -> m_drive.driveCartesian(0, 0, XSpeed(() -> 0.00))).until(() -> XSpeed(() -> 0) == 0);
 
   }
-
 
   public double XSpeed(DoubleSupplier DYaw) {
     if (yaw > DYaw.getAsDouble() + 1) { // Rango de error para VelocidadX ((SOLO CAMBIAR DYaw)
@@ -330,12 +314,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     Id = 0;
     yaw = 0;
     pitch = 0;
-    area = 0;
+    Area = 0;
     skew = 0;
   }
 
   public double limelightArea() {
-    return area;
+    return Area;
   }
 
 }
