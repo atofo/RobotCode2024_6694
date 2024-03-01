@@ -63,8 +63,8 @@ public class Constants {
 
     public class IntakeLauncherConstants {
         public static final int intakelauncher_intakeMotor_PORT = 33;
-        public static final int intakelauncher_downMotor_PORT = 31;
-        public static final int intakelauncher_upMotor_PORT = 32;
+        public static final int intakelauncher_downMotor_PORT = 32;
+        public static final int intakelauncher_upMotor_PORT = 31;
         public static final int intakelauncher_intakeSwitch_PORT = 3;
     }
 
@@ -77,7 +77,7 @@ public class Constants {
         /* El Motor NEO puede maximo ~5800 RPM. Si necesitamos RPS (Rotaciones por segundo) hay que dividir entre 60
          5800 / 60 = 96.66 */
         public static final int[] kEncoderPorts = new int[] {1, 2};
-        public static final boolean kEncoderReversed = false;
+        public static final boolean kEncoderReversed = true;
         public static final int kEncoderCPR = 2048; // REV Through Bore Encoder CPR
         public static final double kEncoderDistancePerPulse =
             // Distance units will be rotations
