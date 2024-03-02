@@ -110,6 +110,16 @@ public class ArmSubsystem extends SubsystemBase {
       Setpoint = arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError;
       pid.setSetpoint(Setpoint);
     }
+
+    public Boolean atSetpoint(){
+      if(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError > Setpoint-ArmConstants.kAtSetpointTolerance &&
+      arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < Setpoint+ArmConstants.kAtSetpointTolerance){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
     
   }
 

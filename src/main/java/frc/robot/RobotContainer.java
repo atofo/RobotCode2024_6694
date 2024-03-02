@@ -17,15 +17,18 @@ import frc.robot.Commands.DriveInverted;
 import frc.robot.Commands.Arm_manualSetpointBack;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
+import frc.robot.Commands.Intake_Emergency;
 import frc.robot.Commands.Intake_getNote;
 import frc.robot.Commands.Intake_returnNote;
 import frc.robot.Commands.LeftClimberDown;
 import frc.robot.Commands.LeftClimberUp;
 import frc.robot.Commands.RightClimberUp;
+import frc.robot.Commands.Shooter_Emergency;
 import frc.robot.Commands.RightClimberDown;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
+import frc.robot.Subsystems.LEDSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.LeftClimber;
 import frc.robot.Subsystems.RightClimber;
@@ -99,16 +102,20 @@ public class RobotContainer {
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final Intake_getNote m_Intake_getNote = new Intake_getNote(m_IntakeSubsystem);
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
+  private final Intake_Emergency m_Intake_Emergency = new Intake_Emergency(m_IntakeSubsystem);
 
   //Shooter
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final Command m_stopShooter = Commands.runOnce(m_shooter::disable, m_shooter);
+  private final Command m_stopShooter2 = Commands.runOnce(m_shooter::disable, m_shooter);
 
   private final Command m_spinUpShooter = Commands.run(m_shooter::enable, m_shooter)
   .until(() -> !m_IntakeSubsystem.noteIn()).andThen((new SequentialCommandGroup(
   Commands.waitSeconds(2.5).asProxy(),
-  m_stopShooter
+  m_stopShooter2
   )));
+
+  private final Shooter_Emergency m_Shooter_Emergency = new Shooter_Emergency(m_shooter);
 
 
 
@@ -125,9 +132,15 @@ public class RobotContainer {
   private final RightClimberUp m_RightClimberUp = new RightClimberUp(m_RightClimberSubsystem);
   private final RightClimberDown m_RightClimberDown = new RightClimberDown(m_RightClimberSubsystem);
 
+  // LEDS
+  private final LEDSubsystem m_LEDSubsystem = new LEDSubsystem();
+
   public RobotContainer() {
     m_chooser.setDefaultOption("redAlliance_threeNotePID", redAlliance_threeNotePID());
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    // LEDS
+    LEDContainer();
 
     //Drivetrain
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
@@ -146,7 +159,6 @@ public class RobotContainer {
     L32.whileTrue(m_ArmSubsystem.setSetpoint(0.001)); // Intake / Modo Correr 2
     povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.65));
     povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.50));
-    povDown2.whileTrue(m_ArmSubsystem.setSetpoint(-0.1090375 * m_drivetrainSubsystem.limelightArea() + 0.1835)); // Shoot (meter unless uno de los dos climbers esten arriba)
     LT2.whileTrue(m_Arm_manualSetpointFront);
     RT2.whileTrue(m_Arm_manualSetpointBack);
     bButton2.onTrue(m_ArmSubsystem.setAprilSetpoint(() -> m_drivetrainSubsystem.limelightArea()));
@@ -154,10 +166,12 @@ public class RobotContainer {
     //Intake
     aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note
     yButton2.whileTrue(m_Intake_returnNote);
+    povDown2.whileTrue(m_Intake_Emergency);
     
     //Shooter
     RB2.onTrue(m_spinUpShooter); //Empezar a girar lanzador
     LB2.onTrue(m_stopShooter); //Parar lanzador
+    povUp2.whileTrue(m_Shooter_Emergency); //Emergency Shoot
     
     //SysID Triggers
     /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -166,6 +180,26 @@ public class RobotContainer {
     yButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse)); */
  
     configureBindings();
+  }
+
+  private void LEDContainer(){
+    if(false /* Pixy Ready */){
+      m_LEDSubsystem.pinWriter(true, true, true);
+    }else if(false /* Pixy Right */){
+      m_LEDSubsystem.pinWriter(false, true, true);
+    }else if(false /* Pixy Left */){
+      m_LEDSubsystem.pinWriter(true, false, true);
+    }else if(m_ArmSubsystem.atSetpoint() && m_shooter.atSetpoint() /* Ready to Shoot */){
+      m_LEDSubsystem.pinWriter(true, true, false);
+    }else if(m_shooter.charging() /* Adjusting Shoot */){
+      m_LEDSubsystem.pinWriter(false, true, false);
+    }else if(m_drivetrainSubsystem.inverted() /* Inverted Drivetrain */){
+      m_LEDSubsystem.pinWriter(false, false, true);
+    }else if(m_IntakeSubsystem.noteIn() /* NoteIn */){
+      m_LEDSubsystem.pinWriter(true, false, false);
+    }else {
+      m_LEDSubsystem.pinWriter(false, false, false);
+  }
   }
 
   private void configureBindings() {  

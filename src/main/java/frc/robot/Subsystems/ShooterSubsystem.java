@@ -10,6 +10,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeLauncherConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -36,14 +37,14 @@ public class ShooterSubsystem extends SubsystemBase {
     m_upPidController.setI(ShooterConstants.kI);
     m_upPidController.setD(ShooterConstants.kD);
     m_upPidController.setIZone(ShooterConstants.kIz);
-    m_upPidController.setFF(ShooterConstants.kFF);
+    m_upPidController.setFF(ShooterConstants.kUpFF);
     m_upPidController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
     
     m_downPidController.setP(ShooterConstants.kP);
     m_downPidController.setI(ShooterConstants.kI);
     m_downPidController.setD(ShooterConstants.kD);
     m_downPidController.setIZone(ShooterConstants.kIz);
-    m_downPidController.setFF(ShooterConstants.kFF);
+    m_downPidController.setFF(ShooterConstants.kDownFF);
     m_downPidController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
   }
 
@@ -58,8 +59,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    if(((m_upEncoder.getVelocity() > ShooterConstants.maxRPM - ShooterConstants.RPMmargin) && (m_upEncoder.getVelocity() < ShooterConstants.maxRPM + ShooterConstants.RPMmargin))
-    && ((m_downEncoder.getVelocity() > ShooterConstants.maxRPM - ShooterConstants.RPMmargin) && (m_downEncoder.getVelocity() < ShooterConstants.maxRPM + ShooterConstants.RPMmargin))){
+    if((((Math.abs(m_upEncoder.getVelocity()) + Math.abs(m_downEncoder.getVelocity()))/2 > ShooterConstants.maxRPM - ShooterConstants.RPMmargin) &&
+    ((Math.abs(m_upEncoder.getVelocity()) + Math.abs(m_downEncoder.getVelocity()))/2 < ShooterConstants.maxRPM + ShooterConstants.RPMmargin))){
       return true;
     }
     else{
@@ -67,18 +68,30 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
+  public boolean charging(){
+    if(upSetPoint > 1 && downSetPoint > 1){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
+  public void emergencyShoot(){
+  m_downMotor.set(1);
+  m_upMotor.set(1);
+  }
+  
+  public void emergencyStop(){
+  m_downMotor.set(1);
+  m_upMotor.set(1);
+  }
+
   @Override
   public void periodic(){
     super.periodic();
     m_upPidController.setReference(upSetPoint, CANSparkMax.ControlType.kVelocity);
     m_downPidController.setReference(downSetPoint, CANSparkMax.ControlType.kVelocity);
-    SmartDashboard.putNumber("P Gain", ShooterConstants.kP);
-    SmartDashboard.putNumber("I Gain", ShooterConstants.kI);
-    SmartDashboard.putNumber("D Gain", ShooterConstants.kD);
-    SmartDashboard.putNumber("I Zone", ShooterConstants.kIz);
-    SmartDashboard.putNumber("Feed Forward", ShooterConstants.kFF);
-    SmartDashboard.putNumber("Max Output", ShooterConstants.kMaxOutput);
-    SmartDashboard.putNumber("Min Output", ShooterConstants.kMinOutput);
     SmartDashboard.putNumber("SetPoint", upSetPoint);
     SmartDashboard.putNumber("Up Velocity", m_upEncoder.getVelocity());
     SmartDashboard.putNumber("Down Velocity", m_downEncoder.getVelocity());

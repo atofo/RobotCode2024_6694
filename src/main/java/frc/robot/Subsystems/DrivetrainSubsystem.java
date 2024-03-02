@@ -35,6 +35,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private double pitch;
   private double Area;
   private double skew;
+  private boolean inverted = false;
 
   private CANSparkMax leftFrontMotor = new CANSparkMax(DrivetrainConstants.leftFrontMotor_PORT, MotorType.kBrushless);
   private CANSparkMax rightFrontMotor = new CANSparkMax(DrivetrainConstants.rightFrontMotor_PORT, MotorType.kBrushless);
@@ -192,7 +193,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
       DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
-
+    inverted = false;
     if (rightTrigger.getAsDouble() > 0.1) {
       if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
           Math.abs(joystickY.getAsDouble()) < 0.1 &&
@@ -224,7 +225,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void driveInverted(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
       DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
-
+        inverted = true;
     if (rightTrigger.getAsDouble() > 0.1) {
       if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
           Math.abs(joystickY.getAsDouble()) < 0.1 &&
@@ -320,6 +321,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public double limelightArea() {
     return Area;
+  }
+
+  public boolean inverted(){
+if(inverted){
+  return true;
+}
+else{
+  return false;
+}
   }
 
 }
