@@ -58,7 +58,7 @@ public class Constants {
     public class ArmConstants {
         public static final int arm_leftMotor_PORT = 21;
         public static final int arm_rightMotor_PORT = 22;
-        public static final double kEncoderError = 0.603;
+        public static final double kEncoderError = 0.560;
     }
 
     public class IntakeLauncherConstants {
@@ -88,9 +88,15 @@ public class Constants {
         public static final double kShooterToleranceRPS = 3; //Tolerancia de error 
     
         // Ojo, valores experimentales de kP, kI y kD, hay que experimentar.
-        public static final double kP = 0.00002;
+        public static final double kP = 0.00012;
         public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kD = 0; 
+        public static final double kIz = 0;
+        public static final double kFF = 0.000700; // PR 0.000400
+        public static final double kMaxOutput = 1; 
+        public static final double kMinOutput = -1;
+        public static final double maxRPM = 5100;
+        public static final double RPMmargin = 30;
     
         // On a real robot the feedforward constants should be empirically determined; these are
         // reasonable guesses.

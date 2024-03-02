@@ -6,59 +6,85 @@ package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeLauncherConstants;
 import frc.robot.Constants.ShooterConstants;
 
-public class ShooterSubsystem extends PIDSubsystem {
+public class ShooterSubsystem extends SubsystemBase {
 
   private CANSparkMax m_downMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_downMotor_PORT, MotorType.kBrushless);
+  private SparkPIDController m_downPidController = m_downMotor.getPIDController();
+  private RelativeEncoder m_downEncoder = m_downMotor.getEncoder();
+  private double downSetPoint = ShooterConstants.maxRPM;
+  
+  
   private CANSparkMax m_upMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_upMotor_PORT, MotorType.kBrushless);
-  private final Encoder m_shooterEncoder =
-      new Encoder(
-          ShooterConstants.kEncoderPorts[0],
-          ShooterConstants.kEncoderPorts[1],
-          ShooterConstants.kEncoderReversed);
-  private final SimpleMotorFeedforward m_shooterFeedforward =
-      new SimpleMotorFeedforward(
-          ShooterConstants.kSVolts, ShooterConstants.kVVoltSecondsPerRotation);
-
+  private SparkPIDController m_upPidController = m_upMotor.getPIDController();
+  private RelativeEncoder m_upEncoder = m_upMotor.getEncoder();
+  private double upSetPoint = ShooterConstants.maxRPM;
 
   public ShooterSubsystem() {
-    super(new PIDController(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD));
     m_upMotor.setInverted(true);
-    getController().setTolerance(ShooterConstants.kShooterToleranceRPS);
-    m_shooterEncoder.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
-    setSetpoint(ShooterConstants.kShooterTargetRPS);
+    upSetPoint =  0;
+    downSetPoint = 0;
+
+    m_upPidController.setP(ShooterConstants.kP);
+    m_upPidController.setI(ShooterConstants.kI);
+    m_upPidController.setD(ShooterConstants.kD);
+    m_upPidController.setIZone(ShooterConstants.kIz);
+    m_upPidController.setFF(ShooterConstants.kFF);
+    m_upPidController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
+    
+    m_downPidController.setP(ShooterConstants.kP);
+    m_downPidController.setI(ShooterConstants.kI);
+    m_downPidController.setD(ShooterConstants.kD);
+    m_downPidController.setIZone(ShooterConstants.kIz);
+    m_downPidController.setFF(ShooterConstants.kFF);
+    m_downPidController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
   }
 
-  @Override
-  public void useOutput(double output, double setpoint) {
-    m_downMotor.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
-    m_upMotor.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
+  public void enable() {
+      upSetPoint = (ShooterConstants.maxRPM);
+      downSetPoint = (ShooterConstants.maxRPM);
   }
-
-  @Override
-  public double getMeasurement() {
-    // Return the process variable measurement here
-    return m_shooterEncoder.getRate();
+  
+  public void disable() {
+      upSetPoint = (0);
+      downSetPoint = (0);
   }
 
   public boolean atSetpoint() {
-    return m_controller.atSetpoint();
+    if(((m_upEncoder.getVelocity() > ShooterConstants.maxRPM - ShooterConstants.RPMmargin) && (m_upEncoder.getVelocity() < ShooterConstants.maxRPM + ShooterConstants.RPMmargin))
+    && ((m_downEncoder.getVelocity() > ShooterConstants.maxRPM - ShooterConstants.RPMmargin) && (m_downEncoder.getVelocity() < ShooterConstants.maxRPM + ShooterConstants.RPMmargin))){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 
   @Override
   public void periodic(){
     super.periodic();
-      SmartDashboard.putNumber("Shooter Rate", m_shooterEncoder.getRate());
-      SmartDashboard.putNumber("Applied Output", m_downMotor.getAppliedOutput());
-      SmartDashboard.putBoolean("At Setpoint", m_controller.atSetpoint());
+    m_upPidController.setReference(upSetPoint, CANSparkMax.ControlType.kVelocity);
+    m_downPidController.setReference(downSetPoint, CANSparkMax.ControlType.kVelocity);
+    SmartDashboard.putNumber("P Gain", ShooterConstants.kP);
+    SmartDashboard.putNumber("I Gain", ShooterConstants.kI);
+    SmartDashboard.putNumber("D Gain", ShooterConstants.kD);
+    SmartDashboard.putNumber("I Zone", ShooterConstants.kIz);
+    SmartDashboard.putNumber("Feed Forward", ShooterConstants.kFF);
+    SmartDashboard.putNumber("Max Output", ShooterConstants.kMaxOutput);
+    SmartDashboard.putNumber("Min Output", ShooterConstants.kMinOutput);
+    SmartDashboard.putNumber("SetPoint", upSetPoint);
+    SmartDashboard.putNumber("Up Velocity", m_upEncoder.getVelocity());
+    SmartDashboard.putNumber("Down Velocity", m_downEncoder.getVelocity());
+    SmartDashboard.putBoolean("atSetpoint", atSetpoint());
+    
   }
 
 }

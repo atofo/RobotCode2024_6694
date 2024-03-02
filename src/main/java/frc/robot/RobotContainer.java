@@ -104,7 +104,7 @@ public class RobotContainer {
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final Command m_stopShooter = Commands.runOnce(m_shooter::disable, m_shooter);
 
-  private final Command m_spinUpShooter = Commands.runOnce(m_shooter::enable, m_shooter)
+  private final Command m_spinUpShooter = Commands.run(m_shooter::enable, m_shooter)
   .until(() -> !m_IntakeSubsystem.noteIn()).andThen((new SequentialCommandGroup(
   Commands.waitSeconds(2.5).asProxy(),
   m_stopShooter

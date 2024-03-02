@@ -51,8 +51,6 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Arm Setpoint: ", pid.getSetpoint());
     SmartDashboard.putNumber("Arm AbsEncoder: ", arm_Encoder.getAbsolutePosition());
     SmartDashboard.putNumber("Arm ProcessVar: ", processVar);
-    SmartDashboard.putNumber("Arm Error ", pid.getPositionError());
-
   }
 
   public Command setSetpoint(double Setpoint) {
