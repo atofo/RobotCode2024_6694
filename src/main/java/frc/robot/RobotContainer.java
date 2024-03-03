@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -211,42 +212,44 @@ public class RobotContainer {
 
   public Command redAlliance_threeNotePID() {
     return new SequentialCommandGroup( //
-      // Initial Set and Shoot
-    new ParallelCommandGroup(
-      m_ArmSubsystem.autoSetSetpoint(0.120), //
+
+    // NOTE 0
+      new ParallelCommandGroup(
+      m_ArmSubsystem.autoSetSetpoint(0.118), //
       m_shooter.autoEnable(), //
-      Commands.waitSeconds(2).asProxy() // CAMBIAR POR UNTIL SETPOINT
-    ),
+      Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()) // CAMBIAR POR UNTIL SETPOINT
+      ), //
+    
     m_IntakeSubsystem.autoIntakeShootOn(), //
     Commands.waitSeconds(.75).asProxy(), //
 
+      new ParallelCommandGroup(
+      m_shooter.autoDisable(), //
+      m_IntakeSubsystem.autoIntakeShootOff(), //
+      m_ArmSubsystem.autoSetSetpoint(0.002) //
+      ),
 
-    m_shooter.autoDisable(), //
-    m_IntakeSubsystem.autoIntakeShootOff(), //
-    m_ArmSubsystem.autoSetSetpoint(0.002), //
-    Commands.waitUntil((() -> m_ArmSubsystem.autoRunMode())), // HASTA AQUI SIRVE PERFECT
+    Commands.waitUntil((() -> m_ArmSubsystem.autoRunMode())), //
 
-        // Go to Next Note
+    // FIRST NOTE PICK AND SHOOT
        new ParallelCommandGroup(
-        m_drivetrainSubsystem.calculatePID_drive(2, 2, 0.5), //primero va el setpoint derecho y luego el setpoint izquierdo (no poner negativo para ir hacia adelante, el metodo ya lo hace)
-         m_IntakeSubsystem.autoGetNote() //
+        m_drivetrainSubsystem.calculatePID_drive(2, 2, 0.5, 100).until(() -> m_IntakeSubsystem.noteIn()), //
+        m_IntakeSubsystem.autoGetNote() //
         .until(() -> m_IntakeSubsystem.noteIn()) //
         ),
-  
-    Commands.waitSeconds(.2),  // Hasta aqui todo perfect
 
-  new ParallelCommandGroup(
-  m_drivetrainSubsystem.calculatePID_drive(-1.99, -1.99, 0.5),
-  m_ArmSubsystem.autoSetSetpoint(0.120),
-  m_shooter.autoEnable()
-  ),
+        
+        new ParallelCommandGroup(
+          m_drivetrainSubsystem.calculatePID_drive(-1.685, -1.685, 0.6, 3.4),
+          m_ArmSubsystem.autoSetSetpoint(0.120),
+          m_shooter.autoEnable()
+        ),
 
-  Commands.waitSeconds(2),
   m_IntakeSubsystem.autoIntakeShootOn(), //
- Commands.waitSeconds(1).asProxy(), //
+  Commands.waitSeconds(.75).asProxy(), //
   m_shooter.autoDisable(), //
   m_IntakeSubsystem.autoIntakeShootOff(), //
-  m_ArmSubsystem.autoSetSetpoint(0.002) // */ 
+  m_ArmSubsystem.autoSetSetpoint(0.002) //
 
     );
   }

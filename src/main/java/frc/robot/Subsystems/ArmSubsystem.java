@@ -61,6 +61,11 @@ public class ArmSubsystem extends SubsystemBase {
   public Command setSetpoint(double Setpoint) {
     return runOnce(() -> pid.setSetpoint(Setpoint));
   }
+  
+  public double getSetpoint(){
+    return pid.getSetpoint();
+
+  }
 
   public Command setAprilSetpoint(DoubleSupplier Area) {
     return runOnce(() -> {
@@ -121,8 +126,8 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public Boolean atSetpoint(){
-      if(((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (Setpoint-ArmConstants.kAtSetpointTolerance)) &&
-      ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < (Setpoint+ArmConstants.kAtSetpointTolerance))){
+      if(((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (getSetpoint()-ArmConstants.kAtSetpointTolerance)) &&
+      ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < (getSetpoint()+ArmConstants.kAtSetpointTolerance))){
         return true;
       }
       else{

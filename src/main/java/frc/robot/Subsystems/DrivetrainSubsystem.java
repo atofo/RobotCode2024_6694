@@ -152,7 +152,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
-  public Command calculatePID_drive(double Setpoint_rightRear, double Setpoint_leftRear, double speed) {
+  public Command calculatePID_drive(double Setpoint_rightRear, double Setpoint_leftRear, double speed, double timeout) {
     return runOnce(() -> {
       resetEncoders();
       pid_rightRear.setSetpoint(Setpoint_rightRear);
@@ -167,7 +167,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
           leftRearMotor.set(processVar_leftRear * speed); // este esta invertido
           leftFrontMotor.set(processVar_leftRear * speed);
-        }))
+        })).withTimeout(timeout)
         .until(() -> ((Math.abs(rightRearEncoder.getPosition()) >= Math.abs(Setpoint_rightRear * 0.95))
             && (Math.abs(leftRearEncoder.getPosition()) >= Math.abs(Setpoint_leftRear * 0.95))))
         .finallyDo(() -> {
