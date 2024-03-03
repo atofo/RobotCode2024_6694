@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.Arm_manualSetpointFront;
 import frc.robot.Commands.DriveInverted;
 import frc.robot.Commands.Arm_manualSetpointBack;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Commands.DriveWithJoystick;
 import frc.robot.Commands.Intake_Emergency;
@@ -28,101 +29,96 @@ import frc.robot.Commands.RightClimberDown;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
-import frc.robot.Subsystems.LEDSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.LeftClimber;
 import frc.robot.Subsystems.RightClimber;
+import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class RobotContainer {
-  //Sendable Chooser
+  // Sendable Chooser
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
+  // Controllers
+  private final CommandXboxController m_firstDriverController = new CommandXboxController(
+      OperatorConstants.firstcontrollerPort);
+  private final CommandXboxController m_secondDriverController = new CommandXboxController(
+      OperatorConstants.secondcontrollerPort);
 
-  //Controllers
-  private final CommandXboxController m_firstDriverController = new CommandXboxController(OperatorConstants.firstcontrollerPort);
-  private final CommandXboxController m_secondDriverController = new CommandXboxController(OperatorConstants.secondcontrollerPort);
-
-
-  //First Driver Triggers
+  // First Driver Triggers
   private Trigger L31 = m_firstDriverController.leftStick();
   private Trigger aButton1 = m_firstDriverController.a();
   private Trigger bButton1 = m_firstDriverController.b();
+  private Trigger xButton1 = m_firstDriverController.x();
 
   private Trigger start1 = m_firstDriverController.start();
   private Trigger back1 = m_firstDriverController.back();
-  
+
   private Trigger LB1 = m_firstDriverController.leftBumper();
   private Trigger RB1 = m_firstDriverController.rightBumper();
-  
-  
-  //Second Driver Triggers
+
+  // Second Driver Triggers
   private Trigger RT2 = m_secondDriverController.rightTrigger();
   private Trigger LT2 = m_secondDriverController.leftTrigger();
-  
+
   private Trigger LB2 = m_secondDriverController.leftBumper();
   private Trigger RB2 = m_secondDriverController.rightBumper();
-  
+
   private Trigger aButton2 = m_secondDriverController.a();
   private Trigger xButton2 = m_secondDriverController.x();
   private Trigger bButton2 = m_secondDriverController.b();
   private Trigger yButton2 = m_secondDriverController.y();
 
-
   private Trigger povRight2 = m_secondDriverController.povRight();
   private Trigger povLeft2 = m_secondDriverController.povLeft();
   private Trigger povDown2 = m_secondDriverController.povDown();
   private Trigger povUp2 = m_secondDriverController.povUp();
-  
+
+  private Trigger start2 = m_secondDriverController.start();
+  private Trigger back2 = m_secondDriverController.back();
+
   private Trigger L32 = m_secondDriverController.leftStick();
 
-
-  //Drivetrain
-  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  // Drivetrain
+  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
   private final DriveWithJoystick m_DriveWithJoystick = new DriveWithJoystick(m_drivetrainSubsystem,
-      () -> -m_firstDriverController.getRawAxis(0), 
+      () -> -m_firstDriverController.getRawAxis(0),
       () -> m_firstDriverController.getRawAxis(1),
-      () -> -m_firstDriverController.getRawAxis(4), 
+      () -> -m_firstDriverController.getRawAxis(4),
       () -> m_firstDriverController.getRawAxis(3),
       () -> m_firstDriverController.getRawAxis(2));
 
   private final DriveInverted m_driveInverted = new DriveInverted(m_drivetrainSubsystem,
-  () -> -m_firstDriverController.getRawAxis(0), 
-  () -> m_firstDriverController.getRawAxis(1),
-  () -> m_firstDriverController.getRawAxis(4), 
-  () -> m_firstDriverController.getRawAxis(3),
-  () -> m_firstDriverController.getRawAxis(2));
+      () -> -m_firstDriverController.getRawAxis(0),
+      () -> m_firstDriverController.getRawAxis(1),
+      () -> m_firstDriverController.getRawAxis(4),
+      () -> m_firstDriverController.getRawAxis(3),
+      () -> m_firstDriverController.getRawAxis(2));
 
-  //Arm
-  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
+  // Arm
+  public final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private final Arm_manualSetpointFront m_Arm_manualSetpointFront = new Arm_manualSetpointFront(m_ArmSubsystem);
   private final Arm_manualSetpointBack m_Arm_manualSetpointBack = new Arm_manualSetpointBack(m_ArmSubsystem);
- 
-  //Intake
-  private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+
+  // Intake
+  public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final Intake_getNote m_Intake_getNote = new Intake_getNote(m_IntakeSubsystem);
   private final Intake_returnNote m_Intake_returnNote = new Intake_returnNote(m_IntakeSubsystem);
   private final Intake_Emergency m_Intake_Emergency = new Intake_Emergency(m_IntakeSubsystem);
 
-  //Shooter
-  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  // Shooter
+  public final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final Command m_stopShooter = Commands.runOnce(m_shooter::disable, m_shooter);
   private final Command m_stopShooter2 = Commands.runOnce(m_shooter::disable, m_shooter);
 
   private final Command m_spinUpShooter = Commands.run(m_shooter::enable, m_shooter)
-  .until(() -> !m_IntakeSubsystem.noteIn()).andThen((new SequentialCommandGroup(
-  Commands.waitSeconds(2.5).asProxy(),
-  m_stopShooter2
-  )));
+      .until(() -> !m_IntakeSubsystem.noteIn()).andThen((new SequentialCommandGroup(
+          Commands.waitSeconds(2.5).asProxy(),
+          m_stopShooter2)));
 
   private final Shooter_Emergency m_Shooter_Emergency = new Shooter_Emergency(m_shooter);
-
-
-
-  private final Command m_autoSpinUpShooter = Commands.runOnce(m_shooter::enable, m_shooter);
-  private final Command m_autoStopShooter = Commands.runOnce(m_shooter::disable, m_shooter);
-
-  //Climbers
+    
+  // Climbers
   private final LeftClimber m_LeftClimberSubsystem = new LeftClimber();
   private final RightClimber m_RightClimberSubsystem = new RightClimber();
 
@@ -133,144 +129,130 @@ public class RobotContainer {
   private final RightClimberDown m_RightClimberDown = new RightClimberDown(m_RightClimberSubsystem);
 
   // LEDS
-  private final LEDSubsystem m_LEDSubsystem = new LEDSubsystem();
+
+  public DigitalOutput port0 = new DigitalOutput(LEDConstants.pin0);
+  public DigitalOutput port1 = new DigitalOutput(LEDConstants.pin1);
+  public DigitalOutput port2 = new DigitalOutput(LEDConstants.pin2);
 
   public RobotContainer() {
     m_chooser.setDefaultOption("redAlliance_threeNotePID", redAlliance_threeNotePID());
     SmartDashboard.putData("Auto choices", m_chooser);
 
     // LEDS
-    LEDContainer();
 
-    //Drivetrain
+    // Drivetrain
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
 
-    bButton1.onTrue(m_drivetrainSubsystem.StraightApril());
+    //bButton1.onTrue(m_drivetrainSubsystem.StraightApril());
     aButton1.toggleOnTrue(m_driveInverted);
-    
-    //Climbers
-    LB1.whileTrue(m_LeftClimberUp); // Left Climber Up
+
+    // Climbers
+/*     LB1.whileTrue(m_LeftClimberUp); // Left Climber Up
     start1.whileTrue(m_RightClimberDown); // Right Climber Down
     RB1.whileTrue(m_RightClimberUp); // Right Climber Up
-    back1.whileTrue(m_LeftClimberDown); // Left Climber Down
-    
-    //Arm
+    back1.whileTrue(m_LeftClimberDown); // Left Climber Down */
+
+    // Arm
     // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
     L32.whileTrue(m_ArmSubsystem.setSetpoint(0.001)); // Intake / Modo Correr 2
-    povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.65));
-    povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.50));
+    povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.314));
+    povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.2615));
+    back2.whileTrue(m_ArmSubsystem.setSetpoint(0.122));
+    start2.whileTrue(m_ArmSubsystem.setSetpoint(0.17));
     LT2.whileTrue(m_Arm_manualSetpointFront);
     RT2.whileTrue(m_Arm_manualSetpointBack);
     bButton2.onTrue(m_ArmSubsystem.setAprilSetpoint(() -> m_drivetrainSubsystem.limelightArea()));
 
-    //Intake
-    aButton2.toggleOnTrue(m_Intake_getNote); //Intake get Note
+    // Intake
+    aButton2.toggleOnTrue(m_Intake_getNote); // Intake get Note
     yButton2.whileTrue(m_Intake_returnNote);
     povDown2.whileTrue(m_Intake_Emergency);
+
+    // Shooter
+    RB2.onTrue(m_spinUpShooter); // Empezar a girar lanzador
+    LB2.onTrue(m_stopShooter); // Parar lanzador
+    povUp2.whileTrue(m_Shooter_Emergency); // Emergency Shoot
+
+
     
-    //Shooter
-    RB2.onTrue(m_spinUpShooter); //Empezar a girar lanzador
-    LB2.onTrue(m_stopShooter); //Parar lanzador
-    povUp2.whileTrue(m_Shooter_Emergency); //Emergency Shoot
-    
-    //SysID Triggers
-    /* aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    bButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    xButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    yButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse)); */
- 
+    // SysID Triggers
+    /*
+     * aButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction
+     * .kForward));
+     * bButton.whileTrue(m_LauncherSubsystem.sysIdQuasistatic(SysIdRoutine.Direction
+     * .kReverse));
+     * xButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.
+     * kForward));
+     * yButton.whileTrue(m_LauncherSubsystem.sysIdDynamic(SysIdRoutine.Direction.
+     * kReverse));
+     */
+
     configureBindings();
   }
 
-  private void LEDContainer(){
-    if(false /* Pixy Ready */){
-      m_LEDSubsystem.pinWriter(true, true, true);
-    }else if(false /* Pixy Right */){
-      m_LEDSubsystem.pinWriter(false, true, true);
-    }else if(false /* Pixy Left */){
-      m_LEDSubsystem.pinWriter(true, false, true);
-    }else if(m_ArmSubsystem.atSetpoint() && m_shooter.atSetpoint() /* Ready to Shoot */){
-      m_LEDSubsystem.pinWriter(true, true, false);
-    }else if(m_shooter.charging() /* Adjusting Shoot */){
-      m_LEDSubsystem.pinWriter(false, true, false);
-    }else if(m_drivetrainSubsystem.inverted() /* Inverted Drivetrain */){
-      m_LEDSubsystem.pinWriter(false, false, true);
-    }else if(m_IntakeSubsystem.noteIn() /* NoteIn */){
-      m_LEDSubsystem.pinWriter(true, false, false);
-    }else {
-      m_LEDSubsystem.pinWriter(false, false, false);
-  }
+ 
+  private void configureBindings() {
+    Command shoot = Commands.either(
+        // Run the feeder
+        Commands.runOnce(m_IntakeSubsystem::throwNote, m_IntakeSubsystem), // Va a lanzar si se alcanza la velocidad
+                                                                           // deseada
+        // Do nothing
+        Commands.none(),
+        // Determine which of the above to do based on whether the shooter has reached
+        // the
+        // desired speed
+        () -> (m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()));
+
+    Command stopIntake = Commands.runOnce(m_IntakeSubsystem::intakeOFF, m_IntakeSubsystem);
+
+    // disparar cuando se presione el boton X
+    xButton2.onTrue(shoot).onFalse(stopIntake);
   }
 
-  private void configureBindings() {  
-    Command shoot =
-        Commands.either(
-              // Run the feeder
-              Commands.runOnce(m_IntakeSubsystem::throwNote, m_IntakeSubsystem), //Va a lanzar si se alcanza la velocidad deseada
-              // Do nothing
-              Commands.none(),
-              // Determine which of the above to do based on whether the shooter has reached the
-              // desired speed
-              m_shooter::atSetpoint);
-  
-      Command stopIntake = Commands.runOnce(m_IntakeSubsystem::intakeOFF, m_IntakeSubsystem);
-  
-      //disparar cuando se presione el boton X
-      xButton2.onTrue(shoot).onFalse(stopIntake);
-  }
-
-  
-  public Command redAlliance_threeNotePID(){
+  public Command redAlliance_threeNotePID() {
     return new SequentialCommandGroup( //
-    // Initial Set and Shoot
-    m_ArmSubsystem.autoSetSetpoint(0.12), //
-    m_autoSpinUpShooter, //
-    Commands.waitUntil((() -> m_shooter.atSetpoint())),
+      // Initial Set and Shoot
+    new ParallelCommandGroup(
+      m_ArmSubsystem.autoSetSetpoint(0.120), //
+      m_shooter.autoEnable(), //
+      Commands.waitSeconds(2).asProxy() // CAMBIAR POR UNTIL SETPOINT
+    ),
     m_IntakeSubsystem.autoIntakeShootOn(), //
-    Commands.waitSeconds(.5).asProxy(), //
-    m_autoStopShooter, //
+    Commands.waitSeconds(.75).asProxy(), //
+
+
+    m_shooter.autoDisable(), //
     m_IntakeSubsystem.autoIntakeShootOff(), //
     m_ArmSubsystem.autoSetSetpoint(0.002), //
-    Commands.waitUntil((() -> m_ArmSubsystem.autoRunMode())) //
+    Commands.waitUntil((() -> m_ArmSubsystem.autoRunMode())), // HASTA AQUI SIRVE PERFECT
+
+        // Go to Next Note
+       new ParallelCommandGroup(
+        m_drivetrainSubsystem.calculatePID_drive(2, 2, 0.5), //primero va el setpoint derecho y luego el setpoint izquierdo (no poner negativo para ir hacia adelante, el metodo ya lo hace)
+         m_IntakeSubsystem.autoGetNote() //
+        .until(() -> m_IntakeSubsystem.noteIn()) //
+        ),
+  
+    Commands.waitSeconds(.2),  // Hasta aqui todo perfect
+
+  new ParallelCommandGroup(
+  m_drivetrainSubsystem.calculatePID_drive(-1.99, -1.99, 0.5),
+  m_ArmSubsystem.autoSetSetpoint(0.120),
+  m_shooter.autoEnable()
+  ),
+
+  Commands.waitSeconds(2),
+  m_IntakeSubsystem.autoIntakeShootOn(), //
+ Commands.waitSeconds(1).asProxy(), //
+  m_shooter.autoDisable(), //
+  m_IntakeSubsystem.autoIntakeShootOff(), //
+  m_ArmSubsystem.autoSetSetpoint(0.002) // */ 
 
     );
-
-   /*  // Go to Next Note
-    new ParallelCommandGroup( //
-      m_drivetrainSubsystem.calculatePID_drive(2, 2, 0.5), //primero va el setpoint derecho y luego el setpoint izquierdo (no poner negativo para ir hacia adelante, el metodo ya lo hace)
-      m_IntakeSubsystem.autoGetNote() //
-      .until(() -> m_IntakeSubsystem.noteIn()) //
-      ), //
-    
-    // Return beneath speaker
-    new ParallelCommandGroup( //
-    m_drivetrainSubsystem.calculatePID_drive(-1.92, -1.92, 0.7), //
-    m_ArmSubsystem.autoSetSetpoint(0.12), //
-    m_autoSpinUpShooter //
-    ),
-
-    Commands.waitUntil((() -> m_shooter.atSetpoint())),
-    m_IntakeSubsystem.autoIntakeShootOn(), //
-    Commands.waitSeconds(.5).asProxy(), //
-    m_autoStopShooter, //
-    m_IntakeSubsystem.autoIntakeShootOff(), //
-    m_ArmSubsystem.autoSetSetpoint(0.002), //
-
-    m_drivetrainSubsystem.calculatePID_drive(1.8, 1.8, 0.6), //primero va el setpoint derecho y luego el setpoint izquierdo (no poner negativo para ir hacia adelante, el metodo ya lo hace)
-    m_drivetrainSubsystem.autoTurnRight(90.0), //
-    Commands.waitSeconds(.5).asProxy(), //
-
-    new ParallelCommandGroup( //
-      m_drivetrainSubsystem.calculatePID_drive(1.45, 1.45, 0.5),
-      m_IntakeSubsystem.autoGetNote() //
-      .until(() -> m_IntakeSubsystem.noteIn()) //
-      ) //
-    
-
-    );  */
   }
 
   public Command getAutonomousCommand() {
     return m_chooser.getSelected();
   }
+
 }

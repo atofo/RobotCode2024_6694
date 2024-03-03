@@ -21,11 +21,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.RobotContainer;
 
 import java.lang.annotation.Target;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class DrivetrainSubsystem extends SubsystemBase {
 
@@ -62,7 +65,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private Transform3d bestCameraToTarget;
   private Transform3d alternateCameraToTarget;
 
+
   public DrivetrainSubsystem() {
+
+    
     rightRearMotor.setInverted(true);
     rightFrontMotor.setInverted(true);
 
@@ -148,7 +154,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public Command calculatePID_drive(double Setpoint_rightRear, double Setpoint_leftRear, double speed) {
     return runOnce(() -> {
-
       resetEncoders();
       pid_rightRear.setSetpoint(Setpoint_rightRear);
       pid_leftRear.setSetpoint(Setpoint_leftRear);
@@ -164,7 +169,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
           leftFrontMotor.set(processVar_leftRear * speed);
         }))
         .until(() -> ((Math.abs(rightRearEncoder.getPosition()) >= Math.abs(Setpoint_rightRear * 0.95))
-            && (Math.abs(leftRearEncoder.getPosition()) >= Math.abs(-Setpoint_leftRear * 0.95))))
+            && (Math.abs(leftRearEncoder.getPosition()) >= Math.abs(Setpoint_leftRear * 0.95))))
         .finallyDo(() -> {
           rightRearMotor.set(0);
           rightFrontMotor.set(0);
@@ -193,6 +198,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
       DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
+    
     inverted = false;
     if (rightTrigger.getAsDouble() > 0.1) {
       if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
@@ -295,13 +301,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         .finallyDo(interrupted -> m_drive.stopMotor());
   }
 
-  public Command StraightApril() {
+/*   public Command StraightApril() {
 
     return run(() -> m_drive.driveCartesian(0, 0, XSpeed(() -> 0.00))).until(() -> XSpeed(() -> 0) == 0);
 
-  }
+  } */
 
-  public double XSpeed(DoubleSupplier DYaw) {
+ /*  public double XSpeed(DoubleSupplier DYaw) {
     if (yaw > DYaw.getAsDouble() + 1) { // Rango de error para VelocidadX ((SOLO CAMBIAR DYaw)
       return -0.2;
     } else if (yaw < DYaw.getAsDouble() - 1) {
@@ -309,7 +315,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     } else {
       return 0;
     }
-  }
+  } */
 
   public void limelightZero() {
     Id = 0;

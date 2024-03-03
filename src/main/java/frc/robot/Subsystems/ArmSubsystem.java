@@ -10,7 +10,9 @@ import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,14 +27,17 @@ public class ArmSubsystem extends SubsystemBase {
 
   private final DutyCycleEncoder arm_Encoder = new DutyCycleEncoder(0);
 
-  PIDController pid = new PIDController(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
+  private PIDController pid = new PIDController(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
 
   private double processVar;
-  private double Setpoint;  
+  private double Setpoint;
 
   public ArmSubsystem() {
     arm_leftMotor.follow(arm_rightMotor);
-    pid.setSetpoint(0.001);
+    arm_leftMotor.setSmartCurrentLimit(55);
+    arm_rightMotor.setSmartCurrentLimit(55);
+
+    //pid.setSetpoint(0.001);
   }
 
 
@@ -40,12 +45,17 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     super.periodic();
     processVar = pid.calculate(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError);
-    arm_rightMotor.set(-processVar * 0.8);  
-    arm_leftMotor.set(-processVar * 0.8);
+
+    arm_rightMotor.set(-processVar);
+    arm_leftMotor.set(-processVar);
 
     SmartDashboard.putNumber("Arm Setpoint: ", pid.getSetpoint());
     SmartDashboard.putNumber("Arm AbsEncoder: ", arm_Encoder.getAbsolutePosition());
+    SmartDashboard.putNumber("Arm Position: ", arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError);
     SmartDashboard.putNumber("Arm ProcessVar: ", processVar);
+    SmartDashboard.putBoolean("ARM At Setpoint", atSetpoint());
+    SmartDashboard.putNumber(" L Motor current", arm_leftMotor.getOutputCurrent());
+    SmartDashboard.putNumber("R Motor current", arm_rightMotor.getOutputCurrent());
   }
 
   public Command setSetpoint(double Setpoint) {
@@ -54,11 +64,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public Command setAprilSetpoint(DoubleSupplier Area) {
     return runOnce(() -> {
-
       if (Area.getAsDouble() > 0.28) {
-        pid.setSetpoint((-0.1090375 * Area.getAsDouble() + 0.1835));
+        pid.setSetpoint((-0.1090375 * Area.getAsDouble() + 0.1775));
       } else {
-        pid.setSetpoint((-0.052 * Area.getAsDouble() + 0.16706));
+        pid.setSetpoint((-0.052 * Area.getAsDouble() + 0.16886));
       }
     });
   }
@@ -112,8 +121,8 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public Boolean atSetpoint(){
-      if(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError > Setpoint-ArmConstants.kAtSetpointTolerance &&
-      arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < Setpoint+ArmConstants.kAtSetpointTolerance){
+      if(((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (Setpoint-ArmConstants.kAtSetpointTolerance)) &&
+      ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < (Setpoint+ArmConstants.kAtSetpointTolerance))){
         return true;
       }
       else{

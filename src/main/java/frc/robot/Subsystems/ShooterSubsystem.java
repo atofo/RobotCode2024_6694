@@ -48,14 +48,26 @@ public class ShooterSubsystem extends SubsystemBase {
     m_downPidController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
   }
 
-  public void enable() {
+  public Command autoEnable() {
+    return runOnce(() -> {
       upSetPoint = (ShooterConstants.maxRPM);
       downSetPoint = (ShooterConstants.maxRPM);
+    });
+  }
+  public Command autoDisable() {
+    return runOnce(() -> {
+      upSetPoint = (0);
+      downSetPoint = (0);
+    });
   }
   
   public void disable() {
       upSetPoint = (0);
       downSetPoint = (0);
+  }
+  public void enable() {
+      upSetPoint = (ShooterConstants.maxRPM);
+      downSetPoint = (ShooterConstants.maxRPM);
   }
 
   public boolean atSetpoint() {

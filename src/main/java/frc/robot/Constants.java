@@ -5,9 +5,9 @@ import edu.wpi.first.math.util.Units;
 public class Constants {
 
     public class LEDConstants {
-        public static final int pin0 = 4;
+        public static final int pin0 = 6;
         public static final int pin1 = 5;
-        public static final int pin2 = 6;
+        public static final int pin2 = 4;
     }
 
     public class OperatorConstants {
@@ -42,22 +42,24 @@ public class Constants {
 
         public static final double kEncoderConversionFactor = (Units.inchesToMeters(1 / (kGearRatio * 2 * Math.PI * kWheelRadiusMeters) * 10));
         
-        public static final double kgyrokP = 0.0002;
+        public static final double kgyrokP   = 0.0002;
     }
 
     public class PIDConstants {
 
-        public static final double kP = 4;
-        public static final double kI = 0;
-        public static final double kD = 0.05;
-
+/*         public static final double kP = 2.90;
+        public static final double kI = 0.0615;
+        public static final double kD = 0.4; */
+        public static final double kP = 5;
+        public static final double kI = 0.012;
+        public static final double kD = 0.005;
     }
 
     public class ArmConstants {
         public static final int arm_leftMotor_PORT = 21;
         public static final int arm_rightMotor_PORT = 22;
-        public static final double kEncoderError = 0.560;
-        public static final double kAtSetpointTolerance = 0.2;
+        public static final double kEncoderError = 0.5592;
+        public static final double kAtSetpointTolerance = 0.01;
     }
 
     public class IntakeLauncherConstants {
@@ -97,7 +99,7 @@ public class Constants {
         public static final double kMaxOutput = 1; 
         public static final double kMinOutput = -1;
         public static final double maxRPM = 5150;
-        public static final double RPMmargin = 40;
+        public static final double RPMmargin = 0.0040;
     
         // On a real robot the feedforward constants should be empirically determined; these are
         // reasonable guesses.

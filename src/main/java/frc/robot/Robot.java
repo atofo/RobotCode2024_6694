@@ -7,7 +7,12 @@ package frc.robot;
 import org.littletonrobotics.urcl.URCL;
 
 import edu.wpi.first.wpilibj.DataLogManager;
+
+
+
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -16,10 +21,7 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  public static final double RightClimberPastSetpoint = 50.0;
-  public static final double RightClimberCurrene = 75.0;
-  public static final double kDefaultArmKp = 50.0;
-  public static final double kDefaultArmSetpointDegrees = 75.0;
+
 
   @Override
   public void robotInit() {
@@ -34,6 +36,36 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    if(m_robotContainer.m_shooter.atSetpoint()){
+      m_robotContainer.port2.set(false);
+      m_robotContainer.port1.set(true);
+      m_robotContainer.port0.set(true);
+    }
+    else if(m_robotContainer.m_shooter.charging() == true){
+      m_robotContainer.port2.set(false);
+      m_robotContainer.port1.set(true);
+      m_robotContainer.port0.set(false);
+    }
+    else if(m_robotContainer.m_drivetrainSubsystem.inverted() == true){
+      m_robotContainer.port2.set(true);
+      m_robotContainer.port1.set(false);
+      m_robotContainer.port0.set(false);
+    }
+    else if (m_robotContainer.m_IntakeSubsystem.noteIn() == true) {
+      m_robotContainer.port2.set(false);
+      m_robotContainer.port1.set(false);
+      m_robotContainer.port0.set(true);
+    } else {
+      m_robotContainer.port2.set(false);
+      m_robotContainer.port1.set(false);
+      m_robotContainer.port0.set(false);
+    }
+
+    SmartDashboard.putBoolean("PORT2: ", m_robotContainer.port2.get());
+    SmartDashboard.putBoolean("PORT1: ", m_robotContainer.port1.get());
+    SmartDashboard.putBoolean("PORT0: ", m_robotContainer.port0.get());
+
+
   }
   
   @Override
@@ -70,7 +102,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+  }
 
   @Override
   public void teleopExit() {}
