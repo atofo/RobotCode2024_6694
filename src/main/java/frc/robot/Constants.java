@@ -46,20 +46,17 @@ public class Constants {
     }
 
     public class PIDConstants {
-
-/*         public static final double kP = 2.90;
-        public static final double kI = 0.0615;
-        public static final double kD = 0.4; */
-        public static final double kP = 5;
-        public static final double kI = 0.012;
-        public static final double kD = 0.005;
+        public static final double kP = 4.2;
+        public static final double kI = 0.0080;
+        public static final double kD = 0.0032;
     }
 
     public class ArmConstants {
         public static final int arm_leftMotor_PORT = 21;
         public static final int arm_rightMotor_PORT = 22;
-        public static final double kEncoderError = 0.5592;
-        public static final double kAtSetpointTolerance = 0.01;
+        public static final double kEncoderError = 0.5600;
+        public static final double kAtSetpointTolerance = 0.015;
+        public static final double kAtSetpointBelowSpeakerTolerance = 0.003;
     }
 
     public class IntakeLauncherConstants {
@@ -98,8 +95,8 @@ public class Constants {
         public static final double kDownFF = 0.000234; // PR 0.000400
         public static final double kMaxOutput = 1; 
         public static final double kMinOutput = -1;
-        public static final double maxRPM = 5150;
-        public static final double RPMmargin = 0.0040;
+        public static final double maxRPM = 4980;
+        public static final double RPMmargin = 40;
     
         // On a real robot the feedforward constants should be empirically determined; these are
         // reasonable guesses.

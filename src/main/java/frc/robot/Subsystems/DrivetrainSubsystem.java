@@ -176,8 +176,34 @@ public class DrivetrainSubsystem extends SubsystemBase {
           leftRearMotor.set(0);
           leftFrontMotor.set(0);
         });
-
   }
+  public Command calculatePID_mecanumdrive(double Setpoint_leftDiagonal, double Setpoint_rightDiagonal, double speed, double timeout) {
+    return runOnce(() -> {
+      resetEncoders();
+      pid_rightRear.setSetpoint(Setpoint_rightDiagonal);
+      pid_leftRear.setSetpoint(Setpoint_leftDiagonal);
+    })
+        .andThen(run(() -> {
+          processVar_rightRear = pid_rightRear.calculate(rightRearEncoder.getPosition());
+          processVar_leftRear = pid_leftRear.calculate(leftRearEncoder.getPosition());
+
+          rightRearMotor.set(processVar_rightRear * speed);
+          leftFrontMotor.set(processVar_rightRear * speed);
+          
+          rightFrontMotor.set(processVar_leftRear * speed);
+          leftRearMotor.set(processVar_leftRear * speed);
+        })).withTimeout(timeout)
+        .until(() -> ((Math.abs(rightRearEncoder.getPosition()) >= Math.abs(Setpoint_rightDiagonal * 0.95))
+            && (Math.abs(leftRearEncoder.getPosition()) >= Math.abs(Setpoint_leftDiagonal * 0.95))))
+        .finallyDo(() -> {
+          rightRearMotor.set(0);
+          rightFrontMotor.set(0);
+          leftRearMotor.set(0);
+          leftFrontMotor.set(0);
+        });
+  }
+
+  
 
   @Override
   public void periodic() {

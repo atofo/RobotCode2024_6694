@@ -53,7 +53,7 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Arm AbsEncoder: ", arm_Encoder.getAbsolutePosition());
     SmartDashboard.putNumber("Arm Position: ", arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError);
     SmartDashboard.putNumber("Arm ProcessVar: ", processVar);
-    SmartDashboard.putBoolean("ARM At Setpoint", atSetpoint());
+    SmartDashboard.putBoolean("Arm Ready", atSetpoint());
     SmartDashboard.putNumber(" L Motor current", arm_leftMotor.getOutputCurrent());
     SmartDashboard.putNumber("R Motor current", arm_rightMotor.getOutputCurrent());
   }
@@ -134,6 +134,18 @@ public class ArmSubsystem extends SubsystemBase {
         return false;
       }
     }
+    public Boolean atSetpointBelowSpeaker(){
+      if(((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (getSetpoint()-ArmConstants.kAtSetpointTolerance)) &&
+      ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < (getSetpoint()+ArmConstants.kAtSetpointBelowSpeakerTolerance))){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+
+
+
     
   }
 

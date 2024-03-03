@@ -5,6 +5,7 @@
 package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -93,6 +94,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void returnNote(){
     m_intakeMotor.set(.3);
+    outswitch = 0;
+    state = 0;
   }
 
   public Boolean noteIn(){

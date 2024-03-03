@@ -46,6 +46,9 @@ public class ShooterSubsystem extends SubsystemBase {
     m_downPidController.setIZone(ShooterConstants.kIz);
     m_downPidController.setFF(ShooterConstants.kDownFF);
     m_downPidController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
+
+    m_upMotor.enableVoltageCompensation(11);
+    m_downMotor.enableVoltageCompensation(11);
   }
 
   public Command autoEnable() {
@@ -107,7 +110,7 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("SetPoint", upSetPoint);
     SmartDashboard.putNumber("Up Velocity", m_upEncoder.getVelocity());
     SmartDashboard.putNumber("Down Velocity", m_downEncoder.getVelocity());
-    SmartDashboard.putBoolean("atSetpoint", atSetpoint());
+    SmartDashboard.putBoolean("Shooter Ready", atSetpoint());
     
   }
 

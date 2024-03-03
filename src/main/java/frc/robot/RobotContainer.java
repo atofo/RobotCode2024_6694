@@ -78,6 +78,7 @@ public class RobotContainer {
   private Trigger back2 = m_secondDriverController.back();
 
   private Trigger L32 = m_secondDriverController.leftStick();
+  private Trigger R32 = m_secondDriverController.rightStick();
 
   // Drivetrain
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
@@ -148,21 +149,22 @@ public class RobotContainer {
     aButton1.toggleOnTrue(m_driveInverted);
 
     // Climbers
-/*     LB1.whileTrue(m_LeftClimberUp); // Left Climber Up
+/*  LB1.whileTrue(m_LeftClimberUp); // Left Climber Up
     start1.whileTrue(m_RightClimberDown); // Right Climber Down
     RB1.whileTrue(m_RightClimberUp); // Right Climber Up
     back1.whileTrue(m_LeftClimberDown); // Left Climber Down */
 
     // Arm
-    // DONT ACTIVATE SETPOINT FROM 0.45 TO 0.62 IF CLIMBERS ARE UP
+    // DONT ACTIVATE SETPOINT FROM 0. TO 0. IF CLIMBERS ARE UP
     L32.whileTrue(m_ArmSubsystem.setSetpoint(0.001)); // Intake / Modo Correr 2
-    povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.314));
-    povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.2615));
-    back2.whileTrue(m_ArmSubsystem.setSetpoint(0.122));
-    start2.whileTrue(m_ArmSubsystem.setSetpoint(0.17));
-    LT2.whileTrue(m_Arm_manualSetpointFront);
-    RT2.whileTrue(m_Arm_manualSetpointBack);
-    bButton2.onTrue(m_ArmSubsystem.setAprilSetpoint(() -> m_drivetrainSubsystem.limelightArea()));
+    povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.314)); // Climb 1
+    povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.2615)); // Climb 2
+    back2.whileTrue(m_ArmSubsystem.setSetpoint(0.122)); // Abajo de Speaker
+    start2.whileTrue(m_ArmSubsystem.setSetpoint(0.150)); // Brazo detras de linea
+    RT2.whileTrue(m_Arm_manualSetpointFront); //Manual Enfrente
+    LT2.whileTrue(m_Arm_manualSetpointBack); //Manual Atras
+    R32.whileTrue(m_ArmSubsystem.setSetpoint(0.314)); // AMP
+    bButton2.onTrue(m_ArmSubsystem.setAprilSetpoint(() -> m_drivetrainSubsystem.limelightArea())); // Brazo Limelight
 
     // Intake
     aButton2.toggleOnTrue(m_Intake_getNote); // Intake get Note
@@ -210,14 +212,20 @@ public class RobotContainer {
     xButton2.onTrue(shoot).onFalse(stopIntake);
   }
 
+
+
+
+
+  // ROUTINES
+
   public Command redAlliance_threeNotePID() {
     return new SequentialCommandGroup( //
 
     // NOTE 0
       new ParallelCommandGroup(
-      m_ArmSubsystem.autoSetSetpoint(0.118), //
+      m_ArmSubsystem.autoSetSetpoint(0.115), //
       m_shooter.autoEnable(), //
-      Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()) // CAMBIAR POR UNTIL SETPOINT
+      Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(4.5)
       ), //
     
     m_IntakeSubsystem.autoIntakeShootOn(), //
@@ -233,24 +241,50 @@ public class RobotContainer {
 
     // FIRST NOTE PICK AND SHOOT
        new ParallelCommandGroup(
-        m_drivetrainSubsystem.calculatePID_drive(2, 2, 0.5, 100).until(() -> m_IntakeSubsystem.noteIn()), //
+        m_drivetrainSubsystem.calculatePID_drive(1.8, 1.8, 0.5, 100)
+        .until(() -> m_IntakeSubsystem.noteIn()), //
         m_IntakeSubsystem.autoGetNote() //
         .until(() -> m_IntakeSubsystem.noteIn()) //
         ),
 
         
         new ParallelCommandGroup(
-          m_drivetrainSubsystem.calculatePID_drive(-1.685, -1.685, 0.6, 3.4),
-          m_ArmSubsystem.autoSetSetpoint(0.120),
-          m_shooter.autoEnable()
+          m_drivetrainSubsystem.calculatePID_drive(-1.5, -1.5, 0.6, 3.4),
+          m_ArmSubsystem.autoSetSetpoint(0.124),
+          m_shooter.autoEnable(),
+          Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(4)
         ),
 
   m_IntakeSubsystem.autoIntakeShootOn(), //
   Commands.waitSeconds(.75).asProxy(), //
   m_shooter.autoDisable(), //
   m_IntakeSubsystem.autoIntakeShootOff(), //
-  m_ArmSubsystem.autoSetSetpoint(0.002) //
+  m_ArmSubsystem.autoSetSetpoint(0.001), //
 
+  // SECOND NOTE PICK AND SHOOT
+         new ParallelCommandGroup(
+        m_drivetrainSubsystem.calculatePID_mecanumdrive(-0.73, 4.35, 0.6, 1000)
+        .until(() -> m_IntakeSubsystem.noteIn()), //
+        m_IntakeSubsystem.autoGetNote() //
+        .until(() -> m_IntakeSubsystem.noteIn()) //
+        ),
+
+        new ParallelCommandGroup(
+          m_shooter.autoEnable(), //
+          m_drivetrainSubsystem.calculatePID_drive(-.4, .4, 1, 3),
+          m_ArmSubsystem.autoSetSetpoint(0.157), //
+          Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(2)
+        ),
+
+
+        m_IntakeSubsystem.autoIntakeShootOn(), //
+        Commands.waitSeconds(.75).asProxy(), //
+
+        new ParallelCommandGroup(
+          m_IntakeSubsystem.autoIntakeShootOff(), //
+          m_shooter.autoDisable(), //
+          m_ArmSubsystem.autoSetSetpoint(0.002) //
+        )
     );
   }
 
