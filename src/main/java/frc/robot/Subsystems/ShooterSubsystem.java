@@ -20,13 +20,16 @@ public class ShooterSubsystem extends SubsystemBase {
   private CANSparkMax m_downMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_downMotor_PORT, MotorType.kBrushless);
   private SparkPIDController m_downPidController = m_downMotor.getPIDController();
   private RelativeEncoder m_downEncoder = m_downMotor.getEncoder();
-  private double downSetPoint = ShooterConstants.maxRPM;
+  private double downSetPoint = ShooterConstants.maxRPM_down;
+  private double transformedDownSetPoint;
   
   
   private CANSparkMax m_upMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_upMotor_PORT, MotorType.kBrushless);
   private SparkPIDController m_upPidController = m_upMotor.getPIDController();
   private RelativeEncoder m_upEncoder = m_upMotor.getEncoder();
-  private double upSetPoint = ShooterConstants.maxRPM;
+  private double upSetPoint = ShooterConstants.maxRPM_up;
+  private double transformedUpSetPoint;
+  private double avgVelocity;
 
   public ShooterSubsystem() {
     m_upMotor.setInverted(true);
@@ -53,8 +56,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public Command autoEnable() {
     return runOnce(() -> {
-      upSetPoint = (ShooterConstants.maxRPM);
-      downSetPoint = (ShooterConstants.maxRPM);
+      upSetPoint = (ShooterConstants.maxRPM_up);
+      downSetPoint = (ShooterConstants.maxRPM_down);
     });
   }
   public Command autoDisable() {
@@ -69,18 +72,31 @@ public class ShooterSubsystem extends SubsystemBase {
       downSetPoint = (0);
   }
   public void enable() {
-      upSetPoint = (ShooterConstants.maxRPM);
-      downSetPoint = (ShooterConstants.maxRPM);
+      upSetPoint = (ShooterConstants.maxRPM_up);
+      downSetPoint = (ShooterConstants.maxRPM_down);
   }
 
   public boolean atSetpoint() {
-    if((((Math.abs(m_upEncoder.getVelocity()) + Math.abs(m_downEncoder.getVelocity()))/2 > ShooterConstants.maxRPM - ShooterConstants.RPMmargin) &&
-    ((Math.abs(m_upEncoder.getVelocity()) + Math.abs(m_downEncoder.getVelocity()))/2 < ShooterConstants.maxRPM + ShooterConstants.RPMmargin))){
+    if(upSetPoint == 4880 && downSetPoint == 4880){
+      transformedUpSetPoint = 5000;
+      transformedDownSetPoint = 5000;
+    }
+    /* if((((Math.abs(m_upEncoder.getVelocity()) + Math.abs(m_downEncoder.getVelocity()))/2 > ShooterConstants.maxRPM_up - ShooterConstants.RPMmargin) &&
+    ((Math.abs(m_upEncoder.getVelocity()) + Math.abs(m_downEncoder.getVelocity()))/2 < ShooterConstants.maxRPM_up + ShooterConstants.RPMmargin))) */
+    if ( Math.abs(m_upEncoder.getVelocity()) >= (transformedUpSetPoint - ShooterConstants.RPMmargin) &&
+    Math.abs(m_upEncoder.getVelocity()) <= (transformedUpSetPoint + ShooterConstants.RPMmargin) &&
+    Math.abs(m_downEncoder.getVelocity()) >= (transformedDownSetPoint - ShooterConstants.RPMmargin) &&
+    Math.abs(m_downEncoder.getVelocity()) <= transformedDownSetPoint + ShooterConstants.RPMmargin )  {
       return true;
     }
     else{
       return false;
     }
+  }
+
+  public double getAvgVelocity(){
+    avgVelocity = (Math.abs(m_upEncoder.getVelocity()) + m_downEncoder.getVelocity()) / 2;
+    return avgVelocity;
   }
 
   public boolean charging(){
@@ -110,6 +126,7 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("SetPoint", upSetPoint);
     SmartDashboard.putNumber("Up Velocity", m_upEncoder.getVelocity());
     SmartDashboard.putNumber("Down Velocity", m_downEncoder.getVelocity());
+    SmartDashboard.putNumber("Average Velocity", getAvgVelocity() );
     SmartDashboard.putBoolean("Shooter Ready", atSetpoint());
     
   }

@@ -135,7 +135,7 @@ public class ArmSubsystem extends SubsystemBase {
       }
     }
     public Boolean atSetpointBelowSpeaker(){
-      if(((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (getSetpoint()-ArmConstants.kAtSetpointTolerance)) &&
+      if(((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (getSetpoint()-ArmConstants.kAtSetpointBelowSpeakerTolerance)) &&
       ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < (getSetpoint()+ArmConstants.kAtSetpointBelowSpeakerTolerance))){
         return true;
       }

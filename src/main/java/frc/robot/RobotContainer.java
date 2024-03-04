@@ -174,7 +174,8 @@ public class RobotContainer {
     // Shooter
     RB2.onTrue(m_spinUpShooter); // Empezar a girar lanzador
     LB2.onTrue(m_stopShooter); // Parar lanzador
-    povUp2.whileTrue(m_Shooter_Emergency); // Emergency Shoot
+    //povUp2.whileTrue(m_Shooter_Emergency); // Emergency Shoot
+    povUp2.onTrue(m_Shooter_Emergency); // Emergency Shoot
 
 
     
@@ -223,9 +224,10 @@ public class RobotContainer {
 
     // NOTE 0
       new ParallelCommandGroup(
-      m_ArmSubsystem.autoSetSetpoint(0.115), //
+      m_ArmSubsystem.autoSetSetpoint(0.106), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
       m_shooter.autoEnable(), //
-      Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(4.5)
+      //Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(4.5)
+      Commands.waitUntil(() -> (m_shooter.getAvgVelocity() > 4700) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(3.4)
       ), //
     
     m_IntakeSubsystem.autoIntakeShootOn(), //
@@ -250,9 +252,10 @@ public class RobotContainer {
         
         new ParallelCommandGroup(
           m_drivetrainSubsystem.calculatePID_drive(-1.5, -1.5, 0.6, 3.4),
-          m_ArmSubsystem.autoSetSetpoint(0.124),
+          m_ArmSubsystem.autoSetSetpoint(0.1275), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
           m_shooter.autoEnable(),
-          Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(4)
+          //Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(4)
+          Commands.waitUntil(() -> (m_shooter.getAvgVelocity() > 4700) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(3.2)
         ),
 
   m_IntakeSubsystem.autoIntakeShootOn(), //
@@ -272,7 +275,7 @@ public class RobotContainer {
         new ParallelCommandGroup(
           m_shooter.autoEnable(), //
           m_drivetrainSubsystem.calculatePID_drive(-.4, .4, 1, 3),
-          m_ArmSubsystem.autoSetSetpoint(0.157), //
+          m_ArmSubsystem.autoSetSetpoint(0.157), // // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
           Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(2)
         ),
 
@@ -287,7 +290,7 @@ public class RobotContainer {
         )
     );
   }
-
+ 
   public Command getAutonomousCommand() {
     return m_chooser.getSelected();
   }
