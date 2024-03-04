@@ -17,7 +17,7 @@ import frc.robot.Constants.IntakeLauncherConstants;
 public class IntakeSubsystem extends SubsystemBase {
   private CANSparkMax m_intakeMotor = new CANSparkMax(IntakeLauncherConstants.intakelauncher_intakeMotor_PORT, MotorType.kBrushless);
   private DigitalInput intakeSwitch = new DigitalInput(IntakeLauncherConstants.intakelauncher_intakeSwitch_PORT);
-  private int state=2;
+  private int state=0;
   private int outswitch = 0;
 
   public IntakeSubsystem() {
@@ -39,7 +39,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     switch(state){
       case 0:
-      m_intakeMotor.set(-0.8);
+      m_intakeMotor.set(-0.6);
       
       break;
 
@@ -70,7 +70,7 @@ public class IntakeSubsystem extends SubsystemBase {
   
       switch(state){
         case 0:
-        m_intakeMotor.set(-0.8);
+        m_intakeMotor.set(-0.6);
         
         break;
   
