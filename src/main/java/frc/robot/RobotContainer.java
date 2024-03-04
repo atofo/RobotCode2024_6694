@@ -115,7 +115,7 @@ public class RobotContainer {
 
   private final Command m_spinUpShooter = Commands.run(m_shooter::enable, m_shooter)
       .until(() -> !m_IntakeSubsystem.noteIn()).andThen((new SequentialCommandGroup(
-          Commands.waitSeconds(2.5).asProxy(),
+          Commands.waitSeconds(1.5).asProxy(),
           m_stopShooter2)));
 
   private final Shooter_Emergency m_Shooter_Emergency = new Shooter_Emergency(m_shooter);
@@ -138,6 +138,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     m_chooser.setDefaultOption("redAlliance_threeNotePID", redAlliance_threeNotePID());
+    m_chooser.addOption("redAlliance_4Note", redAlliance_4Note());
     SmartDashboard.putData("Auto choices", m_chooser);
 
     // LEDS
@@ -159,7 +160,8 @@ public class RobotContainer {
     L32.whileTrue(m_ArmSubsystem.setSetpoint(0.001)); // Intake / Modo Correr 2
     povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.314)); // Climb 1
     povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.2615)); // Climb 2
-    back2.whileTrue(m_ArmSubsystem.setSetpoint(0.122)); // Abajo de Speaker
+    // back2.whileTrue(m_ArmSubsystem.setSetpoint(0.122)); // Abajo de Speaker
+    back2.whileTrue(m_ArmSubsystem.setSetpoint(0.100)); // Abajo de Speaker
     start2.whileTrue(m_ArmSubsystem.setSetpoint(0.150)); // Brazo detras de linea
     RT2.whileTrue(m_Arm_manualSetpointFront); //Manual Enfrente
     LT2.whileTrue(m_Arm_manualSetpointBack); //Manual Atras
@@ -175,7 +177,7 @@ public class RobotContainer {
     RB2.onTrue(m_spinUpShooter); // Empezar a girar lanzador
     LB2.onTrue(m_stopShooter); // Parar lanzador
     //povUp2.whileTrue(m_Shooter_Emergency); // Emergency Shoot
-    povUp2.onTrue(m_Shooter_Emergency); // Emergency Shoot
+    povUp2.toggleOnTrue(m_Shooter_Emergency); // Emergency Shoot
 
 
     
@@ -266,7 +268,7 @@ public class RobotContainer {
 
   // SECOND NOTE PICK AND SHOOT
          new ParallelCommandGroup(
-        m_drivetrainSubsystem.calculatePID_mecanumdrive(-0.73, 4.35, 0.6, 1000)
+        m_drivetrainSubsystem.calculatePID_mecanumdrive(-0.73, 4.35, 0.6, 1000) //
         .until(() -> m_IntakeSubsystem.noteIn()), //
         m_IntakeSubsystem.autoGetNote() //
         .until(() -> m_IntakeSubsystem.noteIn()) //
@@ -274,9 +276,9 @@ public class RobotContainer {
 
         new ParallelCommandGroup(
           m_shooter.autoEnable(), //
-          m_drivetrainSubsystem.calculatePID_drive(-.4, .4, 1, 3),
+          m_drivetrainSubsystem.calculatePID_drive(-.4, .4, 1, 3), //
           m_ArmSubsystem.autoSetSetpoint(0.157), // // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
-          Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(2)
+          Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(2) //
         ),
 
 
@@ -288,6 +290,41 @@ public class RobotContainer {
           m_shooter.autoDisable(), //
           m_ArmSubsystem.autoSetSetpoint(0.002) //
         )
+    );
+  }
+
+
+
+
+
+  public Command redAlliance_4Note(){
+    return new SequentialCommandGroup(
+
+    // NOTE 0
+      new ParallelCommandGroup(
+      m_ArmSubsystem.autoSetSetpoint(0.106), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
+      m_shooter.autoEnable(), //
+      //Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(4.5)
+      Commands.waitUntil(() -> (m_shooter.getAvgVelocity() > 4700) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(3.4)
+      ), //
+    
+    m_IntakeSubsystem.autoIntakeShootOn(), //
+    Commands.waitSeconds(.75).asProxy(), //
+
+    // GO TO FIRST NOTE 
+      new ParallelCommandGroup(
+      m_shooter.autoDisable(), //
+      m_IntakeSubsystem.autoIntakeShootOff(), //
+      m_ArmSubsystem.autoSetSetpoint(0.001), //
+      m_drivetrainSubsystem.calculatePID_mecanumdrive(3, -1, 0.5, 1000)
+      .until(() -> m_IntakeSubsystem.noteIn()) //
+      ),
+
+
+      new ParallelCommandGroup(
+        
+      )
+
     );
   }
  

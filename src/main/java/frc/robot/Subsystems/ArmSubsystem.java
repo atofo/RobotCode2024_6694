@@ -49,6 +49,9 @@ public class ArmSubsystem extends SubsystemBase {
     arm_rightMotor.set(-processVar);
     arm_leftMotor.set(-processVar);
 
+    //arm_rightMotor.set(-processVar*1.10);
+    //arm_leftMotor.set(-processVar)*1.10;
+
     SmartDashboard.putNumber("Arm Setpoint: ", pid.getSetpoint());
     SmartDashboard.putNumber("Arm AbsEncoder: ", arm_Encoder.getAbsolutePosition());
     SmartDashboard.putNumber("Arm Position: ", arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError);
@@ -59,8 +62,26 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public Command setSetpoint(double Setpoint) {
-    return runOnce(() -> pid.setSetpoint(Setpoint));
+    return runOnce(
+      () -> pid.setSetpoint(Setpoint)
+    );
   }
+
+    public Command setIntelligentSetpoint(double Setpoint) {
+      return runOnce(
+        () -> {
+          if(getSetpoint() > 0.2){
+            pid.setPID(0, 0, 0);
+            pid.setSetpoint(Setpoint);
+          }
+          else if(getSetpoint() <= 0.2){
+            pid.setPID(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
+            pid.setSetpoint(Setpoint);
+          }
+        
+        }
+      );
+    }
   
   public double getSetpoint(){
     return pid.getSetpoint();
