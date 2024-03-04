@@ -18,7 +18,7 @@ public class RightClimber extends SubsystemBase {
   private RelativeEncoder m_RightEncoder = m_RightClimber.getEncoder();
 
   public RightClimber() {
-
+    m_RightClimber.enableVoltageCompensation(11);
   }
 
   public void rightClimberUp(){

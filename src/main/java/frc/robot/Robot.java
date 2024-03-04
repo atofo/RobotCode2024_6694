@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    if(m_robotContainer.m_shooter.atSetpoint() && m_robotContainer.m_ArmSubsystem.atSetpoint()){
+    if(m_robotContainer.m_shooter.atSetpoint() && m_robotContainer.m_ArmSubsystem.atSetpoint() && m_robotContainer.m_IntakeSubsystem.noteIn()){
       m_robotContainer.port2.set(false);
       m_robotContainer.port1.set(true);
       m_robotContainer.port0.set(true);

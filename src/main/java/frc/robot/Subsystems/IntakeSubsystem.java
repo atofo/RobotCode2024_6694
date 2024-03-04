@@ -21,6 +21,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private int outswitch = 0;
 
   public IntakeSubsystem() {
+    m_intakeMotor.enableVoltageCompensation(11);
   }
 
   public Command autoGetNote(){

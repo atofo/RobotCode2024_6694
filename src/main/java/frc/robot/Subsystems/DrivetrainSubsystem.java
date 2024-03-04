@@ -86,6 +86,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     limelightZero();
 
     Gyroscope.calibrate();
+
+    leftFrontMotor.enableVoltageCompensation(11);
+    rightFrontMotor.enableVoltageCompensation(11);
+    leftRearMotor.enableVoltageCompensation(11);
+    rightRearMotor.enableVoltageCompensation(11);
   }
 
   // Encoders

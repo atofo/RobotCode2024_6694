@@ -18,6 +18,7 @@ public class LeftClimber extends SubsystemBase {
   private RelativeEncoder m_LeftEncoder = m_LeftClimber.getEncoder();
   public LeftClimber() {
     m_LeftClimber.setInverted(true);
+    m_LeftClimber.enableVoltageCompensation(11);
   }
 
   public void leftClimberUp(){
