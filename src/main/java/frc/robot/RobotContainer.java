@@ -140,6 +140,7 @@ public class RobotContainer {
     m_chooser.setDefaultOption("redAlliance_threeNotePID", redAlliance_threeNotePID());
     m_chooser.addOption("redAlliance_4Note", redAlliance_4Note());
     m_chooser.addOption("blueAlliance_threeNotePID", blueAlliance_threeNotePID());
+    m_chooser.addOption("fwd test", fwdTest());
     SmartDashboard.putData("Auto choices", m_chooser);
 
     // LEDS
@@ -218,7 +219,7 @@ public class RobotContainer {
 
 
   public Command fwdTest(){
-    return 
+    return m_drivetrainSubsystem.calculatePID_drive(1.8, 1.8, 0.32, 1.7);
   }
 
 
