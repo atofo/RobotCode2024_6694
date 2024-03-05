@@ -32,8 +32,6 @@ public class ArmSubsystem extends SubsystemBase {
   private double processVar;
   private double Setpoint;
 
-  private double Amplifier;
-
   public ArmSubsystem() {
     arm_leftMotor.follow(arm_rightMotor);
     arm_leftMotor.setSmartCurrentLimit(55);
@@ -48,14 +46,11 @@ public class ArmSubsystem extends SubsystemBase {
     super.periodic();
     processVar = pid.calculate(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError);
 
-    //arm_rightMotor.set(-processVar);
-    //arm_leftMotor.set(-processVar);
-    if(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.004){ //Cuando este abajo, deja de hacer crunchy
-      Amplifier = 1;
-    }
+    arm_rightMotor.set(-processVar);
+    arm_leftMotor.set(-processVar);
 
-    arm_rightMotor.set(-processVar*Amplifier);
-    arm_leftMotor.set(-processVar*Amplifier);
+    //arm_rightMotor.set(-processVar*1.10);
+    //arm_leftMotor.set(-processVar)*1.10;
 
     SmartDashboard.putNumber("Arm Setpoint: ", pid.getSetpoint());
     SmartDashboard.putNumber("Arm AbsEncoder: ", arm_Encoder.getAbsolutePosition());
@@ -84,83 +79,6 @@ public class ArmSubsystem extends SubsystemBase {
             pid.setSetpoint(Setpoint);
           }
         
-        }
-      );
-    }
-
-    public Command setAmplifierSetpoint(double Setpoint) {
-      return runOnce(
-        () -> {
-          if(Setpoint == 0.2615){ // mandar arriba
-          Amplifier = 1;
-          pid.setSetpoint(Setpoint);
-        }
-          else if(Setpoint == 0.100){ //mandar a tirar
-          Amplifier = 1.20;
-            pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.001){ // mandar a chupar
-            Amplifier = 1.20;
-            pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.150){ // mandar a tirar de lejos 
-            Amplifier = 1.05;
-            pid.setSetpoint(Setpoint);
-          }
-        
-        }
-      );
-    }
-
-    public Command autoSetAmplifierSetpoint(double Setpoint) {
-      return runOnce(
-        () -> {
-          if(Setpoint == 0.2615){ // mandar arriba
-          Amplifier = 1;
-          pid.setSetpoint(Setpoint);
-        }
-          else if(Setpoint == 0.106){ //mandar a tirar
-          Amplifier = 1.850;
-            pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.001){ // mandar a chupar
-            Amplifier = 1.7;
-            pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.1275){ // mandar a tirar de lejos 
-            Amplifier = 1.750;
-            pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.147){ // mandar a tirar de lejos 
-            Amplifier = 1.22;
-            pid.setSetpoint(Setpoint);
-          }
-        }
-      );
-    }
-    public Command fourNote_autoSetAmplifierSetpoint(double Setpoint) {
-      return runOnce(
-        () -> {
-          if(Setpoint == 0.2615){ // mandar arriba
-          Amplifier = 1;
-          pid.setSetpoint(Setpoint);
-        }
-          else if(Setpoint == 0.1045){ //mandar a tirar
-          Amplifier = 1.850;
-            pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.001){ // mandar a chupar
-            Amplifier = 1.825;
-            pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.151){ // mandar a tirar de lejos 
-            Amplifier = 2.00;
-            pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.147){ // mandar a tirar de lejos 
-            Amplifier = 1.22;
-            pid.setSetpoint(Setpoint);
-          }
         }
       );
     }

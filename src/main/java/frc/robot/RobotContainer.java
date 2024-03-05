@@ -159,12 +159,12 @@ public class RobotContainer {
 
     // Arm
     // DONT ACTIVATE SETPOINT FROM 0. TO 0. IF CLIMBERS ARE UP
-    L32.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.001)); // Intake / Modo Correr 2
+    L32.whileTrue(m_ArmSubsystem.setSetpoint(0.001)); // Intake / Modo Correr 2
     povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.314)); // Climb 1
-    povLeft2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.2615)); // Climb 2 // ARRIBA
+    povLeft2.whileTrue(m_ArmSubsystem.setSetpoint(0.2615)); // Climb 2
     // back2.whileTrue(m_ArmSubsystem.setSetpoint(0.122)); // Abajo de Speaker
-    back2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.100)); // Abajo de Speaker
-    start2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.150)); // Brazo detras de linea
+    back2.whileTrue(m_ArmSubsystem.setSetpoint(0.100)); // Abajo de Speaker
+    start2.whileTrue(m_ArmSubsystem.setSetpoint(0.150)); // Brazo detras de linea
     RT2.whileTrue(m_Arm_manualSetpointFront); //Manual Enfrente
     LT2.whileTrue(m_Arm_manualSetpointBack); //Manual Atras
     R32.whileTrue(m_ArmSubsystem.setSetpoint(0.314)); // AMP
@@ -231,40 +231,42 @@ public class RobotContainer {
 
     // NOTE 0
       new ParallelCommandGroup(
-      m_ArmSubsystem.autoSetAmplifierSetpoint(0.106), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
+      m_ArmSubsystem.autoSetSetpoint(0.106), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
       m_shooter.autoEnable(), //
       //Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(4.5)
-      Commands.waitUntil(() -> (m_shooter.atSetpoint()) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(1.7)
+      Commands.waitUntil(() -> (m_shooter.getAvgVelocity() > 4700) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(3.4)
       ), //
     
     m_IntakeSubsystem.autoIntakeShootOn(), //
-    Commands.waitSeconds(.6).asProxy(), //
+    Commands.waitSeconds(.75).asProxy(), //
 
       new ParallelCommandGroup(
       m_shooter.autoDisable(), //
       m_IntakeSubsystem.autoIntakeShootOff(), //
-      m_ArmSubsystem.autoSetAmplifierSetpoint(0.001) //
+      m_ArmSubsystem.autoSetSetpoint(0.002) //
       ),
 
+    Commands.waitUntil((() -> m_ArmSubsystem.autoRunMode())), //
 
     // FIRST NOTE PICK AND SHOOT
        new ParallelCommandGroup(
-        m_drivetrainSubsystem.calculatePID_drive(1.8, 1.8, 0.32, 1.7),
+        m_drivetrainSubsystem.calculatePID_drive(1.8, 1.8, 0.5, 100)
+        .until(() -> m_IntakeSubsystem.noteIn()), //
         m_IntakeSubsystem.autoGetNote() //
         .until(() -> m_IntakeSubsystem.noteIn()) //
         ),
 
         
         new ParallelCommandGroup(
-          m_drivetrainSubsystem.calculatePID_drive(-1.5, -1.5, 0.645, 1.7),
-          m_ArmSubsystem.autoSetAmplifierSetpoint(0.1275), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
+          m_drivetrainSubsystem.calculatePID_drive(-1.5, -1.5, 0.6, 3.4),
+          m_ArmSubsystem.autoSetSetpoint(0.1275), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
           m_shooter.autoEnable(),
           //Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(4)
-          Commands.waitUntil(() -> (m_shooter.atSetpoint()) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(1.2)
+          Commands.waitUntil(() -> (m_shooter.getAvgVelocity() > 4700) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(3.2)
         ),
 
   m_IntakeSubsystem.autoIntakeShootOn(), //
-  Commands.waitSeconds(.6).asProxy(), //
+  Commands.waitSeconds(.75).asProxy(), //
   m_shooter.autoDisable(), //
   m_IntakeSubsystem.autoIntakeShootOff(), //
   m_ArmSubsystem.autoSetSetpoint(0.001), //
@@ -280,95 +282,22 @@ public class RobotContainer {
         new ParallelCommandGroup(
           m_shooter.autoEnable(), //
           m_drivetrainSubsystem.calculatePID_drive(-.4, .4, 1, 3), //
-          m_ArmSubsystem.autoSetAmplifierSetpoint(0.147), // // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
+          m_ArmSubsystem.autoSetSetpoint(0.157), // // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
           Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(2) //
         ),
 
 
         m_IntakeSubsystem.autoIntakeShootOn(), //
-        Commands.waitSeconds(.6).asProxy(), //
+        Commands.waitSeconds(.75).asProxy(), //
 
         new ParallelCommandGroup(
           m_IntakeSubsystem.autoIntakeShootOff(), //
           m_shooter.autoDisable(), //
-          m_ArmSubsystem.autoSetAmplifierSetpoint(0.001) //
+          m_ArmSubsystem.autoSetSetpoint(0.002) //
         )
     );
   }
 
-
-
-
-  public Command blueAlliance_threeNotePID() {
-    return new SequentialCommandGroup( //
-
-    // NOTE 0
-      new ParallelCommandGroup(
-      m_ArmSubsystem.autoSetAmplifierSetpoint(0.106), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
-      m_shooter.autoEnable(), //
-      //Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(4.5)
-      Commands.waitUntil(() -> (m_shooter.atSetpoint()) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(1.7)
-      ), //
-    
-    m_IntakeSubsystem.autoIntakeShootOn(), //
-    Commands.waitSeconds(.6).asProxy(), //
-
-      new ParallelCommandGroup(
-      m_shooter.autoDisable(), //
-      m_IntakeSubsystem.autoIntakeShootOff(), //
-      m_ArmSubsystem.autoSetAmplifierSetpoint(0.001) //
-      ),
-
-
-    // FIRST NOTE PICK AND SHOOT
-       new ParallelCommandGroup(
-        m_drivetrainSubsystem.calculatePID_drive(1.8, 1.8, 0.32, 100)
-        .until(() -> m_IntakeSubsystem.noteIn()), //
-        m_IntakeSubsystem.autoGetNote() //
-        .until(() -> m_IntakeSubsystem.noteIn()) //
-        ),
-
-        
-        new ParallelCommandGroup(
-          m_drivetrainSubsystem.calculatePID_drive(-1.5, -1.5, 0.645, 1.7),
-          m_ArmSubsystem.autoSetAmplifierSetpoint(0.1275), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
-          m_shooter.autoEnable(),
-          //Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(4)
-          Commands.waitUntil(() -> (m_shooter.atSetpoint()) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(1.2)
-        ),
-
-  m_IntakeSubsystem.autoIntakeShootOn(), //
-  Commands.waitSeconds(.6).asProxy(), //
-  m_shooter.autoDisable(), //
-  m_IntakeSubsystem.autoIntakeShootOff(), //
-  m_ArmSubsystem.autoSetSetpoint(0.001), //
-
-  // SECOND NOTE PICK AND SHOOT
-         new ParallelCommandGroup(
-        m_drivetrainSubsystem.calculatePID_mecanumdrive(3.8, -0.75, 0.6, 1000) // AJUSTAR EL ROCKET PLANNER
-        .until(() -> m_IntakeSubsystem.noteIn()), //
-        m_IntakeSubsystem.autoGetNote() //
-        .until(() -> m_IntakeSubsystem.noteIn()) //
-        ),
-
-        new ParallelCommandGroup(
-          m_shooter.autoEnable(), //
-          m_drivetrainSubsystem.calculatePID_drive(.4, -.4, 1, 3), //
-          m_ArmSubsystem.autoSetAmplifierSetpoint(0.147), // // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
-          Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(2) //
-        ),
-
-
-        m_IntakeSubsystem.autoIntakeShootOn(), //
-        Commands.waitSeconds(.6).asProxy(), //
-
-        new ParallelCommandGroup(
-          m_IntakeSubsystem.autoIntakeShootOff(), //
-          m_shooter.autoDisable(), //
-          m_ArmSubsystem.autoSetAmplifierSetpoint(0.001) //
-        )
-    );
-  }
 
 
 
@@ -378,45 +307,29 @@ public class RobotContainer {
 
     // NOTE 0
     new ParallelCommandGroup(
-      m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.1015), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
+      m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.1045), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
       m_shooter.autoEnable(), //
       //Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(4.5)
-      Commands.waitUntil(() -> (m_shooter.atSetpoint()) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(1.4)
+      Commands.waitUntil(() -> (m_shooter.getAvgVelocity() > 4700) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(3.4)
       ), //
     
     m_IntakeSubsystem.autoIntakeShootOn(), //
-    Commands.waitSeconds(.5).asProxy(), //
-    
-    new ParallelCommandGroup(
+    Commands.waitSeconds(.75).asProxy(), //
+
+    // GO TO FIRST NOTE 
+      new ParallelCommandGroup(
       m_shooter.autoDisable(), //
       m_IntakeSubsystem.autoIntakeShootOff(), //
-      m_ArmSubsystem.autoSetAmplifierSetpoint(0.001) //
-      ),
-      
-    //FIRST NOTE
-    new ParallelCommandGroup(
-      m_drivetrainSubsystem.calculatePID_drive(1.8, 1.8, 0.35, 100)
-      .until(() -> m_IntakeSubsystem.noteIn()), //
-      m_IntakeSubsystem.autoGetNote() //
+      m_ArmSubsystem.autoSetSetpoint(0.001), //
+      m_drivetrainSubsystem.calculatePID_mecanumdrive(3, -1, 0.5, 1000)
       .until(() -> m_IntakeSubsystem.noteIn()) //
       ),
 
-      new ParallelCommandGroup(
-        m_drivetrainSubsystem.calculatePID_drive(-0.63, -0.63, 0.4, 2.2),
-        m_shooter.autoEnable(), //
-        m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.151), // // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
-        Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(2.2) //
-      ),
-
-      m_IntakeSubsystem.autoIntakeShootOn(), //
-      Commands.waitSeconds(.5).asProxy(), //
 
       new ParallelCommandGroup(
-        m_IntakeSubsystem.autoIntakeShootOff(), //
-        m_shooter.autoDisable(), //
-        m_ArmSubsystem.autoSetAmplifierSetpoint(0.001) //
-    )
-    
+        
+      )
+
     );
   }
  
