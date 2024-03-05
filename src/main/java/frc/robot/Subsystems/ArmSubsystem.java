@@ -127,11 +127,11 @@ public class ArmSubsystem extends SubsystemBase {
             Amplifier = 1.7;
             pid.setSetpoint(Setpoint);
           }
-          else if(Setpoint == 0.1275){ // mandar a tirar de lejos 
+          else if(Setpoint == 0.110){ // mandar a tirar de lejos 
             Amplifier = 1.750;
             pid.setSetpoint(Setpoint);
           }
-          else if(Setpoint == 0.147){ // mandar a tirar de lejos 
+          else if(Setpoint == 0.140){ // mandar a tirar de lejos 
             Amplifier = 1.22;
             pid.setSetpoint(Setpoint);
           }
@@ -141,24 +141,24 @@ public class ArmSubsystem extends SubsystemBase {
     public Command fourNote_autoSetAmplifierSetpoint(double Setpoint) {
       return runOnce(
         () -> {
-          if(Setpoint == 0.2615){ // mandar arriba
+          if(Setpoint == 0.2615){ // MANDAR ARRIBA 90
           Amplifier = 1;
           pid.setSetpoint(Setpoint);
         }
-          else if(Setpoint == 0.1045){ //mandar a tirar
-          Amplifier = 1.850;
+          else if(Setpoint == 0.1042){ //TIRO 0
+          Amplifier = 1.990;
             pid.setSetpoint(Setpoint);
           }
-          else if(Setpoint == 0.001){ // mandar a chupar
-            Amplifier = 1.825;
+          else if(Setpoint == 0.001){ // INTAKE mandar a chupar
+            Amplifier = 2.0;
             pid.setSetpoint(Setpoint);
           }
-          else if(Setpoint == 0.151){ // mandar a tirar de lejos 
-            Amplifier = 2.00;
+          else if(Setpoint == 0.1335){ // SEGUNDO TIRO
+            Amplifier = 2.15;
             pid.setSetpoint(Setpoint);
           }
-          else if(Setpoint == 0.147){ // mandar a tirar de lejos 
-            Amplifier = 1.22;
+          else if(Setpoint == 0.1320){ // mandar a tirar de lejos TERCER TIRO
+            Amplifier = 2.30;
             pid.setSetpoint(Setpoint);
           }
         }

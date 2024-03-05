@@ -49,9 +49,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
       DrivetrainConstants.kD);
   PIDController pid_leftRear = new PIDController(DrivetrainConstants.kP, DrivetrainConstants.kI,
       DrivetrainConstants.kD);
+  PIDController pid_rightFront = new PIDController(DrivetrainConstants.kP, DrivetrainConstants.kI,
+      DrivetrainConstants.kD);
+  PIDController pid_leftFront = new PIDController(DrivetrainConstants.kP, DrivetrainConstants.kI,
+      DrivetrainConstants.kD);
 
   private double processVar_rightRear;
   private double processVar_leftRear;
+  private double processVar_rightFront;
+  private double processVar_leftFront;
 
   private ADIS16470_IMU Gyroscope = new ADIS16470_IMU();
 
@@ -60,43 +66,52 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   private RelativeEncoder rightRearEncoder = rightRearMotor.getEncoder();
   private RelativeEncoder leftRearEncoder = leftRearMotor.getEncoder();
+  private RelativeEncoder rightFrontEncoder = rightFrontMotor.getEncoder();
+  private RelativeEncoder leftFrontEncoder = leftFrontMotor.getEncoder();
 
   private PhotonTrackedTarget target;
   private Transform3d bestCameraToTarget;
   private Transform3d alternateCameraToTarget;
 
-
   public DrivetrainSubsystem() {
 
-    
     rightRearMotor.setInverted(true);
     rightFrontMotor.setInverted(true);
 
     leftRearEncoder.setPosition(0);
     rightRearEncoder.setPosition(0);
+    leftFrontEncoder.setPosition(0);
+    rightFrontEncoder.setPosition(0);
 
     leftRearEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor); // esto usa rotaciones y
                                                                                                // // se multiplica por
                                                                                                // el // argumento
     rightRearEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor);
+    leftFrontEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor);
+    rightFrontEncoder.setPositionConversionFactor(DrivetrainConstants.kEncoderConversionFactor);
+
     leftRearEncoder.setVelocityConversionFactor(DrivetrainConstants.kEncoderConversionFactor / 60);
     rightRearEncoder.setVelocityConversionFactor(DrivetrainConstants.kEncoderConversionFactor / 60);
+    leftFrontEncoder.setVelocityConversionFactor(DrivetrainConstants.kEncoderConversionFactor / 60);
+    rightFrontEncoder.setVelocityConversionFactor(DrivetrainConstants.kEncoderConversionFactor / 60);
 
     Limelight = new PhotonCamera("photonvision");
     limelightZero();
 
     Gyroscope.calibrate();
 
-    leftFrontMotor.enableVoltageCompensation(11);
-    rightFrontMotor.enableVoltageCompensation(11);
-    leftRearMotor.enableVoltageCompensation(11);
-    rightRearMotor.enableVoltageCompensation(11);
+    leftFrontMotor.enableVoltageCompensation(11.7);
+    rightFrontMotor.enableVoltageCompensation(11.7);
+    leftRearMotor.enableVoltageCompensation(11.7);
+    rightRearMotor.enableVoltageCompensation(11.7);
   }
 
   // Encoders
   public void resetEncoders() {
     leftRearEncoder.setPosition(0);
     rightRearEncoder.setPosition(0);
+    leftFrontEncoder.setPosition(0);
+    rightFrontEncoder.setPosition(0);
   }
 
   public void resetEncoder_rightRear() {
@@ -111,16 +126,23 @@ public class DrivetrainSubsystem extends SubsystemBase {
     Gyroscope.reset();
   }
 
-  public double getRightEncoderPosition() {
+  public double getRearRightEncoderPosition() {
     return rightRearEncoder.getPosition();
   }
 
-  public double getLeftEncoderPosition() {
+  public double getRearLeftEncoderPosition() {
     return leftRearEncoder.getPosition();
+  }
+  public double getFrontRightEncoderPosition() {
+    return rightFrontEncoder.getPosition();
+  }
+
+  public double getFrontLeftEncoderPosition() {
+    return leftFrontEncoder.getPosition();
   }
 
   public double getAvarageEncoderDistance() {
-    return ((getLeftEncoderPosition() + getRightEncoderPosition()) / 2);
+    return ((getRearLeftEncoderPosition() + getRearRightEncoderPosition()) / 2);
   }
 
   public Command calculatePID_rightRear(double Setpoint) {
@@ -182,7 +204,42 @@ public class DrivetrainSubsystem extends SubsystemBase {
           leftFrontMotor.set(0);
         });
   }
-  public Command calculatePID_mecanumdrive(double Setpoint_leftDiagonal, double Setpoint_rightDiagonal, double speed, double timeout) {
+
+  public Command FourNote_calculatePID_drive(double Setpoint_rightRear, double Setpoint_leftRear,
+      double Setpoint_rightFront, double Setpoint_leftFront, double speed, double timeout) {
+    return runOnce(() -> {
+      resetEncoders();
+      pid_rightRear.setSetpoint(Setpoint_rightRear);
+      pid_leftRear.setSetpoint(Setpoint_leftRear);
+      pid_rightFront.setSetpoint(Setpoint_rightFront);
+      pid_leftFront.setSetpoint(Setpoint_leftFront);
+    }) // Este encoder leftRear da negativo el setpoint debe ser negativo
+        .andThen(run(() -> {
+          processVar_rightRear = pid_rightRear.calculate(rightRearEncoder.getPosition());
+          processVar_leftRear = pid_leftRear.calculate(leftRearEncoder.getPosition());
+          processVar_rightFront = pid_rightFront.calculate(rightFrontEncoder.getPosition());
+          processVar_leftFront = pid_leftFront.calculate(leftFrontEncoder.getPosition());
+
+          rightRearMotor.set(processVar_rightRear * speed); // este esta invertido
+          rightFrontMotor.set(processVar_rightFront * speed); 
+
+          leftRearMotor.set(processVar_leftRear * speed); // este esta invertido
+          leftFrontMotor.set(processVar_leftFront * speed);
+        })).withTimeout(timeout)
+        .until(() -> ((Math.abs(rightRearEncoder.getPosition()) >= Math.abs(Setpoint_rightRear * 0.95))
+        && (Math.abs(leftRearEncoder.getPosition()) >= Math.abs(Setpoint_leftRear * 0.95))
+        && (Math.abs(rightFrontEncoder.getPosition()) >= Math.abs(Setpoint_rightFront * 0.95))
+        && (Math.abs(leftFrontEncoder.getPosition()) >= Math.abs(Setpoint_leftFront * 0.95))))
+        .finallyDo(() -> {
+          rightRearMotor.set(0);
+          rightFrontMotor.set(0);
+          leftRearMotor.set(0);
+          leftFrontMotor.set(0);
+        });
+  }
+
+  public Command calculatePID_mecanumdrive(double Setpoint_leftDiagonal, double Setpoint_rightDiagonal, double speed,
+      double timeout) {
     return runOnce(() -> {
       resetEncoders();
       pid_rightRear.setSetpoint(Setpoint_rightDiagonal);
@@ -194,7 +251,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
           rightRearMotor.set(processVar_rightRear * speed);
           leftFrontMotor.set(processVar_rightRear * speed);
-          
+
           rightFrontMotor.set(processVar_leftRear * speed);
           leftRearMotor.set(processVar_leftRear * speed);
         })).withTimeout(timeout)
@@ -208,13 +265,40 @@ public class DrivetrainSubsystem extends SubsystemBase {
         });
   }
 
-  
+  public Command calculatePID_cleandrive(double Setpoint_leftDiagonal, double Setpoint_rightDiagonal, double speedrR,
+      double speedrF, double speed, double timeout) {
+    return runOnce(() -> {
+      resetEncoders();
+      pid_rightRear.setSetpoint(Setpoint_rightDiagonal);
+      pid_leftRear.setSetpoint(Setpoint_leftDiagonal);
+    })
+        .andThen(run(() -> {
+          processVar_rightRear = pid_rightRear.calculate(rightRearEncoder.getPosition());
+          processVar_leftRear = pid_leftRear.calculate(leftRearEncoder.getPosition());
+
+          rightRearMotor.set(processVar_rightRear * speed);
+          leftFrontMotor.set(processVar_rightRear * speed);
+
+          rightFrontMotor.set(processVar_leftRear * speed);
+          leftRearMotor.set(processVar_leftRear * speed);
+        })).withTimeout(timeout)
+        .until(() -> ((Math.abs(rightRearEncoder.getPosition()) >= Math.abs(Setpoint_rightDiagonal * 0.95))
+            && (Math.abs(leftRearEncoder.getPosition()) >= Math.abs(Setpoint_leftDiagonal * 0.95))))
+        .finallyDo(() -> {
+          rightRearMotor.set(0);
+          rightFrontMotor.set(0);
+          leftRearMotor.set(0);
+          leftFrontMotor.set(0);
+        });
+  }
 
   @Override
   public void periodic() {
     super.periodic();
-    SmartDashboard.putNumber("Posicion atras izquierdo: ", getLeftEncoderPosition());
-    SmartDashboard.putNumber("Posicion atras derecho: ", getRightEncoderPosition());
+    SmartDashboard.putNumber("Posicion atras izquierdo: ", getRearLeftEncoderPosition());
+    SmartDashboard.putNumber("Posicion atras derecho: ", getRearRightEncoderPosition());
+    SmartDashboard.putNumber("Posicion enfrente izquierdo: ", getFrontLeftEncoderPosition());
+    SmartDashboard.putNumber("Posicion enfrente derecho: ", getFrontRightEncoderPosition());
     SmartDashboard.putNumber("Gyroscope", Gyroscope.getAngle(IMUAxis.kYaw));
     var result = Limelight.getLatestResult();
 
@@ -229,7 +313,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void drive(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
       DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
-    
+
     inverted = false;
     if (rightTrigger.getAsDouble() > 0.1) {
       if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
@@ -262,7 +346,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void driveInverted(DoubleSupplier joystickX, DoubleSupplier joystickY, DoubleSupplier joystickZ,
       DoubleSupplier rightTrigger, DoubleSupplier leftTrigger) {
-        inverted = true;
+    inverted = true;
     if (rightTrigger.getAsDouble() > 0.1) {
       if (Math.abs(joystickX.getAsDouble()) < 0.1 &&
           Math.abs(joystickY.getAsDouble()) < 0.1 &&
@@ -300,53 +384,33 @@ public class DrivetrainSubsystem extends SubsystemBase {
         .andThen(run(() -> m_drive.driveCartesian(0, speed, 0)))
         // End command when we've traveled the specified distance
         .until(
-            () -> Math.max(getLeftEncoderPosition(), getRightEncoderPosition()) >= distanceMeters)
+            () -> Math.max(getRearLeftEncoderPosition(), getRearRightEncoderPosition()) >= distanceMeters)
         // Stop the drive when the command ends
         .finallyDo(interrupted -> m_drive.stopMotor());
 
   }
 
-  public Command autoTurnLeft(Double angle) {
-    return runOnce(() -> resetGyro()).andThen(() -> run(() -> {
-      if (Gyroscope.getAngle(IMUAxis.kYaw) > -angle - 4) {
-        m_drive.driveCartesian(0, 0,
-            (0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) + (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
-      } else if (Gyroscope.getAngle(IMUAxis.kYaw) < -angle + 4) {
-        m_drive.driveCartesian(0, 0,
-            -(0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) - (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
-      }
-    }).until(() -> (Gyroscope.getAngle(IMUAxis.kYaw) < angle - 4) && (Gyroscope.getAngle(IMUAxis.kYaw) > angle + 4)))
-        .finallyDo(interrupted -> m_drive.stopMotor());
-  }
+  /*
+   * public Command StraightApril() {
+   * 
+   * return run(() -> m_drive.driveCartesian(0, 0, XSpeed(() -> 0.00))).until(()
+   * -> XSpeed(() -> 0) == 0);
+   * 
+   * }
+   */
 
-  public Command autoTurnRight(Double angle) {
-    return runOnce(() -> resetGyro()).andThen(() -> run(() -> {
-      if (Gyroscope.getAngle(IMUAxis.kYaw) < angle - 4) {
-        m_drive.driveCartesian(0, 0,
-            -(0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) + (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001)));
-      } else if (Gyroscope.getAngle(IMUAxis.kYaw) > angle + 4) {
-        m_drive.driveCartesian(0, 0,
-            0.15 + ((Gyroscope.getAngle(IMUAxis.kYaw) - (Gyroscope.getAngle(IMUAxis.kYaw) - angle)) * 0.001));
-      }
-    }).until(() -> (Gyroscope.getAngle(IMUAxis.kYaw) > angle - 4) && (Gyroscope.getAngle(IMUAxis.kYaw) < angle + 4)))
-        .finallyDo(interrupted -> m_drive.stopMotor());
-  }
-
-/*   public Command StraightApril() {
-
-    return run(() -> m_drive.driveCartesian(0, 0, XSpeed(() -> 0.00))).until(() -> XSpeed(() -> 0) == 0);
-
-  } */
-
- /*  public double XSpeed(DoubleSupplier DYaw) {
-    if (yaw > DYaw.getAsDouble() + 1) { // Rango de error para VelocidadX ((SOLO CAMBIAR DYaw)
-      return -0.2;
-    } else if (yaw < DYaw.getAsDouble() - 1) {
-      return 0.2;
-    } else {
-      return 0;
-    }
-  } */
+  /*
+   * public double XSpeed(DoubleSupplier DYaw) {
+   * if (yaw > DYaw.getAsDouble() + 1) { // Rango de error para VelocidadX ((SOLO
+   * CAMBIAR DYaw)
+   * return -0.2;
+   * } else if (yaw < DYaw.getAsDouble() - 1) {
+   * return 0.2;
+   * } else {
+   * return 0;
+   * }
+   * }
+   */
 
   public void limelightZero() {
     Id = 0;
@@ -360,13 +424,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return Area;
   }
 
-  public boolean inverted(){
-if(inverted){
-  return true;
-}
-else{
-  return false;
-}
+  public boolean inverted() {
+    if (inverted) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
 }

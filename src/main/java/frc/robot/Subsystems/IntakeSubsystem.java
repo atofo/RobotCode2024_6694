@@ -39,7 +39,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     switch(state){
       case 0:
-      m_intakeMotor.set(-0.6);
+      m_intakeMotor.set(-1);
       
       break;
 
@@ -70,7 +70,7 @@ public class IntakeSubsystem extends SubsystemBase {
   
       switch(state){
         case 0:
-        m_intakeMotor.set(-0.6);
+        m_intakeMotor.set(-0.8);
         
         break;
   
