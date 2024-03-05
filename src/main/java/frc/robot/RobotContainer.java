@@ -217,6 +217,9 @@ public class RobotContainer {
   }
 
 
+  public Command fwdTest(){
+    return 
+  }
 
 
 
@@ -245,8 +248,7 @@ public class RobotContainer {
 
     // FIRST NOTE PICK AND SHOOT
        new ParallelCommandGroup(
-        m_drivetrainSubsystem.calculatePID_drive(1.8, 1.8, 0.32, 100)
-        .until(() -> m_IntakeSubsystem.noteIn()), //
+        m_drivetrainSubsystem.calculatePID_drive(1.8, 1.8, 0.32, 1.7),
         m_IntakeSubsystem.autoGetNote() //
         .until(() -> m_IntakeSubsystem.noteIn()) //
         ),
@@ -375,7 +377,7 @@ public class RobotContainer {
 
     // NOTE 0
     new ParallelCommandGroup(
-      m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.1045), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
+      m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.1015), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
       m_shooter.autoEnable(), //
       //Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(4.5)
       Commands.waitUntil(() -> (m_shooter.atSetpoint()) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(1.4)
