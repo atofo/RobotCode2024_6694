@@ -390,6 +390,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   }
 
+  public void setMaxOutput(double maxOutput){
+    m_drive.setMaxOutput(maxOutput);
+  }
+
   /*
    * public Command StraightApril() {
    * 

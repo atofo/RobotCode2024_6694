@@ -50,7 +50,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     //arm_rightMotor.set(-processVar);
     //arm_leftMotor.set(-processVar);
-    if(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.004){ //Cuando este abajo, deja de hacer crunchy
+    if(Setpoint == 0.001 && arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.004){ //Cuando este abajo, deja de hacer crunchy
+      Amplifier = 0.2;
+    }
+    else if(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.004){ //Cuando este abajo, deja de hacer crunchy
       Amplifier = 1;
     }
 
@@ -72,30 +75,14 @@ public class ArmSubsystem extends SubsystemBase {
     );
   }
 
-    public Command setIntelligentSetpoint(double Setpoint) {
-      return runOnce(
-        () -> {
-          if(getSetpoint() > 0.2){
-            pid.setPID(0, 0, 0);
-            pid.setSetpoint(Setpoint);
-          }
-          else if(getSetpoint() <= 0.2){
-            pid.setPID(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD);
-            pid.setSetpoint(Setpoint);
-          }
-        
-        }
-      );
-    }
-
     public Command setAmplifierSetpoint(double Setpoint) {
       return runOnce(
         () -> {
-          if(Setpoint == 0.2615){ // mandar arriba
+          if(Setpoint == 0.262){ // mandar arriba
           Amplifier = 1;
           pid.setSetpoint(Setpoint);
         }
-          else if(Setpoint == 0.100){ //mandar a tirar
+          else if(Setpoint == 0.106){ //mandar a tirar
           Amplifier = 1.20;
             pid.setSetpoint(Setpoint);
           }
@@ -172,10 +159,12 @@ public class ArmSubsystem extends SubsystemBase {
 
   public Command setAprilSetpoint(DoubleSupplier Area) {
     return runOnce(() -> {
-      if (Area.getAsDouble() > 0.28) {
-        pid.setSetpoint((-0.1090375 * Area.getAsDouble() + 0.1775));
+      if (Area.getAsDouble() > 0.29) {
+        Amplifier = 1.00001;
+        pid.setSetpoint((-0.0935235516149 * Area.getAsDouble() + 0.1664));
       } else {
-        pid.setSetpoint((-0.052 * Area.getAsDouble() + 0.16886));
+        Amplifier = 0.76;
+        pid.setSetpoint((-0.0935235516149 * Area.getAsDouble() + 0.1677));
       }
     });
   }

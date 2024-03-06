@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -149,6 +150,8 @@ public class RobotContainer {
 
     //bButton1.onTrue(m_drivetrainSubsystem.StraightApril());
     aButton1.toggleOnTrue(m_driveInverted);
+    xButton1.onTrue(new InstantCommand(() -> m_drivetrainSubsystem.setMaxOutput(0.2)))
+            .onFalse(new InstantCommand(() -> m_drivetrainSubsystem.setMaxOutput(1)) );
 
     // Climbers
     LB1.whileTrue(m_LeftClimberUp); // Left Climber Up
@@ -160,9 +163,9 @@ public class RobotContainer {
     // DONT ACTIVATE SETPOINT FROM 0. TO 0. IF CLIMBERS ARE UP
     L32.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.001)); // Intake / Modo Correr 2
     povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.314)); // Climb 1
-    povLeft2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.2615)); // Climb 2 // ARRIBA
+    povLeft2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.262)); // Climb 2 // ARRIBA
     // back2.whileTrue(m_ArmSubsystem.setSetpoint(0.122)); // Abajo de Speaker
-    back2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.100)); // Abajo de Speaker
+    back2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.106)); // Abajo de Speaker
     start2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.150)); // Brazo detras de linea
     RT2.whileTrue(m_Arm_manualSetpointFront); //Manual Enfrente
     LT2.whileTrue(m_Arm_manualSetpointBack); //Manual Atras

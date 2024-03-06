@@ -86,7 +86,8 @@ public class ShooterSubsystem extends SubsystemBase {
     if ( Math.abs(m_upEncoder.getVelocity()) >= (transformedUpSetPoint - ShooterConstants.RPMmargin) &&
     Math.abs(m_upEncoder.getVelocity()) <= (transformedUpSetPoint + ShooterConstants.RPMmargin) &&
     Math.abs(m_downEncoder.getVelocity()) >= (transformedDownSetPoint - ShooterConstants.RPMmargin) &&
-    Math.abs(m_downEncoder.getVelocity()) <= transformedDownSetPoint + ShooterConstants.RPMmargin )  {
+    Math.abs(m_downEncoder.getVelocity()) <= transformedDownSetPoint + ShooterConstants.RPMmargin  && 
+     Math.abs(m_upEncoder.getVelocity()) >= (10)) {
       return true;
     }
     else{
