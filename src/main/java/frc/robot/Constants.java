@@ -46,15 +46,18 @@ public class Constants {
     }
 
     public class PIDConstants {
-        public static final double kP = 4.2;
-        public static final double kI = 0.0080;
-        public static final double kD = 0.0032;
+        //public static final double kP = 4.60;
+        public static final double kP = 14.70;
+        //public static final double kI = 0.0080;
+        public static final double kI = 0.0000;
+        //public static final double kD = 0.0032;
+        public static final double kD = 0.0000;
     }
 
     public class ArmConstants {
         public static final int arm_leftMotor_PORT = 21;
         public static final int arm_rightMotor_PORT = 22;
-        public static final double kEncoderError = 0.2332;
+        public static final double kEncoderError = 0.2331;
         public static final double kAtSetpointTolerance = 0.020;
         public static final double kAtSetpointBelowSpeakerTolerance = 0.004;
     }

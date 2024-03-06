@@ -35,9 +35,9 @@ public class ArmSubsystem extends SubsystemBase {
   private double Amplifier;
 
   public ArmSubsystem() {
-    arm_leftMotor.follow(arm_rightMotor);
-    arm_leftMotor.setSmartCurrentLimit(55);
-    arm_rightMotor.setSmartCurrentLimit(55);
+    //arm_leftMotor.follow(arm_rightMotor);
+    arm_leftMotor.setSmartCurrentLimit(60);
+    arm_rightMotor.setSmartCurrentLimit(60);
 
     //pid.setSetpoint(0.001);
   }
@@ -82,12 +82,12 @@ public class ArmSubsystem extends SubsystemBase {
           Amplifier = 1;
           pid.setSetpoint(Setpoint);
         }
-          else if(Setpoint == 0.114){ //mandar a tirar
+          else if(Setpoint == 0.106){ //mandar a tirar
           Amplifier = 1.20;
             pid.setSetpoint(Setpoint);
           }
           else if(Setpoint == 0.001){ // mandar a chupar
-            Amplifier = 1.20;
+            Amplifier = 1.08;
             pid.setSetpoint(Setpoint);
           }
           else if(Setpoint == 0.150){ // mandar a tirar de lejos 

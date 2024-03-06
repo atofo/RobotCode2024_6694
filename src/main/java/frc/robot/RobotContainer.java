@@ -51,6 +51,7 @@ public class RobotContainer {
   private Trigger aButton1 = m_firstDriverController.a();
   private Trigger bButton1 = m_firstDriverController.b();
   private Trigger xButton1 = m_firstDriverController.x();
+  private Trigger yButton1 = m_firstDriverController.y();
 
   private Trigger start1 = m_firstDriverController.start();
   private Trigger back1 = m_firstDriverController.back();
@@ -147,14 +148,14 @@ public class RobotContainer {
 
     // Drivetrain
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
-    aButton1.toggleOnTrue(m_driveInverted);
+    RB1.toggleOnTrue(m_driveInverted);
     xButton1.onTrue(new InstantCommand(() -> m_drivetrainSubsystem.setMaxOutput(0.2)))
             .onFalse(new InstantCommand(() -> m_drivetrainSubsystem.setMaxOutput(1)) );
 
     // Climbers
     LB1.whileTrue(m_LeftClimberUp); // Left Climber Up
     start1.whileTrue(m_RightClimberDown); // Right Climber Down
-    RB1.whileTrue(m_RightClimberUp); // Right Climber Up
+    yButton1.whileTrue(m_RightClimberUp); // Right Climber Up
     back1.whileTrue(m_LeftClimberDown); // Left Climber Down
 
     // Arm
@@ -163,7 +164,7 @@ public class RobotContainer {
     povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.314)); // Climb 1
     povLeft2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.262)); // Climb 2 // ARRIBA
     // back2.whileTrue(m_ArmSubsystem.setSetpoint(0.122)); // Abajo de Speaker
-    bButton2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.114)); // Abajo de Speaker
+    bButton2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.106)); // Abajo de Speaker
     start2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.150)); // Brazo detras de linea
     RT2.whileTrue(m_Arm_manualSetpointFront); //Manual Enfrente
     LT2.whileTrue(m_Arm_manualSetpointBack); //Manual Atras
