@@ -50,8 +50,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     //arm_rightMotor.set(-processVar);
     //arm_leftMotor.set(-processVar);
-    if(Setpoint == 0.001 && arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.004){ //Cuando este abajo, deja de hacer crunchy
-      Amplifier = 0.2;
+    if(Setpoint == 0.001 && arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.01){ //Cuando este abajo, deja de hacer crunchy
+      Amplifier = 0;
     }
     else if(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.004){ //Cuando este abajo, deja de hacer crunchy
       Amplifier = 1;
@@ -82,7 +82,7 @@ public class ArmSubsystem extends SubsystemBase {
           Amplifier = 1;
           pid.setSetpoint(Setpoint);
         }
-          else if(Setpoint == 0.106){ //mandar a tirar
+          else if(Setpoint == 0.114){ //mandar a tirar
           Amplifier = 1.20;
             pid.setSetpoint(Setpoint);
           }

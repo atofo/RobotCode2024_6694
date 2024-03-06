@@ -50,8 +50,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_downPidController.setFF(ShooterConstants.kDownFF);
     m_downPidController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 
-    m_upMotor.enableVoltageCompensation(11);
-    m_downMotor.enableVoltageCompensation(11);
+    m_upMotor.enableVoltageCompensation(11.7);
+    m_downMotor.enableVoltageCompensation(11.7);
   }
 
   public Command autoEnable() {
@@ -115,8 +115,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   
   public void emergencyStop(){
-  m_downMotor.set(1);
-  m_upMotor.set(1);
+  m_downMotor.set(0);
+  m_upMotor.set(0);
   }
 
   @Override

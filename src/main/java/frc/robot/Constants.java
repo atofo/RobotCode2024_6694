@@ -54,7 +54,7 @@ public class Constants {
     public class ArmConstants {
         public static final int arm_leftMotor_PORT = 21;
         public static final int arm_rightMotor_PORT = 22;
-        public static final double kEncoderError = 0.1883;
+        public static final double kEncoderError = 0.2332;
         public static final double kAtSetpointTolerance = 0.020;
         public static final double kAtSetpointBelowSpeakerTolerance = 0.004;
     }
@@ -87,7 +87,7 @@ public class Constants {
     
         // Ojo, valores experimentales de kP, kI y kD, hay que experimentar.
         //public static final double kP = 0.00012;
-        public static final double kP = 0.0000025;
+        public static final double kP = 0.0000026; // Estaba en 0.0000025
         public static final double kI = 0;
         public static final double kD = 0; 
         public static final double kIz = 0;

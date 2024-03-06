@@ -147,8 +147,6 @@ public class RobotContainer {
 
     // Drivetrain
     m_drivetrainSubsystem.setDefaultCommand(m_DriveWithJoystick);
-
-    //bButton1.onTrue(m_drivetrainSubsystem.StraightApril());
     aButton1.toggleOnTrue(m_driveInverted);
     xButton1.onTrue(new InstantCommand(() -> m_drivetrainSubsystem.setMaxOutput(0.2)))
             .onFalse(new InstantCommand(() -> m_drivetrainSubsystem.setMaxOutput(1)) );
@@ -165,12 +163,12 @@ public class RobotContainer {
     povRight2.whileTrue(m_ArmSubsystem.setSetpoint(0.314)); // Climb 1
     povLeft2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.262)); // Climb 2 // ARRIBA
     // back2.whileTrue(m_ArmSubsystem.setSetpoint(0.122)); // Abajo de Speaker
-    back2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.106)); // Abajo de Speaker
+    bButton2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.114)); // Abajo de Speaker
     start2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.150)); // Brazo detras de linea
     RT2.whileTrue(m_Arm_manualSetpointFront); //Manual Enfrente
     LT2.whileTrue(m_Arm_manualSetpointBack); //Manual Atras
     R32.whileTrue(m_ArmSubsystem.setSetpoint(0.314)); // AMP
-    bButton2.onTrue(m_ArmSubsystem.setAprilSetpoint(() -> m_drivetrainSubsystem.limelightArea())); // Brazo Limelight
+    back2.onTrue(m_ArmSubsystem.setAprilSetpoint(() -> m_drivetrainSubsystem.limelightArea())); // Brazo Limelight
 
     // Intake
     aButton2.toggleOnTrue(m_Intake_getNote); // Intake get Note
