@@ -6,18 +6,26 @@ package frc.robot;
 
 import org.littletonrobotics.urcl.URCL;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 
 
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.ArmConstants;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+
+  //public ShuffleboardTab tab = Shuffleboard.getTab("kEncoder_error");
+  //public GenericEntry encoderError_entry = tab.add("Arm abs encoder", 0.2402).getEntry();
+
 
   private RobotContainer m_robotContainer;
 
@@ -36,7 +44,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    if(m_robotContainer.m_shooter.atSetpoint() && m_robotContainer.m_ArmSubsystem.atSetpoint() && m_robotContainer.m_IntakeSubsystem.noteIn()){
+
+ 
+
+    if(m_robotContainer.m_shooter.atSetpoint3500() && m_robotContainer.m_ArmSubsystem.atSetpoint() && m_robotContainer.m_IntakeSubsystem.noteIn()){
       m_robotContainer.port2.set(false);
       m_robotContainer.port1.set(true);
       m_robotContainer.port0.set(true);
@@ -64,6 +75,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("PORT2: ", m_robotContainer.port2.get());
     SmartDashboard.putBoolean("PORT1: ", m_robotContainer.port1.get());
     SmartDashboard.putBoolean("PORT0: ", m_robotContainer.port0.get());
+
+
 
 
   }

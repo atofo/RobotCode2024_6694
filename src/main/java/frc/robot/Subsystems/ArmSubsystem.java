@@ -35,30 +35,31 @@ public class ArmSubsystem extends SubsystemBase {
   private double Amplifier;
 
   public ArmSubsystem() {
-    //arm_leftMotor.follow(arm_rightMotor);
+    // arm_leftMotor.follow(arm_rightMotor);
     arm_leftMotor.setSmartCurrentLimit(60);
     arm_rightMotor.setSmartCurrentLimit(60);
 
-    //pid.setSetpoint(0.001);
+    // pid.setSetpoint(0.001);
   }
-
 
   @Override
   public void periodic() {
     super.periodic();
     processVar = pid.calculate(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError);
 
-    //arm_rightMotor.set(-processVar);
-    //arm_leftMotor.set(-processVar);
-    if(Setpoint == 0.001 && arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.01){ //Cuando este abajo, deja de hacer crunchy
+    // arm_rightMotor.set(-processVar);
+    // arm_leftMotor.set(-processVar);
+    if (Setpoint == 0.001 && arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.01) { // Cuando este
+                                                                                                      // abajo, deja de
+                                                                                                      // hacer crunchy
       Amplifier = 0;
-    }
-    else if(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.004){ //Cuando este abajo, deja de hacer crunchy
+    } else if (arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.004) { // Cuando este abajo, deja de
+                                                                                         // hacer crunchy
       Amplifier = 1;
     }
 
-    arm_rightMotor.set(-processVar*Amplifier);
-    arm_leftMotor.set(-processVar*Amplifier);
+    arm_rightMotor.set(-processVar * Amplifier);
+    arm_leftMotor.set(-processVar * Amplifier);
 
     SmartDashboard.putNumber("Arm Setpoint: ", pid.getSetpoint());
     SmartDashboard.putNumber("Arm AbsEncoder: ", arm_Encoder.getAbsolutePosition());
@@ -67,92 +68,94 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Arm Ready", atSetpoint());
     SmartDashboard.putNumber(" L Motor current", arm_leftMotor.getOutputCurrent());
     SmartDashboard.putNumber("R Motor current", arm_rightMotor.getOutputCurrent());
+    SmartDashboard.putNumber("PID kP", pid.getP());
   }
 
   public Command setSetpoint(double Setpoint) {
     return runOnce(
-      () -> pid.setSetpoint(Setpoint)
-    );
+        () -> pid.setSetpoint(Setpoint));
   }
 
-    public Command setAmplifierSetpoint(double Setpoint) {
-      return runOnce(
+  public Command setAmplifierSetpoint(double Setpoint) {
+    return runOnce(
         () -> {
-          if(Setpoint == 0.262){ // mandar arriba
-          Amplifier = 1;
-          pid.setSetpoint(Setpoint);
-        }
-          else if(Setpoint == 0.106){ //mandar a tirar
-          Amplifier = 1.20;
+          if (Setpoint == 0.2390) { // mandar arriba
+            Amplifier = 1;
+            pid.setPID(14.70, 0, 0);
             pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.001){ // mandar a chupar
+          } else if (Setpoint == 0.1028) { // mandar a tirar
+            Amplifier = 1.00; // antes estaba en 1.20 pero voy a ajustar el PID del brazo
+            pid.setPID(22, 0, 0);
+            pid.setSetpoint(Setpoint);
+          } else if (Setpoint == 0.001) { // mandar a chupar
             Amplifier = 1.08;
+            pid.setPID(14.70, 0, 0);
             pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.150){ // mandar a tirar de lejos 
+          } else if (Setpoint == 0.150) { // mandar a tirar de lejos
             Amplifier = 1.05;
+            pid.setPID(14.70, 0, 0);
             pid.setSetpoint(Setpoint);
-          }
-        
-        }
-      );
-    }
+          } else if (Setpoint == 0.314) { // mandar a amp o climb 1
+            Amplifier = 1.00;
+            pid.setPID(13.00, 0, 0);
+            pid.setSetpoint(Setpoint);
+          } 
 
-    public Command autoSetAmplifierSetpoint(double Setpoint) {
-      return runOnce(
+        });
+  }
+
+  public Command autoSetAmplifierSetpoint(double Setpoint) {
+    return runOnce(
         () -> {
-          if(Setpoint == 0.2615){ // mandar arriba
-          Amplifier = 1;
-          pid.setSetpoint(Setpoint);
-        }
-          else if(Setpoint == 0.106){ //mandar a tirar
-          Amplifier = 1.850;
+          if (Setpoint == 0.2615) { // mandar arriba
+            Amplifier = 1;
             pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.001){ // mandar a chupar
-            Amplifier = 1.7;
+          } else if (Setpoint == 0.1030) { // mandar a tirar
+            Amplifier = 1.00; // antes estaba en 1.20 pero voy a ajustar el PID del brazo
+            pid.setPID(22, 0, 0);
             pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.110){ // mandar a tirar de lejos 
+          } else if (Setpoint == 0.001) { // mandar a chupar
+            Amplifier = 1.08;
+            pid.setPID(14.70, 0, 0);
+            pid.setSetpoint(Setpoint);
+          } else if (Setpoint == 0.110) { // mandar a tirar de lejos
             Amplifier = 1.750;
             pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.140){ // mandar a tirar de lejos 
-            Amplifier = 1.22;
+          } else if (Setpoint == 0.1090) { // mandar a tirar de lejos
+            Amplifier = 1;
+            pid.setPID(22, 0, 0);
             pid.setSetpoint(Setpoint);
           }
-        }
-      );
-    }
-    public Command fourNote_autoSetAmplifierSetpoint(double Setpoint) {
-      return runOnce(
+        });
+  }
+
+  public Command fourNote_autoSetAmplifierSetpoint(double Setpoint) {
+    return runOnce(
         () -> {
-          if(Setpoint == 0.2615){ // MANDAR ARRIBA 90
-          Amplifier = 1;
-          pid.setSetpoint(Setpoint);
-        }
-          else if(Setpoint == 0.1042){ //TIRO 0
-          Amplifier = 1.990;
+          if (Setpoint == 0.2615) { // MANDAR ARRIBA 90
+            Amplifier = 1;
+            pid.setSetpoint(Setpoint);
+          } else if (Setpoint == 0.1021) { // TIRO 0
+            Amplifier = 1.0;
+            pid.setPID(22, 0, 0);
+            pid.setSetpoint(Setpoint);
+          } else if (Setpoint == 0.001) { // INTAKE mandar a chupar
+            Amplifier = 1.08;
+            pid.setPID(14.70, 0, 0);
+            pid.setSetpoint(Setpoint);
+          } else if (Setpoint == 0.1170) { // SEGUNDO TIRO
+            Amplifier = 1.0;
+            pid.setPID(22, 0, 0);
+            pid.setSetpoint(Setpoint);
+          } else if (Setpoint == 0.1172) { // mandar a tirar de lejos TERCER TIRO
+            Amplifier = 1.0;
+            pid.setPID(22, 0, 0);
             pid.setSetpoint(Setpoint);
           }
-          else if(Setpoint == 0.001){ // INTAKE mandar a chupar
-            Amplifier = 2.0;
-            pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.1335){ // SEGUNDO TIRO
-            Amplifier = 2.15;
-            pid.setSetpoint(Setpoint);
-          }
-          else if(Setpoint == 0.1320){ // mandar a tirar de lejos TERCER TIRO
-            Amplifier = 2.30;
-            pid.setSetpoint(Setpoint);
-          }
-        }
-      );
-    }
-  
-  public double getSetpoint(){
+        });
+  }
+
+  public double getSetpoint() {
     return pid.getSetpoint();
 
   }
@@ -173,71 +176,66 @@ public class ArmSubsystem extends SubsystemBase {
     return runOnce(() -> pid.setSetpoint(Setpoint));
   }
 
-   public void manualSetpointFront() {
-      Setpoint = pid.getSetpoint() + 0.01;
-      pid.setSetpoint(Setpoint);
-    }
-    
-    public void manualSetpointBack(){
-      Setpoint = pid.getSetpoint() - 0.01;
-      pid.setSetpoint(Setpoint);
-
-    }
-   
-    public Boolean isUp(){
-      if(arm_Encoder.getAbsolutePosition() > 0.05 && arm_Encoder.getAbsolutePosition() < 0.62){
-        return true;
-      }
-      else{
-        return false;
-      }
-    }
-
-    public Boolean autoRunMode(){
-      if((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < 0.02){
-        return true;
-      }
-      else{
-        return false;
-      }
-    }
-
-    public Boolean isOnFront(){
-      if(arm_Encoder.getAbsolutePosition() < 0.47){
-        return true;
-      }
-      else{
-        return false;
-      }
-    }
-
-    
-    public void setpointStop(){
-      Setpoint = arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError;
-      pid.setSetpoint(Setpoint);
-    }
-
-    public Boolean atSetpoint(){
-      if(((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (getSetpoint()-ArmConstants.kAtSetpointTolerance)) &&
-      ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < (getSetpoint()+ArmConstants.kAtSetpointTolerance))){
-        return true;
-      }
-      else{
-        return false;
-      }
-    }
-    public Boolean atSetpointBelowSpeaker(){
-      if(((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (getSetpoint()-ArmConstants.kAtSetpointBelowSpeakerTolerance)) &&
-      ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < (getSetpoint()+ArmConstants.kAtSetpointBelowSpeakerTolerance))){
-        return true;
-      }
-      else{
-        return false;
-      }
-    }
-
-
-
-    
+  public void manualSetpointFront() {
+    Setpoint = pid.getSetpoint() + 0.01;
+    pid.setSetpoint(Setpoint);
   }
 
+  public void manualSetpointBack() {
+    Setpoint = pid.getSetpoint() - 0.01;
+    pid.setSetpoint(Setpoint);
+
+  }
+
+  public Boolean isUp() {
+    if (arm_Encoder.getAbsolutePosition() > 0.05 && arm_Encoder.getAbsolutePosition() < 0.62) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public Boolean autoRunMode() {
+    if ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < 0.02) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public Boolean isOnFront() {
+    if (arm_Encoder.getAbsolutePosition() < 0.47) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public void setpointStop() {
+    Setpoint = arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError;
+    pid.setSetpoint(Setpoint);
+  }
+
+  public Boolean atSetpoint() {
+    if (((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (getSetpoint()
+        - ArmConstants.kAtSetpointTolerance)) &&
+        ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < (getSetpoint()
+            + ArmConstants.kAtSetpointTolerance))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public Boolean atSetpointBelowSpeaker() {
+    if (((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (getSetpoint()
+        - ArmConstants.kAtSetpointBelowSpeakerTolerance)) &&
+        ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < (getSetpoint()
+            + ArmConstants.kAtSetpointBelowSpeakerTolerance))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+}

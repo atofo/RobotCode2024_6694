@@ -95,6 +95,16 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
+  public boolean atSetpoint3500() {
+    if(Math.abs(m_upEncoder.getVelocity()) > 3900 && Math.abs(m_downEncoder.getVelocity()) > 3900){
+      return true;
+    }
+    
+    else{
+      return false;
+    }
+  }
+
   public double getAvgVelocity(){
     avgVelocity = (Math.abs(m_upEncoder.getVelocity()) + m_downEncoder.getVelocity()) / 2;
     return avgVelocity;
