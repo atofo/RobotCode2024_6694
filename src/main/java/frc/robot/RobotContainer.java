@@ -173,8 +173,8 @@ public class RobotContainer {
     povLeft2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.2390)); // Climb 2 // ARRIBA
     bButton2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.1028)); // Abajo de Speaker
     start2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.150)); // Brazo detras de linea
-    RT2.whileTrue(m_Arm_manualSetpointFront); //Manual Enfrente
-    LT2.whileTrue(m_Arm_manualSetpointBack); //Manual Atras
+    LT2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.1028 - 0.02)); // SETPOINT ABAJO DE SPEAKER -2
+    RT2.whileTrue(m_ArmSubsystem.setAmplifierSetpoint(0.1028 + 0.02)); // SETPOINT ABAJO DE SPEAKER +2
     R32.whileTrue(m_ArmSubsystem.setSetpoint(0.314)); // AMP
     back2.onTrue(m_ArmSubsystem.setAprilSetpoint(() -> m_drivetrainSubsystem.limelightArea())); // Brazo Limelight
 
