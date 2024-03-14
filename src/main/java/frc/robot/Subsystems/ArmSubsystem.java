@@ -13,7 +13,10 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,6 +37,14 @@ public class ArmSubsystem extends SubsystemBase {
 
   private double Amplifier;
 
+  private ShuffleboardTab tab = Shuffleboard.getTab("Encoder Error");
+  private GenericEntry kEncoderErrorEntry =
+    tab.add("Error Encoder", 0.2400)
+          .getEntry();
+  private double kEncoderError;
+
+
+
   public ArmSubsystem() {
     // arm_leftMotor.follow(arm_rightMotor);
     arm_leftMotor.setSmartCurrentLimit(60);
@@ -45,15 +56,17 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     super.periodic();
-    processVar = pid.calculate(arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError);
+    kEncoderError = kEncoderErrorEntry.getDouble(0.2400);
+
+    processVar = pid.calculate(arm_Encoder.getAbsolutePosition() - kEncoderError);
 
     // arm_rightMotor.set(-processVar);
     // arm_leftMotor.set(-processVar);
-    if (Setpoint == 0.001 && arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.01) { // Cuando este
+    if (Setpoint == 0.001 && arm_Encoder.getAbsolutePosition() - kEncoderError < 0.01) { // Cuando este
                                                                                                       // abajo, deja de
                                                                                                       // hacer crunchy
       Amplifier = 0;
-    } else if (arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError < 0.004) { // Cuando este abajo, deja de
+    } else if (arm_Encoder.getAbsolutePosition() - kEncoderError < 0.004) { // Cuando este abajo, deja de
                                                                                          // hacer crunchy
       Amplifier = 1;
     }
@@ -63,7 +76,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Arm Setpoint: ", pid.getSetpoint());
     SmartDashboard.putNumber("Arm AbsEncoder: ", arm_Encoder.getAbsolutePosition());
-    SmartDashboard.putNumber("Arm Position: ", arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError);
+    SmartDashboard.putNumber("Arm Position: ", arm_Encoder.getAbsolutePosition() - kEncoderError);
     SmartDashboard.putNumber("Arm ProcessVar: ", processVar);
     SmartDashboard.putBoolean("Arm Ready", atSetpoint());
     SmartDashboard.putNumber(" L Motor current", arm_leftMotor.getOutputCurrent());
@@ -196,7 +209,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public Boolean autoRunMode() {
-    if ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < 0.02) {
+    if ((arm_Encoder.getAbsolutePosition() - kEncoderError) < 0.02) {
       return true;
     } else {
       return false;
@@ -212,14 +225,14 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setpointStop() {
-    Setpoint = arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError;
+    Setpoint = arm_Encoder.getAbsolutePosition() - kEncoderError;
     pid.setSetpoint(Setpoint);
   }
 
   public Boolean atSetpoint() {
-    if (((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (getSetpoint()
+    if (((arm_Encoder.getAbsolutePosition() - kEncoderError) > (getSetpoint()
         - ArmConstants.kAtSetpointTolerance)) &&
-        ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < (getSetpoint()
+        ((arm_Encoder.getAbsolutePosition() - kEncoderError) < (getSetpoint()
             + ArmConstants.kAtSetpointTolerance))) {
       return true;
     } else {
@@ -228,9 +241,9 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public Boolean atSetpointBelowSpeaker() {
-    if (((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) > (getSetpoint()
+    if (((arm_Encoder.getAbsolutePosition() - kEncoderError) > (getSetpoint()
         - ArmConstants.kAtSetpointBelowSpeakerTolerance)) &&
-        ((arm_Encoder.getAbsolutePosition() - ArmConstants.kEncoderError) < (getSetpoint()
+        ((arm_Encoder.getAbsolutePosition() - kEncoderError) < (getSetpoint()
             + ArmConstants.kAtSetpointBelowSpeakerTolerance))) {
       return true;
     } else {

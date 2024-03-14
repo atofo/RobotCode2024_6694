@@ -4,11 +4,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Constants {
-
-
-
 
     public class LEDConstants {
         public static final int pin0 = 6;
@@ -63,10 +61,11 @@ public class Constants {
     public class ArmConstants {
         public static final int arm_leftMotor_PORT = 21;
         public static final int arm_rightMotor_PORT = 22;
-        public static final double kEncoderError = 0.2400;
+        //public static final double kEncoderError = 0.2400;
         public static final double kAtSetpointTolerance = 0.020;
         public static final double kAtSetpointBelowSpeakerTolerance = 0.004;
     }
+
 
     public class IntakeLauncherConstants {
         public static final int intakelauncher_intakeMotor_PORT = 33;

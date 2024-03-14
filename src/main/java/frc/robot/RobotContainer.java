@@ -146,9 +146,9 @@ public class RobotContainer {
   public RobotContainer() {
     m_chooser.setDefaultOption("RED 3", RED_3());
     m_chooser.addOption("RED 4", RED_4());
+    m_chooser.addOption("BLUE 4", BLUE_4());
     m_chooser.addOption("Drive Test", driveTest());
     SmartDashboard.putData("Auto choices", m_chooser);
-
 
 
     // LEDS
@@ -374,6 +374,118 @@ public class RobotContainer {
 
     new ParallelCommandGroup(
       m_drivetrainSubsystem.calculatePID_drive(-0.7, 0.7, 1, 1)
+    ).withTimeout(1.2),
+
+    m_drivetrainSubsystem.calculatePID_drive(-1.20, -1.20, 0.87, 1.3).withTimeout(1.3),
+
+    new ParallelCommandGroup(
+      m_shooter.autoEnable(),
+      m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.1172),
+      Commands.waitUntil(() -> (m_shooter.atSetpoint3500()) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(1.55)
+
+    ).withTimeout(1.55),
+
+
+    m_IntakeSubsystem.autoIntakeShootOn(), //
+    Commands.waitSeconds(.55).asProxy(), //
+
+      new ParallelCommandGroup(
+        m_IntakeSubsystem.autoIntakeShootOff(), //
+        m_shooter.autoDisable(), //
+        m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.001) //
+      )
+
+/*         m_drivetrainSubsystem.calculatePID_drive(0.85, -0.85, 1.40, 1.20).withTimeout(1.20),
+
+        new ParallelCommandGroup(
+      m_drivetrainSubsystem.calculatePID_drive(2.2, 2.2, 0.40, 2.5)
+      .until(() -> m_IntakeSubsystem.noteIn()), //
+      m_IntakeSubsystem.autoGetNote() //
+      .until(() -> m_IntakeSubsystem.noteIn()) //
+      ) */
+
+      
+
+
+
+      
+   /*    m_drivetrainSubsystem.calculatePID_mecanumdrive(3.23, -1.93, 0.6, 2.35),
+      m_drivetrainSubsystem.calculatePID_drive(0.2, -0.2, 1, 0.5),
+
+
+      new ParallelCommandGroup(
+        m_IntakeSubsystem.autoGetNote()
+        .until(() -> m_IntakeSubsystem.noteIn()).withTimeout(3),
+        m_drivetrainSubsystem.calculatePID_drive(1, 1, 0.6, 3)
+        .until(() -> m_IntakeSubsystem.noteIn()) // //
+      )
+ */
+
+   );
+  }
+
+  ////////////////////////////////////////////////////////////////
+  /////////////////////// BLUE 4
+  public Command BLUE_4(){
+    return new SequentialCommandGroup(
+
+    // NOTE 0
+    new ParallelCommandGroup(
+      m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.1021), // AQUI SE CAMBIA EL ANGULO DEL BRAZO, NO SUBIR!!
+      m_shooter.autoEnable(), //
+      //Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(4.5)
+      Commands.waitUntil(() -> (m_shooter.atSetpoint3500()) && m_ArmSubsystem.atSetpointBelowSpeaker()).withTimeout(1.45)
+      ), //
+    
+    m_IntakeSubsystem.autoIntakeShootOn(), //
+    Commands.waitSeconds(.45).asProxy(), //
+    
+    new ParallelCommandGroup(
+      m_shooter.autoDisable(), //
+      m_IntakeSubsystem.autoIntakeShootOff(), //
+      m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.001) //
+      ),
+      
+    //FIRST NOTE
+    new ParallelCommandGroup(
+      m_drivetrainSubsystem.calculatePID_drive(2.2, 2.2, 0.32, 4)
+      .until(() -> m_IntakeSubsystem.noteIn()), //
+      m_IntakeSubsystem.autoGetNote() //
+      .until(() -> m_IntakeSubsystem.noteIn()) //
+      ),
+
+      new ParallelCommandGroup(
+        m_drivetrainSubsystem.calculatePID_drive(-1.1, -1.1, 0.39, 2.1), //
+        m_shooter.autoEnable(), //
+        m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.1170), //
+        Commands.waitUntil(() -> m_shooter.atSetpoint() && m_ArmSubsystem.atSetpoint()).withTimeout(1.75) //
+      ),
+
+      m_IntakeSubsystem.autoIntakeShootOn(), //
+      Commands.waitSeconds(.45).asProxy(), //
+
+      new ParallelCommandGroup(
+        m_IntakeSubsystem.autoIntakeShootOff(), //
+        m_shooter.autoDisable(),
+        m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.001), //
+        m_drivetrainSubsystem.calculatePID_drive(-1.05, 1.05, 1.40, 1) // ESTABA EN 932
+    ).withTimeout(1.1),
+
+
+
+
+
+    // SECOND NOTE PICK AND SHOOT
+    new ParallelCommandGroup(
+      m_ArmSubsystem.fourNote_autoSetAmplifierSetpoint(0.001), //
+      m_drivetrainSubsystem.calculatePID_drive(1.2, 1.2, 0.8, 2)
+      .until(() -> m_IntakeSubsystem.noteIn()), //
+      m_IntakeSubsystem.autoGetNote() //
+      .until(() -> m_IntakeSubsystem.noteIn()) //
+      ).withTimeout(2.2),
+
+    new ParallelCommandGroup(
+      m_drivetrainSubsystem.calculatePID_drive(0.7, -0.7, 1, 1)
     ).withTimeout(1.2),
 
     m_drivetrainSubsystem.calculatePID_drive(-1.20, -1.20, 0.87, 1.3).withTimeout(1.3),
